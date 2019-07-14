@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "RyEngine.h"
+#include "Core/Core.cpp"
 
 #define MAX_LOADSTRING 100
 
