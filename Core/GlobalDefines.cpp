@@ -4,6 +4,8 @@
 
 #if _DEBUG
 
+#define DEBUG _DEBUG
+
 #define ENABLE_ASSERT true
 #define S_ASSERT_TYPE_DIV true
 

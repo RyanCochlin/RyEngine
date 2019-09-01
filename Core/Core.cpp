@@ -3,5 +3,6 @@
 //TODO document
 
 #include "GlobalDefines.cpp"
-#include "Assertions\Assert.cpp"
-#include "Error\Error.cpp"
+#include "Error/Error.cpp"
+#include "Assertions/Assert.cpp"
+#include "Utils.cpp"
