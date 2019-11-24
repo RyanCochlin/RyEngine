@@ -1,3 +1,5 @@
+#include "GlobalDefines.h"
+
 //Assert failure print messages
 #define _assert_fail "_assert_fail"
 #define _s_assert_fail _s_assert_fail

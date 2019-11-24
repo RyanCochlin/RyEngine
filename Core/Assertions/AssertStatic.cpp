@@ -2,6 +2,8 @@
 //Assertions Main
 //TODO document
 
+#include "GlobalDefines.h"
+
 #if ENABLE_ASSERT
 
 #ifdef __cplusplus

@@ -2,7 +2,18 @@
 //Assertions Main
 //TODO document
 
-#include "GlobalDefines.cpp"
-#include "Error/Error.cpp"
-#include "Assertions/Assert.cpp"
-#include "Utils.cpp"
+#include <Windows.h>
+
+#include "Core.h"
+#include "SubSystems/SubSystemManager.h"
+
+namespace RyEngine
+{
+	void RyEngineCore::Initialize()
+	{
+		SubSystemManager::Instance().RegisterSubSystems();
+
+		//TODO for now just gonna start the subsystems here
+		SubSystemManager::Instance().SpinUpSubSystems();
+	}
+}

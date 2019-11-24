@@ -72,6 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir);$(ProjectDir)Core;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -90,6 +91,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Core</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -147,18 +149,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Core.h" />
     <ClInclude Include="Core\Error\DirectX\RyDXException.h" />
+    <ClInclude Include="Core\Error\Error.h" />
     <ClInclude Include="Core\Error\ExceptionContainer.h" />
     <ClInclude Include="Core\Error\RyException.h" />
+    <ClInclude Include="Core\External\d3dx12.h" />
     <ClInclude Include="Core\Platform\Graphics\DirectX\DirectXInit.h" />
     <ClInclude Include="Core\Platform\Graphics\IGraphicsInit.h" />
+    <ClInclude Include="Core\RyEngineCore.h" />
+    <ClInclude Include="Core\SubSystems\ApplicationSubSystem.h" />
+    <ClInclude Include="Core\SubSystems\SubSystemManager.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RyEngine.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Core\SubSystems\SubSystem.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Core\Platform\Window\WindowSystem.h" />
+    <ClInclude Include="Core\Platform\Window\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Core\Assertions\Assert.cpp">
+    <ClCompile Include="Core\Assertions\Assert.h">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Core\Assertions\AssertDefines.cpp">
@@ -173,20 +184,20 @@
     <ClCompile Include="Core\Core.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Core\Error\Error.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Core\Error\ErrorLog.cpp">
+    <ClCompile Include="Core\Error\ErrorLog.h">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Core\Error\RyException.cpp" />
-    <ClCompile Include="Core\GlobalDefines.cpp">
+    <ClCompile Include="Core\GlobalDefines.h">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Core\Platform\Graphics\DirectX\DirectXInit.cpp" />
     <ClCompile Include="Core\Platform\Graphics\RyGraphics.h" />
-    <ClCompile Include="Core\Platform\Platform.cpp" />
-    <ClCompile Include="Core\Utils.cpp" />
+    <ClCompile Include="Core\Platform\Platform.h" />
+    <ClCompile Include="Core\SubSystems\ApplicationSubSystem.cpp" />
+    <ClCompile Include="Core\SubSystems\SubSystemManager.cpp" />
+    <ClCompile Include="Core\Utils.h" />
+    <ClCompile Include="Core\Utils\Singleton.h" />
     <ClCompile Include="RyEngine.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -194,6 +205,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Core\Platform\Window\WindowSystem.cpp" />
+    <ClCompile Include="Core\SubSystems\SubSystem.cpp" />
+    <ClCompile Include="Core\Platform\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="RyEngine.rc" />

@@ -1,13 +1,14 @@
 #pragma once
 
 #include "IGraphicsInit.h"
+#include "DirectX/DirectXInit.h"
 
-namespace RyGraphics
+namespace RyEngine
 {
-	class GraphicsWrapper
+	/*class GraphicsWrapper
 	{
 	public:
 
 	private:
-	};
+	};*/
 }

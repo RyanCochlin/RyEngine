@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "RyEngine.h"
-#include "Core/Core.cpp"
+#include "Core/Core.h"
 
 #define MAX_LOADSTRING 100
 
@@ -26,18 +26,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    // TODO: Place code here.
+	RyEngine::RyEngineCore::Instance().Initialize();
 
     // Initialize global strings
-    LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
+    /*LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_RYENGINE, szWindowClass, MAX_LOADSTRING);
-    MyRegisterClass(hInstance);
+    MyRegisterClass(hInstance);*/
 
     // Perform application initialization:
-    if (!InitInstance (hInstance, nCmdShow))
+    /*if (!InitInstance (hInstance, nCmdShow))
     {
         return FALSE;
-    }
+    }*/
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_RYENGINE));
 

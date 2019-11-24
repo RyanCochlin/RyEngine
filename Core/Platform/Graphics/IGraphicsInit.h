@@ -1,5 +1,5 @@
 #pragma once
-namespace RyGraphics
+namespace RyEngine
 {
 	class IGraphicsInit
 	{

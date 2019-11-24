@@ -1,13 +1,9 @@
-//Ryan Cochlin - 7/13/2019
-//Assertions Main
-//TODO document
+#pragma once
 
-#include "ErrorLog.cpp"
+#include "ErrorLog.h"
 #include "RyException.h"
 #include "DirectX/RyDXException.h"
-#include "../Utils.cpp"
-
-//TODO get the exception type by platform
+#include "Utils.h"
 
 #ifndef ThrowIfFailed
 #define ThrowIfFailed(x) \

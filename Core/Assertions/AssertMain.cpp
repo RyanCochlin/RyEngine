@@ -2,9 +2,11 @@
 //Assertions Main
 //TODO document
 
+#include "GlobalDefines.h"
+
 #if ENABLE_ASSERT
 
-#define DebugBreak() __debugbreak();
+#define _DebugBreak() __debugbreak();
 
 #define ASSERT(expr) \
 	if(expr){} \
@@ -14,7 +16,7 @@
 			#expr, \
 			__FILE__, \
 			__LINE__); \
-		DebugBreak() \
+		_DebugBreak() \
 	}
 
 #else
