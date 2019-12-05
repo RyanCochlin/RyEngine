@@ -1,10 +1,10 @@
 //TODO enumerate devices
-//TODO check for warp device
 
 #include "Assertions/Assert.h"
 #include "Error/Error.h"
 #include "DirectXInit.h"
-#include "Platform/Window/Window.h"
+#include "Window/Window.h"
+#include "Graphics/Color.h"
 #include "SubSystems/SubSystemManager.h"
 
 using Microsoft::WRL::ComPtr;
@@ -15,9 +15,15 @@ namespace RyEngine
 
 	void DirectXInit::Init()
 	{
-		_use4xMsaa = true;
+		_use4xMsaa = false;
 		_currentBackBuffer = 0;
+		InitSettings();
 		LoadPipeline();
+	}
+
+	void DirectXInit::Release()
+	{
+
 	}
 
 	void DirectXInit::InitSettings()
@@ -45,6 +51,7 @@ namespace RyEngine
 		CreateDescriptorHeap();
 		CreateRenderTarget();
 		CreateDepthStencilBuffer();
+		CreateViewPort(); //This is not ready yet
 	}
 
 	void DirectXInit::CheckFeatureSupport()
@@ -55,11 +62,11 @@ namespace RyEngine
 		qualityLevels.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;
 		qualityLevels.NumQualityLevels = 0;
 
-		ThrowIfFailed(_d3dDevice->CheckFeatureSupport(
+		/*ThrowIfFailed(*/HRESULT hr = _d3dDevice->CheckFeatureSupport(
 			D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS,
 			&qualityLevels,
 			sizeof(qualityLevels)
-		));
+		);
 
 		_qualityLevels = qualityLevels.NumQualityLevels;
 		//TODO: should probably do something more than assert but it's good enough for now
@@ -86,11 +93,23 @@ namespace RyEngine
 		Microsoft::WRL::ComPtr<IDXGIAdapter1> hardwareAdapter;
 		GetHardwareAdapter(&hardwareAdapter);
 
-		ThrowIfFailed(D3D12CreateDevice(
+		HRESULT result = D3D12CreateDevice(
 			hardwareAdapter.Get(),
 			D3D_FEATURE_LEVEL_11_0,
 			IID_PPV_ARGS(&_d3dDevice)
-		));
+		);
+
+		if (FAILED(result))
+		{
+			ComPtr<IDXGIAdapter> warpAdapter;
+			ThrowIfFailed(_dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter)));
+
+			ThrowIfFailed(D3D12CreateDevice(
+				warpAdapter.Get(),
+				D3D_FEATURE_LEVEL_11_0,
+				IID_PPV_ARGS(&_d3dDevice)
+			));
+		}
 	}
 
 	void DirectXInit::CreateCommandObjects()
@@ -144,29 +163,33 @@ namespace RyEngine
 	void DirectXInit::CreateSwapChain()
 	{
 		Window* w = SubSystemManager::Instance().windowSystem().get_mainWindow();
-		DXGI_SWAP_CHAIN_DESC sd;
+		//DXGI_SWAP_CHAIN_DESC sd;
+		//SecureZeroMemory(&sd, sizeof(sd));
 
+		_swapChain.Reset();
+
+		DXGI_SWAP_CHAIN_DESC sd;
 		sd.BufferDesc.Width = _dxBufferWidth;
 		sd.BufferDesc.Height = _dxBufferHeight;
-		sd.BufferDesc.RefreshRate.Numerator = _dxRefreshRate;
+		sd.BufferDesc.RefreshRate.Numerator = 60;
 		sd.BufferDesc.RefreshRate.Denominator = 1;
 		sd.BufferDesc.Format = _dxSwapChainModeFormat;
-		sd.BufferDesc.ScanlineOrdering = _dxSwapChainScanlineOrder;
-		sd.BufferDesc.Scaling = _dxSwapChainModeScaling;
-		sd.SampleDesc.Count = _use4xMsaa ? _dxMultiSampleCount : 1;
+		sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+		sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		sd.SampleDesc.Count = _use4xMsaa ? 4 : 1;
 		sd.SampleDesc.Quality = _use4xMsaa ? (_qualityLevels - 1) : 0;
-		sd.BufferUsage = _dxBufferUsage;
+		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		sd.BufferCount = BUFFER_COUNT;
-		sd.SwapEffect = _dxSwapEffect;
-		sd.Flags = _dxSwapChainFlags;
-		sd.Windowed = true; //TODO: This should be in the window manager subsystem
 		sd.OutputWindow = w->get_hWND();
+		sd.Windowed = true;
+		sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+		sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
+		// Note: Swap chain uses queue to perform flush.
 		ThrowIfFailed(_dxgiFactory->CreateSwapChain(
 			_commandQueue.Get(),
 			&sd,
-			_swapChain.GetAddressOf()
-		));
+			_swapChain.GetAddressOf()));
 	}
 
 	void DirectXInit::CreateDescriptorHeap()
@@ -179,10 +202,10 @@ namespace RyEngine
 		rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		rtvHeapDesc.NodeMask = 0;
 
-		rtvHeapDesc.NumDescriptors = 1;
-		rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-		rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-		rtvHeapDesc.NodeMask = 0;
+		dsvHeapDesc.NumDescriptors = 1;
+		dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+		dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		dsvHeapDesc.NodeMask = 0;
 
 		ThrowIfFailed(_d3dDevice->CreateDescriptorHeap(&rtvHeapDesc, IID_PPV_ARGS(_rtvHeap.GetAddressOf())));
 		ThrowIfFailed(_d3dDevice->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(_dsvHeap.GetAddressOf())));
@@ -204,7 +227,66 @@ namespace RyEngine
 
 	void DirectXInit::CreateDepthStencilBuffer()
 	{
-		
+		D3D12_RESOURCE_DESC depthStencilDesc;
+		depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+		depthStencilDesc.Alignment = 0;
+		depthStencilDesc.Width = _dxBufferWidth;
+		depthStencilDesc.Height = _dxBufferHeight;
+		depthStencilDesc.DepthOrArraySize = 1;
+		depthStencilDesc.MipLevels = 1;
+		depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+		depthStencilDesc.SampleDesc.Count = _use4xMsaa ? 4 : 1;
+		depthStencilDesc.SampleDesc.Quality = _use4xMsaa ? _qualityLevels - 1 : 0;
+		depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+		depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+		D3D12_CLEAR_VALUE optClear;
+		optClear.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		optClear.DepthStencil.Depth = 1.0f;
+		optClear.DepthStencil.Stencil = 0;
+
+		ThrowIfFailed(_d3dDevice->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+			D3D12_HEAP_FLAG_NONE,
+			&depthStencilDesc,
+			D3D12_RESOURCE_STATE_COMMON,
+			&optClear,
+			IID_PPV_ARGS(&_depthStencilBuffer)
+		));
+
+		_d3dDevice->CreateDepthStencilView(
+			_depthStencilBuffer.Get(),
+			nullptr,
+			DepthStencilView()
+		);
+
+		_commandList->ResourceBarrier(
+			1,
+			&CD3DX12_RESOURCE_BARRIER::Transition(
+				_depthStencilBuffer.Get(),
+				D3D12_RESOURCE_STATE_COMMON,
+				D3D12_RESOURCE_STATE_DEPTH_WRITE
+			)
+		);
+	}
+
+	void DirectXInit::CreateViewPort()
+	{
+		//TODO: most of this should change I just want to get to a point where I'm clearing the screen with a color
+		//ThrowIfFailed(_commandAllocator->Reset());
+
+		//ThrowIfFailed(_commandList->Reset(_commandAllocator.Get(), nullptr));
+
+		_mainView = new ViewPort(_commandList.Get(), 0.0f, 0.0f, static_cast<FLOAT>(_dxBufferWidth), static_cast<FLOAT>(_dxBufferHeight));
+
+		//ID3D12Resource* currentBackBuffer = _renderTargets[_currentBackBuffer].Get();
+		//_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(currentBackBuffer,
+			//D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+
+		// Clear the back buffer and depth buffer.
+		//Color color = { 0.0f, 1.0f, 1.0f, 1.0f };
+		//_commandList->ClearRenderTargetView(CurrentBackBufferView(), color.rbga, 0, nullptr);
+		//_commandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 	}
 	
 #pragma endregion

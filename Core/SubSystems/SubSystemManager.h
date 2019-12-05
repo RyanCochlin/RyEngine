@@ -2,7 +2,8 @@
 
 #include "Utils/Singleton.h"
 #include "SubSystem.h"
-#include "Platform/Window/WindowSystem.h"
+#include "Window/WindowSystem.h"
+#include "Graphics/GraphicsSystem.h"
 
 #include <vector>
 
@@ -13,6 +14,7 @@ namespace RyEngine
 	public:
 		//Getter for every subsystem. Maybe figure out a better way to do this
 		WindowSystem windowSystem();
+		GraphicsSystem graphicsSystem();
 
 		void SpinUpSubSystems();
 		void RegisterSubSystems();
@@ -22,6 +24,7 @@ namespace RyEngine
 
 		//Refs to subsystems
 		WindowSystem* _windowSystem;
+		GraphicsSystem* _graphicsSystem;
 		
 		void Register(SubSystem* s);
 		void Add(SubSystem* s);

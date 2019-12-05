@@ -6,8 +6,9 @@
 #include <d3d12.h>
 #include <DXGI1_6.h>
 
-#include "Platform/Graphics/RyGraphics.h"
 #include "External/d3dx12.h"
+#include "ViewPort.h"
+#include "Graphics/IGraphicsAPI.h"
 
 #pragma comment(lib,"d3dcompiler.lib")
 #pragma comment(lib, "D3D12.lib")
@@ -15,12 +16,14 @@
 
 namespace RyEngine
 {
-	class DirectXInit : public IGraphicsInit
+	class DirectXInit : public IGraphicsAPI
 	{
 	public:
 		static const UINT BUFFER_COUNT = 2;
 
-		void Init();
+		void Init() override;
+		void Release() override;
+
 	protected:
 		Microsoft::WRL::ComPtr<IDXGIFactory6> _dxgiFactory;
 		Microsoft::WRL::ComPtr<ID3D12Device> _d3dDevice;
@@ -33,6 +36,8 @@ namespace RyEngine
 		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> _bundleAllocator;
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> _commandList;
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> _bundleCommandList;
+		Microsoft::WRL::ComPtr<ID3D12Resource> _depthStencilBuffer;
+
 	private:
 		bool _useWarpDevice;
 		bool _use4xMsaa;
@@ -40,12 +45,14 @@ namespace RyEngine
 		UINT _currentBackBuffer;
 		UINT _rtvDescriptorSize;
 		UINT _dsvDescriptorSize;
+		ViewPort* _mainView;
 
 		DXGI_FORMAT _dxSwapChainModeFormat;
 		DXGI_MODE_SCANLINE_ORDER _dxSwapChainScanlineOrder;
 		DXGI_MODE_SCALING _dxSwapChainModeScaling;
 		DXGI_SWAP_EFFECT _dxSwapEffect;
 		DXGI_SWAP_CHAIN_FLAG _dxSwapChainFlags;
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC _psoDesc;
 		UINT _dxBufferUsage;
 		UINT _dxBufferWidth;
 		UINT _dxBufferHeight;
@@ -67,6 +74,7 @@ namespace RyEngine
 		void CreateDescriptorHeap();
 		void CreateRenderTarget();
 		void CreateDepthStencilBuffer();
+		void CreateViewPort();
 
 		void GetHardwareAdapter(IDXGIAdapter1** ppAdapter);
 		D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView();

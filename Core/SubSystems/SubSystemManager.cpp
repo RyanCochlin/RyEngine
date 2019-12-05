@@ -2,7 +2,7 @@
 
 #include "Core.h"
 #include "SubSystemManager.h"
-#include "Platform/Window/WindowSystem.h"
+#include "Window/WindowSystem.h"
 
 namespace RyEngine
 {
@@ -10,6 +10,12 @@ namespace RyEngine
 	{
 		return *_windowSystem;
 	}
+
+	GraphicsSystem SubSystemManager::graphicsSystem()
+	{
+		return *_graphicsSystem;
+	}
+
 
 	void SubSystemManager::RegisterSubSystems()
 	{
@@ -19,6 +25,15 @@ namespace RyEngine
 		{
 			Register(_allSubSystems[i]);
 		}
+	}
+
+	void SubSystemManager::AddAllSubSystems()
+	{
+		_windowSystem = new WindowSystem();
+		Add(_windowSystem);
+
+		_graphicsSystem = new GraphicsSystem();
+		Add(_graphicsSystem);
 	}
 
 	void SubSystemManager::SpinUpSubSystems()
@@ -32,12 +47,6 @@ namespace RyEngine
 	void SubSystemManager::Add(SubSystem* s)
 	{
 		_allSubSystems.push_back(s);
-	}
-
-	void SubSystemManager::AddAllSubSystems()
-	{
-		_windowSystem = new WindowSystem();
-		Add(_windowSystem);
 	}
 
 	void SubSystemManager::Register(SubSystem* s)

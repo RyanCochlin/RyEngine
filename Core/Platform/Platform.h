@@ -1,2 +1,2 @@
-#include "Graphics/RyGraphics.h"
+#include "Graphics/GraphicsSystem.h"
 #include "Window/WindowSystem.h"

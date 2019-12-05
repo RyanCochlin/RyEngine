@@ -13,12 +13,14 @@ namespace RyEngine
 		LoadStringW(_hInstance, IDC_RYENGINE, _winClass, STRING_BUFFER_MAX);
 
 		RegisterWindowClass();
+
+		Window* w = AddWindow(_winTitle);
+		_mainWin = w;
 	}
 
 	void WindowSystem::OnStart()
 	{
-		Window* w = AddWindow(_winTitle);
-		_mainWin = w;
+		
 	}
 
 	Window* WindowSystem::get_mainWindow()
