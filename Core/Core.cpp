@@ -16,4 +16,12 @@ namespace RyEngine
 		//TODO for now just gonna start the subsystems here
 		SubSystemManager::Instance().SpinUpSubSystems();
 	}
+
+	void RyEngineCore::CoreMain()
+	{
+		while (true)
+		{
+
+		}
+	}
 }

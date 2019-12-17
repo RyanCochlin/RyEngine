@@ -5,6 +5,7 @@
 #include <wrl.h>
 #include <d3d12.h>
 #include <DXGI1_6.h>
+#include <d3dcompiler.h>
 
 #include "External/d3dx12.h"
 #include "ViewPort.h"
@@ -37,6 +38,8 @@ namespace RyEngine
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> _commandList;
 		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> _bundleCommandList;
 		Microsoft::WRL::ComPtr<ID3D12Resource> _depthStencilBuffer;
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> _rootSignature;
+		Microsoft::WRL::ComPtr<ID3D12PipelineState> _pipelineState;
 
 	private:
 		bool _useWarpDevice;
@@ -74,6 +77,8 @@ namespace RyEngine
 		void CreateDescriptorHeap();
 		void CreateRenderTarget();
 		void CreateDepthStencilBuffer();
+		void CreateRootSignature();
+		void CreatePipelineState();
 		void CreateViewPort();
 
 		void GetHardwareAdapter(IDXGIAdapter1** ppAdapter);

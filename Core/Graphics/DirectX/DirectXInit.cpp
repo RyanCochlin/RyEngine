@@ -1,11 +1,11 @@
 //TODO enumerate devices
 
-#include "Assertions/Assert.h"
-#include "Error/Error.h"
+#include "Assertions\Assert.h"
+#include "Error\Error.h"
 #include "DirectXInit.h"
-#include "Window/Window.h"
-#include "Graphics/Color.h"
-#include "SubSystems/SubSystemManager.h"
+#include "Window\Window.h"
+#include "Graphics\Color.h"
+#include "SubSystems\SubSystemManager.h"
 
 using Microsoft::WRL::ComPtr;
 
@@ -18,6 +18,7 @@ namespace RyEngine
 		_use4xMsaa = false;
 		_currentBackBuffer = 0;
 		InitSettings();
+		EnableDebug();
 		LoadPipeline();
 	}
 
@@ -42,7 +43,6 @@ namespace RyEngine
 
 	void DirectXInit::LoadPipeline()
 	{
-		EnableDebug();
 		CreateFactory();
 		CreateDevice();
 		CheckFeatureSupport();
@@ -50,7 +50,10 @@ namespace RyEngine
 		CreateSwapChain();
 		CreateDescriptorHeap();
 		CreateRenderTarget();
-		CreateDepthStencilBuffer();
+		CreateCommandAllocators();
+		//CreateDepthStencilBuffer();
+		CreateRootSignature();
+		CreatePipelineState();
 		CreateViewPort(); //This is not ready yet
 	}
 
@@ -62,11 +65,11 @@ namespace RyEngine
 		qualityLevels.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;
 		qualityLevels.NumQualityLevels = 0;
 
-		/*ThrowIfFailed(*/HRESULT hr = _d3dDevice->CheckFeatureSupport(
+		ThrowIfFailed(_d3dDevice->CheckFeatureSupport(
 			D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS,
 			&qualityLevels,
 			sizeof(qualityLevels)
-		);
+		));
 
 		_qualityLevels = qualityLevels.NumQualityLevels;
 		//TODO: should probably do something more than assert but it's good enough for now
@@ -145,7 +148,7 @@ namespace RyEngine
 			_commandAllocator.Get(),
 			nullptr,
 			IID_PPV_ARGS(&_commandList)
-		)); 
+		));
 
 		_commandList->Close();
 
@@ -157,7 +160,7 @@ namespace RyEngine
 			IID_PPV_ARGS(&_bundleCommandList)
 		));
 
-		_bundleCommandList->Close();  
+		_bundleCommandList->Close();
 	}
 
 	void DirectXInit::CreateSwapChain()
@@ -268,6 +271,78 @@ namespace RyEngine
 				D3D12_RESOURCE_STATE_DEPTH_WRITE
 			)
 		);
+	}
+
+	void DirectXInit::CreateRootSignature()
+	{
+		CD3DX12_ROOT_PARAMETER slotRootParameter[1];
+
+		CD3DX12_DESCRIPTOR_RANGE cbvTable;
+		cbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+		slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable);
+
+		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(1, slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+		/*CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc;
+		rootSigDesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);*/
+
+		ComPtr<ID3DBlob> serializedRootSig = nullptr;
+		ComPtr<ID3DBlob> errorBlob = nullptr;
+		HRESULT hr = D3D12SerializeRootSignature(&rootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1, &serializedRootSig, &errorBlob);
+
+		if (errorBlob != nullptr)
+		{
+			::OutputDebugStringA((char*)errorBlob->GetBufferPointer());
+		}
+		ThrowIfFailed(hr);
+
+		ThrowIfFailed(_d3dDevice->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&_rootSignature)));
+	}
+
+	void DirectXInit::CreatePipelineState()
+	{
+		ComPtr<ID3DBlob> vertexShader;
+		ComPtr<ID3DBlob> pixelShader;
+
+#if DEBUG
+		UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#else
+		UINT compileFlags = 0;
+#endif
+		
+		//TODO: need to figure out how to use a relative path to the shaders
+		LPCWSTR shaderPath = L"C:\\Users\\rubby\\source\\repos\\RyEngine\\Core\\Graphics\\Shaders\\Shader.hlsl";
+		LPCSTR vertexEntryPoint = "VSMain";
+		LPCSTR vertexTarget = "vs_5_0";
+		LPCSTR pixelEntryPoint = "PSMain";
+		LPCSTR pixelTarget = "ps_5_0";
+
+		ThrowIfFailed(D3DCompileFromFile(shaderPath, nullptr, nullptr, vertexEntryPoint, vertexTarget, compileFlags, 0, &vertexShader, nullptr));
+		ThrowIfFailed(D3DCompileFromFile(shaderPath, nullptr, nullptr, pixelEntryPoint, pixelTarget, compileFlags, 0, &pixelShader, nullptr));
+
+		D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
+		{
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
+		};
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
+		ZeroMemory(&psoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+		psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
+		psoDesc.pRootSignature = _rootSignature.Get();
+		psoDesc.VS = { reinterpret_cast<BYTE*>(vertexShader->GetBufferPointer()), vertexShader->GetBufferSize() };
+		psoDesc.PS = { reinterpret_cast<BYTE*>(pixelShader->GetBufferPointer()), pixelShader->GetBufferSize() };
+		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		psoDesc.DepthStencilState.DepthEnable = FALSE;
+		psoDesc.DepthStencilState.StencilEnable = FALSE;
+		psoDesc.SampleMask = UINT_MAX;
+		psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		psoDesc.NumRenderTargets = 1;
+		psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		psoDesc.SampleDesc.Count = _use4xMsaa ? 4 : 1;
+		psoDesc.SampleDesc.Quality = _use4xMsaa ? (_qualityLevels - 1) : 0;
+		psoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		ThrowIfFailed(_d3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&_pipelineState)));
 	}
 
 	void DirectXInit::CreateViewPort()
