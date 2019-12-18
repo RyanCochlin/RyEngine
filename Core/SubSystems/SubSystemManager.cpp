@@ -6,17 +6,6 @@
 
 namespace RyEngine
 {
-	WindowSystem SubSystemManager::windowSystem()
-	{
-		return *_windowSystem;
-	}
-
-	GraphicsSystem SubSystemManager::graphicsSystem()
-	{
-		return *_graphicsSystem;
-	}
-
-
 	void SubSystemManager::RegisterSubSystems()
 	{
 		AddAllSubSystems();
@@ -33,7 +22,22 @@ namespace RyEngine
 		Add(_windowSystem);
 
 		_graphicsSystem = new GraphicsSystem();
-		Add(_graphicsSystem);
+		AddRenderable(_graphicsSystem);
+	}
+
+	void SubSystemManager::Release()
+	{
+		for (size_t i = 0; i < _allSubSystems.size(); i++)
+		{
+			_allSubSystems[i]->Release();
+		}
+
+		_updatableSubSystems.clear();
+		_allSubSystems.clear();
+		_renderableSubSystems.clear();
+
+		delete _windowSystem;
+		delete _graphicsSystem;
 	}
 
 	void SubSystemManager::SpinUpSubSystems()
@@ -42,6 +46,31 @@ namespace RyEngine
 		{
 			_allSubSystems[i]->OnStart();
 		}
+	}
+
+	void SubSystemManager::OnUpdate()
+	{
+
+	}
+
+	void SubSystemManager::OnRender()
+	{
+		for (size_t i = 0; i < _renderableSubSystems.size(); i++)
+		{
+			_renderableSubSystems[i]->OnRender();
+		}
+	}
+
+	void SubSystemManager::AddUpdatable(UpdatableSubSystem* s)
+	{
+		_updatableSubSystems.push_back(s);
+		Add(s);
+	}
+
+	void SubSystemManager::AddRenderable(RenderableSubSystem* s)
+	{
+		_renderableSubSystems.push_back(s);
+		Add(s);
 	}
 
 	void SubSystemManager::Add(SubSystem* s)

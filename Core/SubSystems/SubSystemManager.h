@@ -2,6 +2,8 @@
 
 #include "Utils/Singleton.h"
 #include "SubSystem.h"
+#include "UpdatableSubSystem.h"
+#include "RenderableSubSystem.h"
 #include "Window/WindowSystem.h"
 #include "Graphics/GraphicsSystem.h"
 
@@ -13,14 +15,27 @@ namespace RyEngine
 	{
 	public:
 		//Getter for every subsystem. Maybe figure out a better way to do this
-		WindowSystem windowSystem();
-		GraphicsSystem graphicsSystem();
+		WindowSystem windowSystem()
+		{
+			return *_windowSystem;
+		}
+
+		GraphicsSystem graphicsSystem()
+		{
+			return *_graphicsSystem;
+		}
 
 		void SpinUpSubSystems();
 		void RegisterSubSystems();
+		void Release();
+		
+		void OnUpdate();
+		void OnRender();
 
 	private:
 		std::vector<SubSystem*> _allSubSystems;
+		std::vector<UpdatableSubSystem*> _updatableSubSystems;
+		std::vector<RenderableSubSystem*> _renderableSubSystems;
 
 		//Refs to subsystems
 		WindowSystem* _windowSystem;
@@ -28,6 +43,8 @@ namespace RyEngine
 		
 		void Register(SubSystem* s);
 		void Add(SubSystem* s);
+		void AddUpdatable(UpdatableSubSystem* s);
+		void AddRenderable(RenderableSubSystem* s);
 		void AddAllSubSystems();
 	};
 }

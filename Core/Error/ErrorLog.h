@@ -1,6 +1,9 @@
 //Ryan Cochlin - 7/13/2019
 //Assertions Main
 //TODO document
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 
 #include <iostream>
 

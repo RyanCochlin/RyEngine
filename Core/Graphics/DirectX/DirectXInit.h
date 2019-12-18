@@ -15,31 +15,59 @@
 #pragma comment(lib, "D3D12.lib")
 #pragma comment(lib, "dxgi.lib")
 
+using Microsoft::WRL::ComPtr;
+
 namespace RyEngine
 {
-	class DirectXInit : public IGraphicsAPI
+	class DirectXInit
 	{
 	public:
 		static const UINT BUFFER_COUNT = 2;
 
-		void Init() override;
-		void Release() override;
+		void Init();
+		void Release();
+
+		ComPtr<ID3D12Resource> GetRenderTarget(UINT target);
+		ID3D12Resource* GetCurrentBackBuffer();
+		void UpdateCurrentBuffer();
+		void UpdateCurrentFence();
+
+		ComPtr<ID3D12Device> Device() const { return _d3dDevice; }
+		ComPtr<ID3D12CommandQueue> CommandQueue() const { return _commandQueue; }
+		ComPtr<ID3D12GraphicsCommandList> CommandList() const { return _commandList; }
+		ComPtr<ID3D12CommandAllocator> CommandAllocator() const { return _commandAllocator; }
+		ComPtr<ID3D12PipelineState> PipelineState() const { return _pipelineState; }
+		ComPtr<ID3D12RootSignature> RootSignature() const { return _rootSignature; }
+		ComPtr<ID3D12DescriptorHeap> RTVHeap() const { return _rtvHeap; }
+		ComPtr<IDXGISwapChain> SwapChain() const { return _swapChain; }
+		ComPtr<ID3D12Fence> Fence() const { return _fence; }
+
+		UINT RTVDescSize() const { return _rtvDescriptorSize; }
+		UINT BufferWidth() const { return _dxBufferWidth; }
+		UINT BufferHeight() const { return _dxBufferHeight; }
+		UINT CurrentFrame() const { return _currentBackBuffer; }
+		HANDLE FenceEvent() const { return _fenceEvent; }
+		UINT64 FenceValue() const { return _fenceValue; }
 
 	protected:
-		Microsoft::WRL::ComPtr<IDXGIFactory6> _dxgiFactory;
-		Microsoft::WRL::ComPtr<ID3D12Device> _d3dDevice;
-		Microsoft::WRL::ComPtr<IDXGISwapChain> _swapChain;
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _rtvHeap;
-		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> _dsvHeap;
-		Microsoft::WRL::ComPtr<ID3D12Resource> _renderTargets[BUFFER_COUNT];
-		Microsoft::WRL::ComPtr<ID3D12CommandQueue> _commandQueue;
-		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> _commandAllocator;
-		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> _bundleAllocator;
-		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> _commandList;
-		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> _bundleCommandList;
-		Microsoft::WRL::ComPtr<ID3D12Resource> _depthStencilBuffer;
-		Microsoft::WRL::ComPtr<ID3D12RootSignature> _rootSignature;
-		Microsoft::WRL::ComPtr<ID3D12PipelineState> _pipelineState;
+		ComPtr<IDXGIFactory6> _dxgiFactory;
+		ComPtr<ID3D12Device> _d3dDevice;
+		ComPtr<IDXGISwapChain> _swapChain;
+		ComPtr<ID3D12DescriptorHeap> _rtvHeap;
+		ComPtr<ID3D12DescriptorHeap> _dsvHeap;
+		ComPtr<ID3D12Resource> _renderTargets[BUFFER_COUNT];
+		ComPtr<ID3D12CommandQueue> _commandQueue;
+		ComPtr<ID3D12CommandAllocator> _commandAllocator;
+		ComPtr<ID3D12CommandAllocator> _bundleAllocator;
+		ComPtr<ID3D12GraphicsCommandList> _commandList;
+		ComPtr<ID3D12GraphicsCommandList> _bundleCommandList;
+		ComPtr<ID3D12Resource> _depthStencilBuffer;
+		ComPtr<ID3D12RootSignature> _rootSignature;
+		ComPtr<ID3D12PipelineState> _pipelineState;
+
+		ComPtr<ID3D12Fence> _fence;
+		HANDLE _fenceEvent;
+		UINT64 _fenceValue;
 
 	private:
 		bool _useWarpDevice;
@@ -48,7 +76,6 @@ namespace RyEngine
 		UINT _currentBackBuffer;
 		UINT _rtvDescriptorSize;
 		UINT _dsvDescriptorSize;
-		ViewPort* _mainView;
 
 		DXGI_FORMAT _dxSwapChainModeFormat;
 		DXGI_MODE_SCANLINE_ORDER _dxSwapChainScanlineOrder;
@@ -79,7 +106,7 @@ namespace RyEngine
 		void CreateDepthStencilBuffer();
 		void CreateRootSignature();
 		void CreatePipelineState();
-		void CreateViewPort();
+		void CreateFence();
 
 		void GetHardwareAdapter(IDXGIAdapter1** ppAdapter);
 		D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView();

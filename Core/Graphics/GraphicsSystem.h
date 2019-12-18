@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IGraphicsAPI.h"
-#include "SubSystems/SubSystem.h"
+#include "SubSystems/RenderableSubSystem.h"
 
 #ifndef __ry_graphics_api__
 #define __ry_graphics_api__
@@ -15,11 +15,13 @@ typedef enum RYGRAPHICS_API
 
 namespace RyEngine
 {
-	class GraphicsSystem : public SubSystem
+	class GraphicsSystem : public RenderableSubSystem
 	{
 	public:
 		void OnRegister() override;
 		void OnStart() override;
+		void OnRender() override;
+		void Release() override;
 
 	private:
 		RYGRAPHICS_API _apiType = RYGRAPHICS_API_DIRECTX;

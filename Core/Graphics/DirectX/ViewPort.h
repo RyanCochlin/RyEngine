@@ -12,6 +12,8 @@ namespace RyEngine
 		void SetScissorRect(RECT rect);
 		void Draw();
 
+		D3D12_VIEWPORT viewPort() const { return _viewPort; }
+
 	private:
 		D3D12_VIEWPORT _viewPort{};
 		RECT _scissorRect;

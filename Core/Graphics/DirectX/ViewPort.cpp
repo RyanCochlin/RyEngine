@@ -11,6 +11,8 @@ namespace RyEngine
 		_viewPort.Height = height;
 		_viewPort.MinDepth = minDepth;
 		_viewPort.MaxDepth = maxDepth;
+		SetScissorRect( { 0, 0, (LONG)width, (LONG)height } );
+
 	}
 
 	void ViewPort::SetScissorRect(RECT rect)

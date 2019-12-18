@@ -10,6 +10,7 @@ namespace RyEngine
 	{
 	public:
 		void Initialize();
-		void CoreMain();
+		void Run();
+		void Release();
 	};
 }

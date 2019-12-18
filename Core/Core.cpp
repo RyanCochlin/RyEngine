@@ -17,11 +17,27 @@ namespace RyEngine
 		SubSystemManager::Instance().SpinUpSubSystems();
 	}
 
-	void RyEngineCore::CoreMain()
+	void RyEngineCore::Run()
 	{
-		while (true)
-		{
+		MSG msg = {};
 
+		while (msg.message != WM_QUIT)
+		{
+			//TODO: Handle input
+			if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+			else
+			{
+				SubSystemManager::Instance().OnRender();
+			}
 		}
+	}
+
+	void RyEngineCore::Release()
+	{
+		SubSystemManager::Instance().Release();
 	}
 }

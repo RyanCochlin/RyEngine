@@ -51,10 +51,10 @@ namespace RyEngine
 		CreateDescriptorHeap();
 		CreateRenderTarget();
 		CreateCommandAllocators();
-		//CreateDepthStencilBuffer();
+		CreateDepthStencilBuffer();
 		CreateRootSignature();
 		CreatePipelineState();
-		CreateViewPort(); //This is not ready yet
+		CreateFence();
 	}
 
 	void DirectXInit::CheckFeatureSupport()
@@ -93,7 +93,7 @@ namespace RyEngine
 
 	void DirectXInit::CreateDevice()
 	{
-		Microsoft::WRL::ComPtr<IDXGIAdapter1> hardwareAdapter;
+		ComPtr<IDXGIAdapter1> hardwareAdapter;
 		GetHardwareAdapter(&hardwareAdapter);
 
 		HRESULT result = D3D12CreateDevice(
@@ -257,19 +257,15 @@ namespace RyEngine
 			IID_PPV_ARGS(&_depthStencilBuffer)
 		));
 
+		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+		dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+		dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+		dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		dsvDesc.Texture2D.MipSlice = 0;
 		_d3dDevice->CreateDepthStencilView(
 			_depthStencilBuffer.Get(),
-			nullptr,
+			&dsvDesc,
 			DepthStencilView()
-		);
-
-		_commandList->ResourceBarrier(
-			1,
-			&CD3DX12_RESOURCE_BARRIER::Transition(
-				_depthStencilBuffer.Get(),
-				D3D12_RESOURCE_STATE_COMMON,
-				D3D12_RESOURCE_STATE_DEPTH_WRITE
-			)
 		);
 	}
 
@@ -345,26 +341,23 @@ namespace RyEngine
 		ThrowIfFailed(_d3dDevice->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&_pipelineState)));
 	}
 
-	void DirectXInit::CreateViewPort()
+	void DirectXInit::CreateFence()
 	{
-		//TODO: most of this should change I just want to get to a point where I'm clearing the screen with a color
-		//ThrowIfFailed(_commandAllocator->Reset());
-
-		//ThrowIfFailed(_commandList->Reset(_commandAllocator.Get(), nullptr));
-
-		_mainView = new ViewPort(_commandList.Get(), 0.0f, 0.0f, static_cast<FLOAT>(_dxBufferWidth), static_cast<FLOAT>(_dxBufferHeight));
-
-		//ID3D12Resource* currentBackBuffer = _renderTargets[_currentBackBuffer].Get();
-		//_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(currentBackBuffer,
-			//D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
-
-		// Clear the back buffer and depth buffer.
-		//Color color = { 0.0f, 1.0f, 1.0f, 1.0f };
-		//_commandList->ClearRenderTargetView(CurrentBackBufferView(), color.rbga, 0, nullptr);
-		//_commandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
+		ThrowIfFailed(_d3dDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&_fence)));
+		_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 	}
 	
 #pragma endregion
+
+	ComPtr<ID3D12Resource> DirectXInit::GetRenderTarget(UINT target)
+	{
+		return _renderTargets[target];
+	}
+
+	ID3D12Resource* DirectXInit::GetCurrentBackBuffer()
+	{
+		return _renderTargets[_currentBackBuffer].Get();
+	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE DirectXInit::CurrentBackBufferView()
 	{
@@ -373,6 +366,16 @@ namespace RyEngine
 			_currentBackBuffer,
 			_rtvDescriptorSize
 		);
+	}
+
+	void DirectXInit::UpdateCurrentBuffer()
+	{
+		_currentBackBuffer = (_currentBackBuffer + 1) % BUFFER_COUNT;
+	}
+
+	void DirectXInit::UpdateCurrentFence()
+	{
+		_fenceValue++;
 	}
 
 	D3D12_CPU_DESCRIPTOR_HANDLE DirectXInit::DepthStencilView()

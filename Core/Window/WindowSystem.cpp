@@ -23,6 +23,16 @@ namespace RyEngine
 		
 	}
 
+	void WindowSystem::Release()
+	{
+		for (size_t i = 0; i < _windows.size(); i++)
+		{
+			delete _windows[i];
+		}
+
+		_windows.clear();
+	}
+
 	Window* WindowSystem::get_mainWindow()
 	{
 		return _mainWin;
@@ -52,6 +62,24 @@ namespace RyEngine
 	{
 		switch (message)
 		{
+		case WM_COMMAND:
+		{
+			int wmId = LOWORD(wParam);
+			// Parse the menu selections:
+			switch (wmId)
+			{
+			case IDM_EXIT:
+				PostQuitMessage(0);
+				//DestroyWindow(hWnd);
+				break;
+			default:
+				return DefWindowProc(hWnd, message, wParam, lParam);
+			}
+			break;
+		}
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}

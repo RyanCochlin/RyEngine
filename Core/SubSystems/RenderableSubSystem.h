@@ -1,13 +1,12 @@
 #pragma once
 
+#include "SubSystem.h"
+
 namespace RyEngine
 {
-	class IGraphicsAPI
+	class RenderableSubSystem : public SubSystem
 	{
 	public:
-		virtual void Init() = 0;
-		virtual void Release() = 0;
 		virtual void OnRender() = 0;
 	};
 }
-

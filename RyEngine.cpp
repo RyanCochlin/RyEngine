@@ -27,6 +27,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
 	RyEngine::RyEngineCore::Instance().Initialize();
+    RyEngine::RyEngineCore::Instance().Run();
+    RyEngine::RyEngineCore::Instance().Release();
 
     // Initialize global strings
     /*LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -39,21 +41,25 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }*/
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_RYENGINE));
+    //HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_RYENGINE));
 
-    MSG msg;
+    //MSG msg;
 
-    // Main message loop:
-    while (GetMessage(&msg, nullptr, 0, 0))
+    //// Main message loop:
+    //while (GetMessage(&msg, nullptr, 0, 0))
+    //{
+    //    if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+    //    {
+    //        TranslateMessage(&msg);
+    //        DispatchMessage(&msg);
+    //    }
+    //}
+
+    if (_CrtDumpMemoryLeaks())
     {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        }
+        OutputDebugString(L"Memory Leak");
     }
-
-    return (int) msg.wParam;
+    return 0;// (int)msg.wParam;
 }
 
 
