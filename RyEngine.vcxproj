@@ -76,7 +76,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir);$(ProjectDir)Core\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -101,7 +101,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
@@ -150,72 +150,62 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Core\Core.h" />
-    <ClInclude Include="Core\Error\DirectX\RyDXException.h" />
-    <ClInclude Include="Core\Error\Error.h" />
-    <ClInclude Include="Core\Error\ExceptionContainer.h" />
-    <ClInclude Include="Core\Error\RyException.h" />
-    <ClInclude Include="Core\External\d3dx12.h" />
-    <ClInclude Include="Core\Graphics\Color.h" />
-    <ClInclude Include="Core\Graphics\DirectX\DirectX.h" />
-    <ClInclude Include="Core\Graphics\DirectX\DirectXInit.h" />
-    <ClInclude Include="Core\Graphics\DirectX\ViewPort.h" />
-    <ClInclude Include="Core\Graphics\IGraphicsAPI.h" />
-    <ClInclude Include="Core\RyEngineCore.h" />
-    <ClInclude Include="Core\SubSystems\ApplicationSubSystem.h" />
-    <ClInclude Include="Core\SubSystems\SubSystemManager.h" />
+    <ClInclude Include="ApplicationSubSystem.h" />
+    <ClInclude Include="RyAssert.h" />
+    <ClInclude Include="AssertDefines.h" />
+    <ClInclude Include="AssertMain.h" />
+    <ClInclude Include="AssertStatic.h" />
+    <ClInclude Include="Color.h" />
+    <ClInclude Include="Core.h" />
+    <ClInclude Include="CoreMath.h" />
+    <ClInclude Include="d3dx12.h" />
+    <ClInclude Include="RyDirectX.h" />
+    <ClInclude Include="DirectXInit.h" />
+    <ClInclude Include="Error.h" />
+    <ClInclude Include="ExceptionContainer.h" />
+    <ClInclude Include="GlobalDefines.h" />
+    <ClInclude Include="GraphicsSystem.h" />
+    <ClInclude Include="IGraphicsAPI.h" />
+    <ClInclude Include="IGraphicsInit.h" />
+    <ClInclude Include="RenderableSubSystem.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="RyDXException.h" />
     <ClInclude Include="RyEngine.h" />
+    <ClInclude Include="RyException.h" />
+    <ClInclude Include="Singleton.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Core\SubSystems\SubSystem.h" />
+    <ClInclude Include="SubSystem.h" />
+    <ClInclude Include="SubSystemManager.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Core\Window\WindowSystem.h" />
-    <ClInclude Include="Core\Window\Window.h" />
+    <ClInclude Include="UpdatableSubSystem.h" />
+    <ClInclude Include="Utils.h" />
+    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="ViewPort.h" />
+    <ClInclude Include="Window.h" />
+    <ClInclude Include="WindowSystem.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Core\Assertions\Assert.h">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Core\Assertions\AssertDefines.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Core\Assertions\AssertStatic.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Core\Assertions\AssertMain.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Core\Core.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Core\Error\ErrorLog.h">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Core\Error\RyException.cpp" />
-    <ClCompile Include="Core\GlobalDefines.h">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Core\Graphics\Color.cpp" />
-    <ClCompile Include="Core\Graphics\DirectX\DirectX.cpp" />
-    <ClCompile Include="Core\Graphics\DirectX\DirectXInit.cpp" />
-    <ClCompile Include="Core\Graphics\DirectX\ViewPort.cpp" />
-    <ClCompile Include="Core\Graphics\GraphicsSystem.cpp" />
-    <ClCompile Include="Core\Graphics\GraphicsSystem.h" />
-    <ClCompile Include="Core\Platform\Platform.h" />
-    <ClCompile Include="Core\SubSystems\ApplicationSubSystem.cpp" />
-    <ClCompile Include="Core\SubSystems\SubSystemManager.cpp" />
-    <ClCompile Include="Core\Utils.h" />
-    <ClCompile Include="Core\Utils\Singleton.h" />
+    <ClCompile Include="ApplicationSubSystem.cpp" />
+    <ClCompile Include="Color.cpp" />
+    <ClCompile Include="Core.cpp" />
+    <ClCompile Include="CoreMath.cpp" />
+    <ClCompile Include="RyDirectX.cpp" />
+    <ClCompile Include="DirectXInit.cpp" />
+    <ClCompile Include="GraphicsSystem.cpp" />
     <ClCompile Include="RyEngine.cpp" />
+    <ClCompile Include="RyException.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Core\Window\WindowSystem.cpp" />
-    <ClCompile Include="Core\SubSystems\SubSystem.cpp" />
-    <ClCompile Include="Core\Window\Window.cpp" />
+    <ClCompile Include="SubSystem.cpp" />
+    <ClCompile Include="SubSystemManager.cpp" />
+    <ClCompile Include="Vertex.cpp" />
+    <ClCompile Include="ViewPort.cpp" />
+    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="WindowSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="RyEngine.rc" />
@@ -223,6 +213,19 @@
   <ItemGroup>
     <Image Include="RyEngine.ico" />
     <Image Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitattributes" />
+    <None Include=".gitignore" />
+    <None Include=".vs\ProjectSettings.json" />
+    <None Include=".vs\slnx.sqlite" />
+    <None Include=".vs\VSWorkspaceState.json" />
+    <None Include="CppProperties.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\Shader.hlsl">
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

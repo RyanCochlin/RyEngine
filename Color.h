@@ -1,0 +1,11 @@
+#pragma once
+
+union Color
+{
+	struct c
+	{
+		FLOAT r, g, b, a;
+	} c;
+	FLOAT rbga[4];
+};
+

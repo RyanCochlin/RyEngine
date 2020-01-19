@@ -13,144 +13,186 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{bf9a45e2-1581-4646-8903-499d3857a906}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\SubSystems">
+      <UniqueIdentifier>{56458978-62fa-43c9-af7b-25fc97bc1338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Graphics">
+      <UniqueIdentifier>{4a3518fb-34f9-40e6-9920-d9ced47c6f75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Graphics\GraphicsAPI">
+      <UniqueIdentifier>{187b83c8-835a-4940-ba0f-646ff0a4ca44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Graphics\GraphicsAPI\DirectX">
+      <UniqueIdentifier>{df37d0ef-cbd5-4ec8-97fa-5774ac71933b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\UI">
+      <UniqueIdentifier>{b7520e52-6481-4fbe-845c-1cd240406d38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Utils">
+      <UniqueIdentifier>{6658420e-044b-4e8b-93d6-edf4d940f29a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Assertions">
+      <UniqueIdentifier>{0843d62d-ca5c-455a-bc74-f14ed7d9a540}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Exceptions">
+      <UniqueIdentifier>{fe400497-b9f7-412a-8fda-f6843d2da0c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Math">
+      <UniqueIdentifier>{62ce41ca-0f66-48bc-bdcc-273118ad3874}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RyEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Error\RyException.h">
+    <ClInclude Include="d3dx12.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Error\DirectX\RyDXException.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Core.h">
+      <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Error\ExceptionContainer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ApplicationSubSystem.h">
+      <Filter>Core\SubSystems</Filter>
     </ClInclude>
-    <ClInclude Include="Core\RyEngineCore.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="GraphicsSystem.h">
+      <Filter>Core\SubSystems</Filter>
     </ClInclude>
-    <ClInclude Include="Core\SubSystems\ApplicationSubSystem.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="RenderableSubSystem.h">
+      <Filter>Core\SubSystems</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Error\Error.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="SubSystem.h">
+      <Filter>Core\SubSystems</Filter>
     </ClInclude>
-    <ClInclude Include="Core\SubSystems\SubSystemManager.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="SubSystemManager.h">
+      <Filter>Core\SubSystems</Filter>
     </ClInclude>
-    <ClInclude Include="Core\SubSystems\SubSystem.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="UpdatableSubSystem.h">
+      <Filter>Core\SubSystems</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Core.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="WindowSystem.h">
+      <Filter>Core\SubSystems</Filter>
     </ClInclude>
-    <ClInclude Include="Core\External\d3dx12.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="DirectXInit.h">
+      <Filter>Core\Graphics\GraphicsAPI\DirectX</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Graphics\DirectX\DirectXInit.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="IGraphicsAPI.h">
+      <Filter>Core\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Graphics\DirectX\ViewPort.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="IGraphicsInit.h">
+      <Filter>Core\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Window\Window.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Color.h">
+      <Filter>Core\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Window\WindowSystem.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ViewPort.h">
+      <Filter>Core\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Graphics\IGraphicsAPI.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Window.h">
+      <Filter>Core\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Graphics\DirectX\DirectX.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Utils.h">
+      <Filter>Core\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Graphics\Color.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Singleton.h">
+      <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="AssertDefines.h">
+      <Filter>Core\Assertions</Filter>
+    </ClInclude>
+    <ClInclude Include="AssertMain.h">
+      <Filter>Core\Assertions</Filter>
+    </ClInclude>
+    <ClInclude Include="AssertStatic.h">
+      <Filter>Core\Assertions</Filter>
+    </ClInclude>
+    <ClInclude Include="RyDXException.h">
+      <Filter>Core\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="ExceptionContainer.h">
+      <Filter>Core\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="RyException.h">
+      <Filter>Core\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalDefines.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Error.h">
+      <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreMath.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="RyAssert.h">
+      <Filter>Core\Assertions</Filter>
+    </ClInclude>
+    <ClInclude Include="RyDirectX.h">
+      <Filter>Core\Graphics\GraphicsAPI\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Core\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="RyEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Assertions\AssertDefines.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Core.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Core.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ApplicationSubSystem.cpp">
+      <Filter>Core\SubSystems</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Assertions\AssertMain.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="GraphicsSystem.cpp">
+      <Filter>Core\SubSystems</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Assertions\AssertStatic.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="SubSystem.cpp">
+      <Filter>Core\SubSystems</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Error\RyException.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="SubSystemManager.cpp">
+      <Filter>Core\SubSystems</Filter>
     </ClCompile>
-    <ClCompile Include="Core\SubSystems\ApplicationSubSystem.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="WindowSystem.cpp">
+      <Filter>Core\SubSystems</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Platform\Platform.h">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Color.cpp">
+      <Filter>Core\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Assertions\Assert.h">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="ViewPort.cpp">
+      <Filter>Core\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Utils.h">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="DirectXInit.cpp">
+      <Filter>Core\Graphics\GraphicsAPI\DirectX</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Error\ErrorLog.h">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Window.cpp">
+      <Filter>Core\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Core\SubSystems\SubSystemManager.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="RyException.cpp">
+      <Filter>Core\Exceptions</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Utils\Singleton.h">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Core\SubSystems\SubSystem.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="CoreMath.cpp">
+      <Filter>Core\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Core\GlobalDefines.h">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="RyDirectX.cpp">
+      <Filter>Core\Graphics\GraphicsAPI\DirectX</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Graphics\DirectX\DirectXInit.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Graphics\DirectX\ViewPort.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Window\Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Window\WindowSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Graphics\DirectX\DirectX.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Graphics\GraphicsSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Graphics\GraphicsSystem.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Graphics\Color.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Vertex.cpp">
+      <Filter>Core\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -165,5 +207,14 @@
     <Image Include="RyEngine.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitattributes" />
+    <None Include=".gitignore" />
+    <None Include="Shaders\Shader.hlsl" />
+    <None Include="CppProperties.json" />
+    <None Include=".vs\ProjectSettings.json" />
+    <None Include=".vs\slnx.sqlite" />
+    <None Include=".vs\VSWorkspaceState.json" />
   </ItemGroup>
 </Project>
