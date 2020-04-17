@@ -1,0 +1,3 @@
+[submodule "RyEngine/vendor/spdlog"]
+	path = RyEngine/vendor/spdlog
+	url = https://github.com/gabime/spdlog
