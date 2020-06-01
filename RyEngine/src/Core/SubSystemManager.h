@@ -2,7 +2,7 @@
 
 #include "Singleton.h"
 #include "SubSystem.h"
-#include "WindowSystem.h"
+#include "Window/WindowSystem.h"
 #include "GraphicsSystem.h"
 
 #include <vector>
@@ -18,12 +18,12 @@ namespace RE
 			return mLog;
 		}
 
-		WindowSystem* Wynd()
+		WindowSystem* Wnd()
 		{
 			return mWindowSystem;
 		}
 
-		GraphicsSystem* RyFX()
+		GraphicsSystem* GFX()
 		{
 			return mGraphicsSystem;
 		}

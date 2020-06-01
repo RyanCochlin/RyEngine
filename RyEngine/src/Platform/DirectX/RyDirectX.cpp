@@ -1,0 +1,181 @@
+#include "pch.h"
+
+#include <string>
+
+#include "RyDirectX.h"
+#include "CommandManager.h"
+#include "Core/Color.h"
+#include "Core/CoreMath.h"
+#include "Platform/Windows/WindowsWindow.h"
+
+namespace RE
+{
+	RyDirectX::RyDirectX() : 
+		_mDisplayWidth(1920),
+		_mDisplayHeight(1080),
+		_mCurrentBuffer(0),
+		_mSwapChainFormat(DXGI_FORMAT_R8G8B8A8_UNORM),
+		_mCommandListManager(nullptr),
+		_mainView{}
+	{}
+
+	RyDirectX::~RyDirectX(){}
+
+	void RyDirectX::Init()
+	{
+		//TODO check feature support
+		RE_TRY
+#if DEBUG
+		//TODO This causes a memory leak! Potentially enable with a cusom flag.
+		ComPtr<ID3D12Debug> debugController;
+		ThrowIfFailed(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)));
+		debugController->EnableDebugLayer();
+#endif
+
+		ComPtr<IDXGIFactory6> pFactory;
+		ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&pFactory)));
+
+		ComPtr<IDXGIAdapter1> pAdapter;
+		size_t max = 0;
+
+		for (uint32_t i = 0; DXGI_ERROR_NOT_FOUND != pFactory->EnumAdapters1(i, &pAdapter); ++i)
+		{
+			DXGI_ADAPTER_DESC1 desc;
+			pAdapter->GetDesc1(&desc);
+
+			if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+			{
+				continue;
+			}
+
+			if (desc.DedicatedVideoMemory > max && SUCCEEDED(D3D12CreateDevice(pAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&_mDevice))))
+			{
+				pAdapter->GetDesc1(&desc);
+				RE_CORE_LOG("D3D12 hardware found: {0} ({1} MB)", WCharPToString(desc.Description), (desc.DedicatedVideoMemory >> 20));
+				max = desc.DedicatedVideoMemory;
+			}
+		}
+
+		if (_mDevice == nullptr)
+		{
+			RE_CORE_WARN("D3D12 hardware not found. Falling back to WARP");
+			ThrowIfFailed(pFactory->EnumWarpAdapter(IID_PPV_ARGS(&pAdapter)));
+			ThrowIfFailed(D3D12CreateDevice(pAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&_mDevice)));
+		}
+
+		_mCommandListManager = new CommandListManager(_mDevice.Get());
+
+		CreateSwapChain(pFactory.Get());
+
+		for (uint16_t i = 0; i < SWAP_CHAIN_BUFFER_COUNT; ++i)
+		{
+			ComPtr<ID3D12Resource> display;
+			ThrowIfFailed(_mSwapChain->GetBuffer(i, IID_PPV_ARGS(&display)));
+			_mDisplays[i].CreateFromSwapChain(display.Get());
+		}
+
+		//TODO get command list to init viewport
+		//_mainView = new ViewPort(_init->CommandList().Get(), 0.0f, 0.0f, static_cast<FLOAT>(_init->BufferWidth()), static_cast<FLOAT>(_init->BufferHeight()));
+		RE_CATCH_DX
+	}
+
+	D3D12_CPU_DESCRIPTOR_HANDLE RyDirectX::AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE type)
+	{
+		return _mDescriptorAllocators[type].Allocate(_mDevice.Get(), 1);
+	}
+
+	void RyDirectX::CreateSwapChain(IDXGIFactory6* factory)
+	{
+		WindowsWindow* wnd = static_cast<WindowsWindow*>(SubSystemManager::Instance().Wnd()->GetMainWindow());
+
+		DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
+		swapChainDesc.BufferDesc.Width = _mDisplayWidth;
+		swapChainDesc.BufferDesc.Height = _mDisplayHeight;
+		swapChainDesc.BufferDesc.RefreshRate.Numerator = SWAP_CHAIN_REFRESH_RATE;
+		swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
+		swapChainDesc.BufferDesc.Format = _mSwapChainFormat;
+		swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+		swapChainDesc.SampleDesc.Quality = 0;
+		swapChainDesc.SampleDesc.Count = 1;
+		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		swapChainDesc.BufferCount = SWAP_CHAIN_BUFFER_COUNT;
+		swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+		swapChainDesc.Windowed = true;
+		swapChainDesc.OutputWindow = wnd->GetHandle();
+
+		//TODO: Use CreateSwapChainForHwind and CreateSwapChainforCoreWindow to support UWP using IDXGISwapChain1
+		ID3D12CommandQueue* comQueue = _mCommandListManager->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT);
+		ThrowIfFailed(factory->CreateSwapChain(comQueue, &swapChainDesc, &_mSwapChain));
+	}
+
+	void RyDirectX::Release()
+	{
+		_mCommandListManager->Shutdown();
+
+		delete _mCommandListManager;
+		delete _mainView;
+	}
+
+	void RyDirectX::OnRender()
+	{
+		//PopulateCommandList();
+
+		//ID3D12CommandList* ppCommandLists[] = { _init->CommandList().Get() };
+		//_init->CommandQueue()->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+
+		/*ThrowIfFailed(_init->SwapChain()->Present(0, 0));
+
+		WaitForPreviousFrame();*/
+	}
+
+	void RyDirectX::PopulateCommandList()
+	{
+		/*ThrowIfFailed(_init->CommandAllocator()->Reset());
+
+		ThrowIfFailed(_init->CommandList()->Reset(_init->CommandAllocator().Get(), _init->PipelineState().Get()));
+		
+		_init->CommandList()->SetGraphicsRootSignature(_init->RootSignature().Get());
+		_mainView->Draw();
+
+		_init->CommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_init->GetCurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+
+		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(_init->RTVHeap()->GetCPUDescriptorHandleForHeapStart(), _init->CurrentFrame(), _init->RTVDescSize());
+		_init->CommandList()->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
+
+		Color clearColor = { 0.0f, 1.0f, 1.0f, 1.0f };
+		_init->CommandList()->ClearRenderTargetView(rtvHandle, clearColor.rbga, 0, nullptr);
+
+		_init->CommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		_init->CommandList()->IASetVertexBuffers(0, 1, &(_init->VertexBufferView()));
+		_init->CommandList()->DrawInstanced(3, 1, 0, 0);
+
+		_init->CommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_init->GetCurrentBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+
+		ThrowIfFailed(_init->CommandList()->Close());*/
+	}
+
+	void RyDirectX::WaitForPreviousFrame()
+	{
+		/*const UINT64 fence = _init->FenceValue();
+		ThrowIfFailed(_init->CommandQueue()->Signal(_init->Fence().Get(), fence));
+		_init->UpdateCurrentFence();
+
+		if (_init->Fence()->GetCompletedValue() < fence)
+		{
+			ThrowIfFailed(_init->Fence()->SetEventOnCompletion(fence, _init->FenceEvent()));
+			WaitForSingleObject(_init->FenceEvent(), INFINITE);
+		}
+
+		_init->UpdateCurrentBuffer();*/
+	}
+
+	//TODO: test stuff
+	void RyDirectX::CreateTriangle()
+	{
+		//Vertex verts[] =
+		//{
+		//	{{0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}
+		//};
+	}
+}  

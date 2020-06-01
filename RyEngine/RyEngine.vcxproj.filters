@@ -7,9 +7,26 @@
     <Filter Include="Core\Assert">
       <UniqueIdentifier>{0FBB976A-7B70-1060-0465-0A3770190764}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Exception">
+      <UniqueIdentifier>{6CD13EFD-589F-3203-4133-A3292DA00E68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Window">
+      <UniqueIdentifier>{5581319D-C136-AA92-4A2B-A469B6DFA096}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform">
+      <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\DirectX">
+      <UniqueIdentifier>{EC338E64-D82C-ADB6-015F-923BEDB68CC2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Platform\Windows">
+      <UniqueIdentifier>{64FBD71A-50F4-F66C-7926-DCF1657ED678}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Application.h" />
+    <ClInclude Include="src\Core\Application.h">
+      <Filter>Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Core\Assert.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -20,6 +37,9 @@
       <Filter>Core\Assert</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Camera.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Collections.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Color.h">
@@ -37,8 +57,11 @@
     <ClInclude Include="src\Core\Error.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\ExceptionContainer.h">
-      <Filter>Core</Filter>
+    <ClInclude Include="src\Core\Exception\RyDXException.h">
+      <Filter>Core\Exception</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Exception\RyException.h">
+      <Filter>Core\Exception</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\GlobalDefines.h">
       <Filter>Core</Filter>
@@ -61,19 +84,7 @@
     <ClInclude Include="src\Core\Resource.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\RyAssert.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\RyDXException.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\RyDirectX.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="src\Core\RyEngineCore.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Core\RyException.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Singleton.h">
@@ -94,22 +105,60 @@
     <ClInclude Include="src\Core\ViewPort.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\Window.h">
-      <Filter>Core</Filter>
+    <ClInclude Include="src\Core\Window\Window.h">
+      <Filter>Core\Window</Filter>
     </ClInclude>
-    <ClInclude Include="src\Core\WindowSystem.h">
-      <Filter>Core</Filter>
+    <ClInclude Include="src\Core\Window\WindowSystem.h">
+      <Filter>Core\Window</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\targetver.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Entry.h" />
+    <ClInclude Include="src\Platform\DirectX\ColorBuffer.h">
+      <Filter>Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\CommandAllocatorPool.h">
+      <Filter>Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\CommandManager.h">
+      <Filter>Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\DescriptorAllocator.h">
+      <Filter>Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\DirectxAPI.h">
+      <Filter>Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\GpuResource.h">
+      <Filter>Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\PixelBuffer.h">
+      <Filter>Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\RyDirectX.h">
+      <Filter>Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\d3dx12.h">
+      <Filter>Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowClass.h">
+      <Filter>Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
+      <Filter>Platform\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="src\RyEngine.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\Core\Application.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
     <ClCompile Include="src\Core\Camera.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Collections.cpp">
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\Color.cpp">
@@ -130,12 +179,6 @@
     <ClCompile Include="src\Core\Log.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\RyDirectX.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Core\RyException.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="src\Core\SubSystem.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -148,11 +191,35 @@
     <ClCompile Include="src\Core\ViewPort.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\Window.cpp">
-      <Filter>Core</Filter>
+    <ClCompile Include="src\Core\Window\Window.cpp">
+      <Filter>Core\Window</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\WindowSystem.cpp">
-      <Filter>Core</Filter>
+    <ClCompile Include="src\Core\Window\WindowSystem.cpp">
+      <Filter>Core\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DirectX\ColorBuffer.cpp">
+      <Filter>Platform\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DirectX\CommandAllocatorPool.cpp">
+      <Filter>Platform\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DirectX\CommandManager.cpp">
+      <Filter>Platform\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DirectX\DescriptorAllocator.cpp">
+      <Filter>Platform\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DirectX\PixelBuffer.cpp">
+      <Filter>Platform\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DirectX\RyDirectX.cpp">
+      <Filter>Platform\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowClass.cpp">
+      <Filter>Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
+      <Filter>Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\pch.cpp" />
   </ItemGroup>

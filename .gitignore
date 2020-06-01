@@ -21,6 +21,8 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+bin/
+bin-int/
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -260,6 +262,7 @@ paket-files/
 __pycache__/
 *.pyc
 
-# Build output
-bin/
-bin-int/
+# sln not needed. Generated with script
+*.sln
+*.vcxproj
+*.vcxproj.filters

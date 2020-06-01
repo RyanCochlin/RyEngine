@@ -3,8 +3,5 @@
 
 namespace RE
 {
-	HWND Window::get_hWND()
-	{
-		return _hWnd;
-	}
+	Window::~Window() {}
 }

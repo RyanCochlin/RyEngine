@@ -1,9 +1,9 @@
 #pragma once
 
-#define RE_SUBSYSTEM_OVERRIDE void OnRegister() override;\
-void OnStart() override;\
-void OnUpdate() override;\
-void OnRender() override;\
+#define RE_SUBSYSTEM_OVERRIDE void OnRegister() override; \
+void OnStart() override; \
+void OnUpdate() override; \
+void OnRender() override; \
 void Release() override;
 
 namespace RE

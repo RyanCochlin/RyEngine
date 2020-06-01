@@ -31,8 +31,7 @@ project "RyEngine"
 	includedirs
 	{
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include",
-		"%{prj.name}/vendor/DirectX"
+		"%{prj.name}/vendor/spdlog/include"
 	}
 
 	filter "system:windows"

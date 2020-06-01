@@ -1,7 +1,6 @@
 //TODO enumerate devices
 
 #include "pch.h"
-#include "d3dx12.h"
 #include "d3d12.h"
 #include "dxgi.h"
 #include "SubSystemManager.h"
@@ -170,7 +169,7 @@ namespace RE
 
 	void DirectXInit::CreateSwapChain()
 	{
-		Window* w = SubSystemManager::Instance().Wynd()->GetMainWindow();
+		Window* w = SubSystemManager::Instance().Wnd()->GetMainWindow();
 		//DXGI_SWAP_CHAIN_DESC sd;
 		//SecureZeroMemory(&sd, sizeof(sd));
 
@@ -188,7 +187,7 @@ namespace RE
 		sd.SampleDesc.Quality = _use4xMsaa ? (_qualityLevels - 1) : 0;
 		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		sd.BufferCount = BUFFER_COUNT;
-		sd.OutputWindow = w->get_hWND();
+		//sd.OutputWindow = w->get_hWND();
 		sd.Windowed = true;
 		sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 		sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;

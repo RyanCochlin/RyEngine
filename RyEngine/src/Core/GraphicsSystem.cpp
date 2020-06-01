@@ -1,23 +1,21 @@
 #include "pch.h"
 #include "GraphicsSystem.h"
-#include "RyDirectX.h"
+#include "Platform/DirectX/RyDirectX.h"
 
 namespace RE
 {
 	void GraphicsSystem::OnRegister()
 	{
-		switch (RYFX_API)
+		switch (CURRENT_GRAPHICS_API)
 		{
-		case RYFX_DIRECTX:
-			mGraphicsAPI = new RyDirectX();
-			break;
+		case GFX_API_DIRECTX:
 		default:
 			//Default is DirectX because that's the only graphics API currently supported
-			mGraphicsAPI = new RyDirectX();
+			_mGraphicsAPI = new RyDirectX();
 			break;
 		}
 
-		mGraphicsAPI->Init();
+		_mGraphicsAPI->Init();
 	}
 
 	void GraphicsSystem::OnStart()
@@ -27,8 +25,8 @@ namespace RE
 
 	void GraphicsSystem::Release()
 	{
-		mGraphicsAPI->Release();
-		delete mGraphicsAPI;
+		_mGraphicsAPI->Release();
+		delete _mGraphicsAPI;
 	}
 
 	void GraphicsSystem::OnUpdate()
@@ -38,11 +36,18 @@ namespace RE
 
 	void GraphicsSystem::OnRender()
 	{
-		mGraphicsAPI->OnRender();
+		_mGraphicsAPI->OnRender();
 	}
 
+#ifdef RE_WINDOWS
+	RyDirectX* GraphicsSystem::GraphicsAPI()
+	{
+		return static_cast<RyDirectX*>(_mGraphicsAPI);
+	}
+#else
 	IGraphicsAPI* GraphicsSystem::GraphicsAPI()
 	{
-		return mGraphicsAPI;
+		return _mGraphicsAPI;
 	}
+#endif
 }

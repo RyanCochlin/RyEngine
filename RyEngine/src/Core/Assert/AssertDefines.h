@@ -1,3 +1,11 @@
+#include "Core/Error.h"
+
+#if DEBUG
+	#ifndef ENABLE_ASSERT
+		#define ENABLE_ASSERT 1
+		#define S_ASSERT_TYPE_DIV 1
+	#endif // ENABLE_ASSERT
+#endif // DEBUG
 
 #if ENABLE_ASSERT
 

@@ -3,6 +3,7 @@
 #include "pch.h"
 #include "SubSystem.h"
 #include "IGraphicsAPI.h"
+#include "Platform/DirectX/RyDirectX.h"
 
 #ifndef __ry_graphics_api__
 #define __ry_graphics_api__
@@ -13,25 +14,31 @@
 
 namespace RE
 {
-	#define RYFX_API_DX 0
-	#define RYFX_API_OPENGL 1
-
-	#define RYFX_API RYFX_API_DX
-
-	enum RYFX_API_TYPE
+	enum GFX_API_TYPE
 	{
-		RYFX_DIRECTX = RYFX_API_DX,
-		RYFX_OPENGL = RYFX_API_OPENGL
+		GFX_API_NONE = 0x00,
+		GFX_API_DIRECTX = 0x01,
+		GFX_API_OPENGL = 0x02
 	};
+
+#ifdef RE_WINDOWS
+#define CURRENT_GRAPHICS_API GFX_API_DIRECTX
+#else
+#define CURRENT_GRAPHICS_API GFX_API_NONE
+#endif
 
 	class GraphicsSystem : public SubSystem
 	{
 	public:
 		RE_SUBSYSTEM_OVERRIDE
 
+#ifdef RE_WINDOWS
+		RyDirectX* GraphicsAPI();
+#else
 		IGraphicsAPI* GraphicsAPI();
+#endif
 
 	private:
-		IGraphicsAPI* mGraphicsAPI;
+		IGraphicsAPI* _mGraphicsAPI;
 	};	
 }

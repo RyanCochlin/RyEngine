@@ -60,7 +60,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>RE_DLL_BUILD;RE_WINDOWS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\DirectX;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -82,7 +82,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>RE_DLL_BUILD;RE_WINDOWS;RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;vendor\DirectX;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -103,17 +103,19 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Application.h" />
+    <ClInclude Include="src\Core\Application.h" />
     <ClInclude Include="src\Core\Assert.h" />
     <ClInclude Include="src\Core\Assert\AssertDefines.h" />
     <ClInclude Include="src\Core\Assert\AssertStatic.h" />
     <ClInclude Include="src\Core\Camera.h" />
+    <ClInclude Include="src\Core\Collections.h" />
     <ClInclude Include="src\Core\Color.h" />
     <ClInclude Include="src\Core\Core.h" />
     <ClInclude Include="src\Core\CoreMath.h" />
     <ClInclude Include="src\Core\DirectXInit.h" />
     <ClInclude Include="src\Core\Error.h" />
-    <ClInclude Include="src\Core\ExceptionContainer.h" />
+    <ClInclude Include="src\Core\Exception\RyDXException.h" />
+    <ClInclude Include="src\Core\Exception\RyException.h" />
     <ClInclude Include="src\Core\GlobalDefines.h" />
     <ClInclude Include="src\Core\GraphicsSystem.h" />
     <ClInclude Include="src\Core\IGraphicsAPI.h" />
@@ -121,41 +123,55 @@
     <ClInclude Include="src\Core\Log.h" />
     <ClInclude Include="src\Core\Platform.h" />
     <ClInclude Include="src\Core\Resource.h" />
-    <ClInclude Include="src\Core\RyAssert.h" />
-    <ClInclude Include="src\Core\RyDXException.h" />
-    <ClInclude Include="src\Core\RyDirectX.h" />
     <ClInclude Include="src\Core\RyEngineCore.h" />
-    <ClInclude Include="src\Core\RyException.h" />
     <ClInclude Include="src\Core\Singleton.h" />
     <ClInclude Include="src\Core\SubSystem.h" />
     <ClInclude Include="src\Core\SubSystemManager.h" />
     <ClInclude Include="src\Core\Utils.h" />
     <ClInclude Include="src\Core\Vertex.h" />
     <ClInclude Include="src\Core\ViewPort.h" />
-    <ClInclude Include="src\Core\Window.h" />
-    <ClInclude Include="src\Core\WindowSystem.h" />
+    <ClInclude Include="src\Core\Window\Window.h" />
+    <ClInclude Include="src\Core\Window\WindowSystem.h" />
     <ClInclude Include="src\Core\targetver.h" />
     <ClInclude Include="src\Entry.h" />
+    <ClInclude Include="src\Platform\DirectX\ColorBuffer.h" />
+    <ClInclude Include="src\Platform\DirectX\CommandAllocatorPool.h" />
+    <ClInclude Include="src\Platform\DirectX\CommandManager.h" />
+    <ClInclude Include="src\Platform\DirectX\DescriptorAllocator.h" />
+    <ClInclude Include="src\Platform\DirectX\DirectxAPI.h" />
+    <ClInclude Include="src\Platform\DirectX\GpuResource.h" />
+    <ClInclude Include="src\Platform\DirectX\PixelBuffer.h" />
+    <ClInclude Include="src\Platform\DirectX\RyDirectX.h" />
+    <ClInclude Include="src\Platform\DirectX\d3dx12.h" />
+    <ClInclude Include="src\Platform\Windows\WindowClass.h" />
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\RyEngine.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\Core\Application.cpp" />
     <ClCompile Include="src\Core\Camera.cpp" />
+    <ClCompile Include="src\Core\Collections.cpp" />
     <ClCompile Include="src\Core\Color.cpp" />
     <ClCompile Include="src\Core\Core.cpp" />
     <ClCompile Include="src\Core\CoreMath.cpp" />
     <ClCompile Include="src\Core\DirectXInit.cpp" />
     <ClCompile Include="src\Core\GraphicsSystem.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
-    <ClCompile Include="src\Core\RyDirectX.cpp" />
-    <ClCompile Include="src\Core\RyException.cpp" />
     <ClCompile Include="src\Core\SubSystem.cpp" />
     <ClCompile Include="src\Core\SubSystemManager.cpp" />
     <ClCompile Include="src\Core\Vertex.cpp" />
     <ClCompile Include="src\Core\ViewPort.cpp" />
-    <ClCompile Include="src\Core\Window.cpp" />
-    <ClCompile Include="src\Core\WindowSystem.cpp" />
+    <ClCompile Include="src\Core\Window\Window.cpp" />
+    <ClCompile Include="src\Core\Window\WindowSystem.cpp" />
+    <ClCompile Include="src\Platform\DirectX\ColorBuffer.cpp" />
+    <ClCompile Include="src\Platform\DirectX\CommandAllocatorPool.cpp" />
+    <ClCompile Include="src\Platform\DirectX\CommandManager.cpp" />
+    <ClCompile Include="src\Platform\DirectX\DescriptorAllocator.cpp" />
+    <ClCompile Include="src\Platform\DirectX\PixelBuffer.cpp" />
+    <ClCompile Include="src\Platform\DirectX\RyDirectX.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowClass.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

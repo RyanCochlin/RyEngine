@@ -4,8 +4,3 @@
 
 #include "Assert/AssertDefines.h"
 #include "Assert/AssertStatic.h"
-
-#if DEBUG
-	#define ENABLE_ASSERT true
-	#define S_ASSERT_TYPE_DIV true
-#endif

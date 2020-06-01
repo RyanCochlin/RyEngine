@@ -29,7 +29,7 @@ namespace RE
 #define RE_CORE_INFO(...) ::RE::Log::GetCoreLogger()->info(__VA_ARGS__)
 #define RE_CORE_LOG(...) ::RE::Log::GetCoreLogger()->trace(__VA_ARGS__)
 
-#define RE_LOG_ERROR(...) ::RE::Log::GetClientLogger()->error(__VA_ARGS__)
-#define RE_LOG_WARN(...) ::RE::Log::GetClientLogger()->warn(__VA_ARGS__)
-#define RE_LOG_INFO(...) ::RE::Log::GetClientLogger()->info(__VA_ARGS__)
-#define RE_LOG(...) ::RE::Log::GetClientLogger()->trace(__VA_ARGS__)
+#define RE_LOG_ERROR(...)// ::RE::Log::GetClientLogger()->error(__VA_ARGS__)
+#define RE_LOG_WARN(...)// ::RE::Log::GetClientLogger()->warn(__VA_ARGS__)
+#define RE_LOG_INFO(...)// ::RE::Log::GetClientLogger()->info(__VA_ARGS__)
+#define RE_LOG(...)// ::RE::Log::GetClientLogger()->trace(__VA_ARGS__)

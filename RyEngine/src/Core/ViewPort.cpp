@@ -3,9 +3,9 @@
 
 namespace RE
 {
-	ViewPort::ViewPort(ID3D12GraphicsCommandList* commandList, FLOAT topLeftX, FLOAT topLeftY, FLOAT width, FLOAT height, FLOAT minDepth, FLOAT maxDepth)
+	ViewPort::ViewPort(FLOAT topLeftX, FLOAT topLeftY, FLOAT width, FLOAT height, FLOAT minDepth, FLOAT maxDepth)
 	{
-		_commandList = commandList;
+		//_commandList = commandList;
 		_viewPort.TopLeftX = topLeftX;
 		_viewPort.TopLeftY = topLeftY;
 		_viewPort.Width = width;
@@ -24,7 +24,7 @@ namespace RE
 
 	void ViewPort::Draw()
 	{
-		_commandList->RSSetViewports(1, &_viewPort);
-		_commandList->RSSetScissorRects(1, &_scissorRect);
+		/*_commandList->RSSetViewports(1, &_viewPort);
+		_commandList->RSSetScissorRects(1, &_scissorRect);*/
 	}
 }
