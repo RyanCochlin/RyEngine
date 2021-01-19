@@ -4,17 +4,16 @@
 
 namespace RE
 {
-	WindowsWindow::WindowsWindow(const char* winTitle, UINT w, UINT h, WIND_CLASS_TYPE wndClass, int cmdShow)
+	WindowsWindow::WindowsWindow(const wchar_t* winTitle, UINT w, UINT h, WIND_CLASS_TYPE wndClass, int cmdShow)
 	{
 		_mWidth = w;
 		_mHeight = h;
 
 		HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(NULL);
-		const char* wndClassName = WindowClassManager::RegisterWindowClass(wndClass, hInstance, WindowsWindow::WindowProc);
-		const wchar_t* lClassName = AnsiToWString(wndClassName).c_str();
+		const wchar_t* wndClassName = WindowClassManager::RegisterWindowClass(wndClass, hInstance, WindowsWindow::WindowProc);
 
-		_mWindHandle = CreateWindow(lClassName,
-			AnsiToWString(winTitle).c_str(),
+		_mWindHandle = CreateWindow(wndClassName,
+			winTitle,
 			WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT,
 			CW_USEDEFAULT,

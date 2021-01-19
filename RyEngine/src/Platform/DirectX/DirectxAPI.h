@@ -1,26 +1,28 @@
 #pragma once
 
-#include "RyDirectX.h"
+#include "DirectXCore.h"
+#include "Core/Color.h"
+#include "Core/IGraphicsAPI.h"
+#include "Core/GeometryHeap.h"
 
 namespace RE
 {
-	RyDirectX _gDirectX;
-
-	class DirectxAPI
+	class DirectxAPI : public IGraphicsAPI
 	{
-		friend class ColorBuffer;
 	public:
-		void Init()
-		{
-			_gDirectX.Init();
-		}
+		DirectxAPI() {}
 
-		void Release() { _gDirectX.Release(); }
-		void OnRender() { _gDirectX.OnRender(); }
+		void Init() override { _mDirectX.Init(); }
+		void Release() override { _mDirectX.Release(); }
+		void OnUpdate() override { _mDirectX.Update(); }
+		void OnRender() override { _mDirectX.OnRender(); }
+
+
+		void SetClearColor(Color color) override { _mDirectX.SetClearColor(color); }
+		void SetGeometry(GeometryHeap* geo) override { _mDirectX.SubmitGeometery(geo); }
 
 	private:
-		static RyDirectX DX() { return _gDirectX; }
-		static ID3D12Device* Device() { return DX()._mDevice.Get(); }
-		static D3D12_CPU_DESCRIPTOR_HANDLE AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE type) { return DX().AllocateDescriptor(type); }
+		DirectXCore _mDirectX;
+		GeometryHeap* _mGeo;
 	};
 }

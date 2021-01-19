@@ -12,7 +12,12 @@ namespace RE
 			_mRtvDescriptorHandle()
 		{}
 
-		void CreateFromSwapChain(ID3D12Resource* resource);
+		void CreateFromSwapChain(ID3D12Device* device, ID3D12Resource* resource, D3D12_CPU_DESCRIPTOR_HANDLE handle);
+
+		void SetClearColor(Color color);
+		Color GetClearColor();
+
+		const D3D12_CPU_DESCRIPTOR_HANDLE GetDescriptorHandle() { return _mRtvDescriptorHandle; }
 
 	protected:
 		Color _mClearColor;

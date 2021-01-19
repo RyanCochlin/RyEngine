@@ -9,23 +9,23 @@
 
 namespace RE
 {
-	class SubSystemManager : public Singleton<SubSystemManager>
+	class RE_API SubSystemManager : public Singleton<SubSystemManager>
 	{
 	public:
 		//Getter for every subsystem. Maybe figure out a better way to do this
 		Log* Logger()
 		{
-			return mLog;
+			return _mLog;
 		}
 
 		WindowSystem* Wnd()
 		{
-			return mWindowSystem;
+			return _mWindowSystem;
 		}
 
 		GraphicsSystem* GFX()
 		{
-			return mGraphicsSystem;
+			return _mGraphicsSystem;
 		}
 
 		void SpinUpSubSystems();
@@ -36,15 +36,18 @@ namespace RE
 		void OnRender();
 
 	private:
-		std::vector<SubSystem*> _allSubSystems;
+		std::vector<SubSystem*> _mAllSubSystems;
 
 		//Refs to subsystems
-		WindowSystem* mWindowSystem;
-		GraphicsSystem* mGraphicsSystem;
-		Log* mLog;
+		WindowSystem* _mWindowSystem;
+		GraphicsSystem* _mGraphicsSystem;
+		Log* _mLog;
 		
 		void Register(SubSystem* s);
 		void Add(SubSystem* s);
 		void AddAllSubSystems();
 	};
 }
+
+#define RE_GRAPHICS ::RE::SubSystemManager::Instance().GFX()
+#define RE_WINDOW ::RE::SubSystemManager::Instance().Wnd()

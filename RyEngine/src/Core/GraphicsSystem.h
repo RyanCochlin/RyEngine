@@ -3,7 +3,10 @@
 #include "pch.h"
 #include "SubSystem.h"
 #include "IGraphicsAPI.h"
-#include "Platform/DirectX/RyDirectX.h"
+#include "Mesh.h"
+#include "Color.h"
+#include "GeometryHeap.h"
+#include "Platform/DirectX/DirectXCore.h"
 
 #ifndef __ry_graphics_api__
 #define __ry_graphics_api__
@@ -27,18 +30,19 @@ namespace RE
 #define CURRENT_GRAPHICS_API GFX_API_NONE
 #endif
 
-	class GraphicsSystem : public SubSystem
+	class RE_API GraphicsSystem : public SubSystem
 	{
 	public:
 		RE_SUBSYSTEM_OVERRIDE
 
-#ifdef RE_WINDOWS
-		RyDirectX* GraphicsAPI();
-#else
 		IGraphicsAPI* GraphicsAPI();
-#endif
+		void AddMeshForDraw(Mesh* mesh);
+		void RemoveMesh(Mesh* mesh);
+		void BackgroundColor(Color color);
 
 	private:
 		IGraphicsAPI* _mGraphicsAPI;
-	};	
+		GeometryHeap* _mGeo;
+		bool _mNewMesh;
+	};
 }

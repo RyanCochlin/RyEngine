@@ -1,226 +1,322 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Core">
-      <UniqueIdentifier>{2EB4837C-1AEB-840D-C3D7-6A10AFED000F}</UniqueIdentifier>
+    <Filter Include="assets">
+      <UniqueIdentifier>{583885F2-44DA-AFC8-2D95-C31C19D63619}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Assert">
-      <UniqueIdentifier>{0FBB976A-7B70-1060-0465-0A3770190764}</UniqueIdentifier>
+    <Filter Include="assets\shaders">
+      <UniqueIdentifier>{51CD2FD9-3D9B-23DF-262F-9405129CFF43}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Exception">
-      <UniqueIdentifier>{6CD13EFD-589F-3203-4133-A3292DA00E68}</UniqueIdentifier>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Window">
-      <UniqueIdentifier>{5581319D-C136-AA92-4A2B-A469B6DFA096}</UniqueIdentifier>
+    <Filter Include="src\Core">
+      <UniqueIdentifier>{A5D31CCF-91A0-77DA-BAB9-6582A6E5AC68}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Platform">
-      <UniqueIdentifier>{2AC788B4-1694-E3BF-3FAD-D1672BD9184E}</UniqueIdentifier>
+    <Filter Include="src\Core\Assert">
+      <UniqueIdentifier>{A6EE7182-127A-DF46-1B8B-623B87953B47}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Platform\DirectX">
-      <UniqueIdentifier>{EC338E64-D82C-ADB6-015F-923BEDB68CC2}</UniqueIdentifier>
+    <Filter Include="src\Core\Exception">
+      <UniqueIdentifier>{A3F1225B-8FD5-E3B0-F835-DE03E438CE32}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Platform\Windows">
-      <UniqueIdentifier>{64FBD71A-50F4-F66C-7926-DCF1657ED678}</UniqueIdentifier>
+    <Filter Include="src\Core\Window">
+      <UniqueIdentifier>{ECB40BB5-5840-7979-6151-FC6DCD5BD579}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform">
+      <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\DirectX">
+      <UniqueIdentifier>{E33DFBCB-CFCC-8495-78EB-98906459953B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\DirectX\InputLayouts">
+      <UniqueIdentifier>{5334E6AD-BFA2-3B2D-088C-F62C743931C9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Platform\Windows">
+      <UniqueIdentifier>{5B054582-4794-CE4B-F0B2-E246DC20DFF1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Application.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Assert.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Assert\AssertDefines.h">
-      <Filter>Core\Assert</Filter>
+      <Filter>src\Core\Assert</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Assert\AssertStatic.h">
-      <Filter>Core\Assert</Filter>
+      <Filter>src\Core\Assert</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Camera.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Collections.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Color.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Core.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\CoreMath.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\DirectXInit.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Error.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Exception\RyDXException.h">
-      <Filter>Core\Exception</Filter>
+      <Filter>src\Core\Exception</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Exception\RyException.h">
-      <Filter>Core\Exception</Filter>
+      <Filter>src\Core\Exception</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\GeometryHeap.h">
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\GlobalDefines.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\GraphicsSystem.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\IGraphicsAPI.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\IGraphicsInit.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Log.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Mesh.h">
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Platform.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Resource.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\RyEngineCore.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Singleton.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\SubSystem.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\SubSystemManager.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Utils.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Vertex.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\ViewPort.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Window\Window.h">
-      <Filter>Core\Window</Filter>
+      <Filter>src\Core\Window</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Window\WindowSystem.h">
-      <Filter>Core\Window</Filter>
+      <Filter>src\Core\Window</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\targetver.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Entry.h" />
+    <ClInclude Include="src\Entry.h">
+      <Filter>src</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\DirectX\ColorBuffer.h">
-      <Filter>Platform\DirectX</Filter>
+      <Filter>src\Platform\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\DirectX\CommandAllocatorPool.h">
-      <Filter>Platform\DirectX</Filter>
+      <Filter>src\Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\CommandContext.h">
+      <Filter>src\Platform\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\DirectX\CommandManager.h">
-      <Filter>Platform\DirectX</Filter>
+      <Filter>src\Platform\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\DirectX\DescriptorAllocator.h">
-      <Filter>Platform\DirectX</Filter>
+      <Filter>src\Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\DirectXCore.h">
+      <Filter>src\Platform\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\DirectX\DirectxAPI.h">
-      <Filter>Platform\DirectX</Filter>
+      <Filter>src\Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\DxMath.h">
+      <Filter>src\Platform\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\DirectX\GpuResource.h">
-      <Filter>Platform\DirectX</Filter>
+      <Filter>src\Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\IndexBuffer.h">
+      <Filter>src\Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\InputLayouts\ILColored.h">
+      <Filter>src\Platform\DirectX\InputLayouts</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\MeshGeometry.h">
+      <Filter>src\Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\PipelineState.h">
+      <Filter>src\Platform\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\DirectX\PixelBuffer.h">
-      <Filter>Platform\DirectX</Filter>
+      <Filter>src\Platform\DirectX</Filter>
     </ClInclude>
-    <ClInclude Include="src\Platform\DirectX\RyDirectX.h">
-      <Filter>Platform\DirectX</Filter>
+    <ClInclude Include="src\Platform\DirectX\RootSignature.h">
+      <Filter>src\Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\ShaderIncludes.h">
+      <Filter>src\Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\UploadBuffer.h">
+      <Filter>src\Platform\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\DirectX\VertexBuffer.h">
+      <Filter>src\Platform\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\DirectX\d3dx12.h">
-      <Filter>Platform\DirectX</Filter>
+      <Filter>src\Platform\DirectX</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowClass.h">
-      <Filter>Platform\Windows</Filter>
+      <Filter>src\Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
-      <Filter>Platform\Windows</Filter>
+      <Filter>src\Platform\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="src\RyEngine.h" />
-    <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\RyEngine.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pch.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Core\Application.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\Camera.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\Collections.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\Color.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\Core.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\CoreMath.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\DirectXInit.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\GeometryHeap.cpp">
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\GraphicsSystem.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\Log.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Mesh.cpp">
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\SubSystem.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\SubSystemManager.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\Vertex.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\ViewPort.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\Window\Window.cpp">
-      <Filter>Core\Window</Filter>
+      <Filter>src\Core\Window</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\Window\WindowSystem.cpp">
-      <Filter>Core\Window</Filter>
+      <Filter>src\Core\Window</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\DirectX\ColorBuffer.cpp">
-      <Filter>Platform\DirectX</Filter>
+      <Filter>src\Platform\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\DirectX\CommandAllocatorPool.cpp">
-      <Filter>Platform\DirectX</Filter>
+      <Filter>src\Platform\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DirectX\CommandContext.cpp">
+      <Filter>src\Platform\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\DirectX\CommandManager.cpp">
-      <Filter>Platform\DirectX</Filter>
+      <Filter>src\Platform\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\DirectX\DescriptorAllocator.cpp">
-      <Filter>Platform\DirectX</Filter>
+      <Filter>src\Platform\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DirectX\DirectXCore.cpp">
+      <Filter>src\Platform\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DirectX\IndexBuffer.cpp">
+      <Filter>src\Platform\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DirectX\MeshGeometry.cpp">
+      <Filter>src\Platform\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DirectX\PipelineState.cpp">
+      <Filter>src\Platform\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\DirectX\PixelBuffer.cpp">
-      <Filter>Platform\DirectX</Filter>
+      <Filter>src\Platform\DirectX</Filter>
     </ClCompile>
-    <ClCompile Include="src\Platform\DirectX\RyDirectX.cpp">
-      <Filter>Platform\DirectX</Filter>
+    <ClCompile Include="src\Platform\DirectX\RootSignature.cpp">
+      <Filter>src\Platform\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DirectX\UploadBuffer.cpp">
+      <Filter>src\Platform\DirectX</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DirectX\VertexBuffer.cpp">
+      <Filter>src\Platform\DirectX</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowClass.cpp">
-      <Filter>Platform\Windows</Filter>
+      <Filter>src\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
-      <Filter>Platform\Windows</Filter>
+      <Filter>src\Platform\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="src\pch.cpp" />
+    <ClCompile Include="src\pch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="assets\shaders\coloredPS.hlsl">
+      <Filter>assets\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\coloredVS.hlsl">
+      <Filter>assets\shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\base.hlsli">
+      <Filter>assets\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

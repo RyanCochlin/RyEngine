@@ -7,7 +7,7 @@ namespace RE
 	{
 		D3D12_RESOURCE_DESC desc = resource->GetDesc();
 
-		_mResource.Attach(resource);
+		_mResource = resource;
 		_mUsageStates = currentState;
 
 		_mWidth = desc.Width;

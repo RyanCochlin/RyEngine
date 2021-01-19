@@ -4,4 +4,15 @@
 namespace RE
 {
 	Window::~Window() {}
+
+	WindowDimensions Window::GetDimensions()
+	{
+		return WindowDimensions{ _mWidth, _mHeight }; 
+	}
+
+	FLOAT Window::GetAspect()
+	{
+		FLOAT aspect = (FLOAT)_mWidth / (FLOAT)_mHeight;
+		return aspect;
+	}
 }

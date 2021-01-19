@@ -6,7 +6,7 @@
 namespace RE
 {
 #define REGISTER_CLASS(name) 
-#define CLASS_MAIN_NAME "RyEngine"
+#define CLASS_MAIN_NAME L"RyEngine"
 
 	enum WIND_CLASS_TYPE
 	{
@@ -17,18 +17,18 @@ namespace RE
 	class WindowClass
 	{
 	public:
-		WindowClass(const char* name);
+		WindowClass(const wchar_t* name);
 
 		virtual ~WindowClass() {}
 
 		void Register() { _mWndRefCount++; }
 		virtual void Release(HINSTANCE resHandle);
 
-		const char* GetName() const { return _mName; }
+		const wchar_t* GetName() const { return _mName; }
 		bool IsRegistered() const { return _mWndRefCount > 0; }
 
 	protected:
-		const char* _mName;
+		const wchar_t* _mName;
 		const char* _mMenuName;
 		uint16_t _mWndRefCount;
 		UINT _mSize;
@@ -61,7 +61,7 @@ namespace RE
 	class WindowClassManager
 	{
 	public:
-		static const char* RegisterWindowClass(WIND_CLASS_TYPE type, HINSTANCE resHandle, WNDPROC wndProc);
+		static const wchar_t* RegisterWindowClass(WIND_CLASS_TYPE type, HINSTANCE resHandle, WNDPROC wndProc);
 		static void ReleaseWindowClass(WIND_CLASS_TYPE type, HINSTANCE resHandle);
 
 	private:

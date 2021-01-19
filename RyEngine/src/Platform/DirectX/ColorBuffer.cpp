@@ -5,12 +5,21 @@
 
 namespace RE
 {
-	void ColorBuffer::CreateFromSwapChain(ID3D12Resource* resource)
+	void ColorBuffer::CreateFromSwapChain(ID3D12Device* device, ID3D12Resource* resource, D3D12_CPU_DESCRIPTOR_HANDLE handle)
 	{
 		AttachResource(resource, D3D12_RESOURCE_STATE_PRESENT);
 
-		RyDirectX* api = SubSystemManager::Instance().GFX()->GraphicsAPI();
-		_mRtvDescriptorHandle = api->AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-		api->_mDevice->CreateRenderTargetView(_mResource.Get(), nullptr, _mRtvDescriptorHandle);
+		_mRtvDescriptorHandle = handle;
+		device->CreateRenderTargetView(_mResource, nullptr, _mRtvDescriptorHandle);
+	}
+
+	void ColorBuffer::SetClearColor(Color color)
+	{
+		_mClearColor = color;
+	}
+
+	Color ColorBuffer::GetClearColor()
+	{
+		return _mClearColor;
 	}
 }

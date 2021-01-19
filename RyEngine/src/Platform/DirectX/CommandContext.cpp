@@ -1,0 +1,142 @@
+#include "pch.h"
+#include "CommandContext.h"
+#include "CommandManager.h"
+#include "VertexBuffer.h"
+#include "MeshGeometry.h"
+#include "ColorBuffer.h"
+
+namespace RE
+{
+	CommandContext::CommandContext(D3D12_COMMAND_LIST_TYPE type, CommandListManager* commandManager) :
+		_mCommandList(nullptr),
+		_mCurrentAllocator(nullptr),
+		_mCommandManager(commandManager),
+		_mType(type)
+	{}
+
+	void CommandContext::Start()
+	{
+		//TODO allocate different types
+		if (_mCurrentAllocator == nullptr)
+		{
+			_mCurrentAllocator = _mCommandManager->GetCommandQueue()->GetAllocator();
+		}
+		_mCommandList->Reset(_mCurrentAllocator, nullptr);
+	}
+
+	void CommandContext::SetRootSignature(RootSignature* rootSig)
+	{
+		if (rootSig->GetRootSignature() != _mRootSignature)
+		{
+			_mRootSignature = rootSig->GetRootSignature();
+		}
+		_mCommandList->SetGraphicsRootSignature(_mRootSignature);
+	}
+
+	void CommandContext::SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY topology)
+	{
+		_mCommandList->IASetPrimitiveTopology(topology);
+	}
+
+	void CommandContext::SetPipelineState(PipelineState* pso)
+	{
+		ID3D12PipelineState* pipeline = pso->GetPipelineStateObject();
+		if (_mPipelineState != pipeline)
+		{
+			_mPipelineState = pipeline;
+		}
+		_mCommandList->SetPipelineState(_mPipelineState);
+	}
+
+	void CommandContext::TransitionResource(GpuResource& resource, D3D12_RESOURCE_STATES newState)
+	{
+		D3D12_RESOURCE_STATES oldState = resource.GetCurrentState();
+		_mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(resource.GetResource(), oldState, newState));
+		resource.SetCurrentState(newState);
+	}
+
+	void CommandContext::SetRenderTarget(D3D12_CPU_DESCRIPTOR_HANDLE rtv)
+	{
+		SetRenderTargets(1, &rtv);
+	}
+
+	void CommandContext::SetRenderTargets(UINT numRTVs, D3D12_CPU_DESCRIPTOR_HANDLE rtvs[])
+	{
+		_mCommandList->OMSetRenderTargets(numRTVs, rtvs, false, nullptr);
+	}
+
+	void CommandContext::SetViewPortAndScissor(UINT x, UINT y, UINT w, UINT h)
+	{
+		SetViewPort(x, y, w, h);
+		SetScissor(x, y, x + w, y + h);
+	}
+
+	void CommandContext::SetViewPort(FLOAT x, FLOAT y, FLOAT w, FLOAT h, FLOAT minDepth, FLOAT maxDepth)
+	{
+		D3D12_VIEWPORT viewPort;
+		viewPort.Width = w;
+		viewPort.Height = h;
+		viewPort.TopLeftX = x;
+		viewPort.TopLeftY = y;
+		viewPort.MinDepth = minDepth;
+		viewPort.MaxDepth = maxDepth;
+		_mCommandList->RSSetViewports(1, &viewPort);
+	}
+
+	void CommandContext::SetScissor(UINT left, UINT right, UINT top, UINT bottom)
+	{
+		SetScissor(CD3DX12_RECT(left, right, top, bottom));
+	}
+
+	void CommandContext::SetScissor(D3D12_RECT rect)
+	{
+		_mCommandList->RSSetScissorRects(1, &rect);
+	}
+
+	void CommandContext::SetVertexBuffers(GeometeryManager* gm, UINT slot)
+	{
+		if (gm->MeshCount() > 0)
+		{
+			UINT count = gm->MeshCount();
+			std::vector<D3D12_VERTEX_BUFFER_VIEW> vbView;
+
+			for (int i = 0; i < count; i++)
+			{
+				D3D12_VERTEX_BUFFER_VIEW vbv = gm->GetMesh(i)->VertexBufferView();
+				vbView.push_back(vbv);
+			}
+
+			_mCommandList->IASetVertexBuffers(0, count, vbView.data());
+		}
+	}
+
+	void CommandContext::Draw(ColorBuffer* buffer, UINT vertexCount)
+	{
+		Color clearColor = buffer->GetClearColor();;
+		D3D12_CPU_DESCRIPTOR_HANDLE rtv = buffer->GetDescriptorHandle();
+
+		_mCommandList->ClearRenderTargetView(rtv, clearColor.rbga, 0, nullptr);
+		_mCommandList->DrawInstanced(vertexCount, 1, 0, 0);
+	}
+
+	void CommandContext::UploadMeshes(ID3D12Device* device, GeometeryManager* gm)
+	{
+		gm->UploadAll(device, _mCommandList);
+	}
+
+	void CommandContext::End()
+	{
+		CommandQueue* queue = _mCommandManager->GetCommandQueue();
+		uint64_t fence = queue->Execute(_mCommandList);
+		_mCommandManager->WaitForFence(fence);
+		queue->ReleaseAllocator(_mCurrentAllocator);
+		_mCurrentAllocator = nullptr;
+	}
+
+	void CommandContext::Initialize()
+	{
+		_mCommandManager->CreateCommandList(_mType, &_mCommandList, &_mCurrentAllocator);
+		_mCommandList->Close();
+	}
+
+}

@@ -3,7 +3,7 @@
 
 namespace RE
 {
-	WindowClass::WindowClass(const char* name) :
+	WindowClass::WindowClass(const wchar_t* name) :
 		_mName(name),
 		_mMenuName(""),
 		_mWndRefCount(0),
@@ -20,7 +20,7 @@ namespace RE
 		_mWndRefCount--;
 		if (_mWndRefCount <= 0)
 		{
-			UnregisterClassW(AnsiToWString(_mName).c_str(), resHandle);
+			UnregisterClassW(_mName, resHandle);
 		}
 	}
 
@@ -37,7 +37,7 @@ namespace RE
 		wcex.hCursor = _mCursor;
 		wcex.hbrBackground = _mBackground;
 		wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_RYENGINE);
-		wcex.lpszClassName = AnsiToWString(_mName).c_str();
+		wcex.lpszClassName = _mName;
 		wcex.hIconSm = _mIconSm;
 
 		RegisterClassExW(&wcex);
@@ -45,7 +45,7 @@ namespace RE
 
 	std::map<WIND_CLASS_TYPE, WindowClass*> WindowClassManager::_sRegisteredClasses{};
 
-	const char* WindowClassManager::RegisterWindowClass(WIND_CLASS_TYPE type, HINSTANCE resHandle, WNDPROC wndProc)
+	const wchar_t* WindowClassManager::RegisterWindowClass(WIND_CLASS_TYPE type, HINSTANCE resHandle, WNDPROC wndProc)
 	{
 		WindowClass* wndClass;
 		if (_sRegisteredClasses.find(type) == _sRegisteredClasses.end())

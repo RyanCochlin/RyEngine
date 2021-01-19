@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ViewPort.h"
+#include "Color.h"
+#include "GeometryHeap.h"
 
 namespace RE
 {
@@ -11,7 +13,11 @@ namespace RE
 
 		virtual void Init() = 0;
 		virtual void Release() = 0;
+		virtual void OnUpdate() = 0;
 		virtual void OnRender() = 0;
+
+		virtual void SetClearColor(Color color) = 0;
+		virtual void SetGeometry(GeometryHeap* geo) = 0;
 
 	protected:
 		ViewPort _mainViewPort;

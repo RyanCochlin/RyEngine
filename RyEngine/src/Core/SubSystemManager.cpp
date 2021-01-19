@@ -7,65 +7,66 @@ namespace RE
 	{
 		AddAllSubSystems();
 		
-		for (size_t i = 0; i < _allSubSystems.size(); i++)
+		std::vector<SubSystem*>::iterator it = _mAllSubSystems.begin();
+		for (;it != _mAllSubSystems.end(); it++)
 		{
-			Register(_allSubSystems[i]);
+			Register(*it);
 		}
 	}
 
 	void SubSystemManager::AddAllSubSystems()
 	{
-		mLog = new Log();
-		Add(mLog);
+		_mLog = new Log();
+		Add(_mLog);
 
-		mWindowSystem = new WindowSystem();
-		Add(mWindowSystem);
+		_mWindowSystem = new WindowSystem();
+		Add(_mWindowSystem);
 
-		mGraphicsSystem = new GraphicsSystem();
-		Add(mGraphicsSystem);
+		_mGraphicsSystem = new GraphicsSystem();
+		Add(_mGraphicsSystem);
 	}
 
 	void SubSystemManager::Release()
 	{
-		for (size_t i = 0; i < _allSubSystems.size(); i++)
+		for (size_t i = 0; i < _mAllSubSystems.size(); i++)
 		{
-			_allSubSystems[i]->Release();
+			_mAllSubSystems[i]->Release();
 		}
 
-		_allSubSystems.clear();
+		_mAllSubSystems.clear();
 
 		//delete mLog;
-		delete mWindowSystem;
-		delete mGraphicsSystem;
+		delete _mWindowSystem;
+		delete _mGraphicsSystem;
 	}
 
 	void SubSystemManager::SpinUpSubSystems()
 	{
-		for (size_t i = 0; i < _allSubSystems.size(); i++)
+		for (size_t i = 0; i < _mAllSubSystems.size(); i++)
 		{
-			_allSubSystems[i]->OnStart();
+			_mAllSubSystems[i]->OnStart();
 		}
 	}
 
 	void SubSystemManager::OnUpdate()
 	{
-		for (size_t i = 0; i < _allSubSystems.size(); i++)
+		for (size_t i = 0; i < _mAllSubSystems.size(); i++)
 		{
-			_allSubSystems[i]->OnUpdate();
+			_mAllSubSystems[i]->OnUpdate();
 		}
 	}
 
 	void SubSystemManager::OnRender()
 	{
-		for (size_t i = 0; i < _allSubSystems.size(); i++)
+		for (size_t i = 0; i < _mAllSubSystems.size(); i++)
 		{
-			_allSubSystems[i]->OnRender();
+			_mAllSubSystems[i]->OnRender();
 		}
 	}
 
 	void SubSystemManager::Add(SubSystem* s)
 	{
-		_allSubSystems.push_back(s);
+		_mAllSubSystems.push_back(s);
 	}
 
 	void SubSystemManager::Register(SubSystem* s)

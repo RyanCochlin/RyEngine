@@ -8,7 +8,7 @@ namespace RE
 	class WindowsWindow : public Window
 	{
 	public:
-		WindowsWindow(const char* winTitle, UINT w, UINT h, WIND_CLASS_TYPE wndClass = WIND_CLASS_TYPE_MAIN, int cmdShow = SW_SHOWDEFAULT);
+		WindowsWindow(const wchar_t* winTitle, UINT w, UINT h, WIND_CLASS_TYPE wndClass = WIND_CLASS_TYPE_MAIN, int cmdShow = SW_SHOWDEFAULT);
 
 		void Release() override;
 

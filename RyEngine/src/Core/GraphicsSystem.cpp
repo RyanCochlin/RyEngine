@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "GraphicsSystem.h"
-#include "Platform/DirectX/RyDirectX.h"
+#include "Platform/DirectX/DirectxAPI.h"
 
 namespace RE
 {
@@ -11,16 +11,17 @@ namespace RE
 		case GFX_API_DIRECTX:
 		default:
 			//Default is DirectX because that's the only graphics API currently supported
-			_mGraphicsAPI = new RyDirectX();
+			_mGraphicsAPI = new DirectxAPI();
 			break;
 		}
 
-		_mGraphicsAPI->Init();
+		_mNewMesh = false;
+		_mGeo = new GeometryHeap();
 	}
 
 	void GraphicsSystem::OnStart()
 	{
-
+		_mGraphicsAPI->Init();
 	}
 
 	void GraphicsSystem::Release()
@@ -31,7 +32,12 @@ namespace RE
 
 	void GraphicsSystem::OnUpdate()
 	{
-
+		if (_mNewMesh)
+		{
+			_mGraphicsAPI->SetGeometry(_mGeo);
+			_mNewMesh = false;
+		}
+		_mGraphicsAPI->OnUpdate();
 	}
 
 	void GraphicsSystem::OnRender()
@@ -39,15 +45,25 @@ namespace RE
 		_mGraphicsAPI->OnRender();
 	}
 
-#ifdef RE_WINDOWS
-	RyDirectX* GraphicsSystem::GraphicsAPI()
-	{
-		return static_cast<RyDirectX*>(_mGraphicsAPI);
-	}
-#else
 	IGraphicsAPI* GraphicsSystem::GraphicsAPI()
 	{
 		return _mGraphicsAPI;
 	}
-#endif
+
+	void GraphicsSystem::AddMeshForDraw(Mesh* mesh)
+	{
+		//TODO want to only set geometery once per frame. Need to figure out how to manage them
+		_mGeo->PushMesh(mesh);
+		_mNewMesh = true;
+	}
+
+	void GraphicsSystem::RemoveMesh(Mesh* mesh)
+	{
+		_mGeo->RemoveMesh(mesh);
+	}
+
+	void GraphicsSystem::BackgroundColor(Color color)
+	{
+		_mGraphicsAPI->SetClearColor(color);
+	}
 }

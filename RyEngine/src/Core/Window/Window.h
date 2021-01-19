@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Core/ViewPort.h"
+#include "WindowSystem.h"
 
 namespace RE
 {
@@ -12,6 +13,9 @@ namespace RE
 		virtual ~Window();
 
 		virtual void Release() = 0;
+
+		WindowDimensions GetDimensions();
+		FLOAT GetAspect();
 
 	protected:
 		UINT _mWidth;

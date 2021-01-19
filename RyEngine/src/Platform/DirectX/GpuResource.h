@@ -28,14 +28,17 @@ namespace RE
 			_mGpuVirtualAddress = (D3D12_GPU_VIRTUAL_ADDRESS)0;
 		}
 
-		ID3D12Resource* operator->() { return _mResource.Get(); }
-		const ID3D12Resource* operator->() const { return _mResource.Get(); }
+		ID3D12Resource* operator->() { return _mResource; }
+		const ID3D12Resource* operator->() const { return _mResource; }
 
-		ID3D12Resource* GetResource() { return _mResource.Get(); }
-		const ID3D12Resource* GetResource() const { return _mResource.Get(); }
+		ID3D12Resource* GetResource() { return _mResource; }
+		const ID3D12Resource* GetResource() const { return _mResource; }
+
+		const D3D12_RESOURCE_STATES GetCurrentState() const { return _mUsageStates; }
+		void SetCurrentState(D3D12_RESOURCE_STATES state) { _mUsageStates = state; }
 
 	protected:
-		ComPtr<ID3D12Resource> _mResource;
+		ID3D12Resource* _mResource;
 		D3D12_RESOURCE_STATES _mUsageStates;
 		D3D12_RESOURCE_STATES _mTransitioningState;
 		D3D12_GPU_VIRTUAL_ADDRESS _mGpuVirtualAddress;

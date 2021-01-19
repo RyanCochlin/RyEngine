@@ -14,9 +14,10 @@ namespace RE
 
 	void CommandAllocatorPool::Release()
 	{
-		for (size_t i = 0; i < _mAllocatorPool.size(); i++)
+		std::vector<ID3D12CommandAllocator*>::iterator i = _mAllocatorPool.begin();
+		for (; i != _mAllocatorPool.end(); i++)
 		{
-			_mAllocatorPool[i]->Release();
+			(*i)->Release();
 		}
 
 		_mAllocatorPool.clear();

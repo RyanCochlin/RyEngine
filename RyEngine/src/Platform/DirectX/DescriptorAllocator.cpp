@@ -5,6 +5,14 @@
 namespace RE
 {
 	//-----------------------------DescriptorAllocator-----------------------------//
+	DescriptorAllocator::DescriptorAllocator(D3D12_DESCRIPTOR_HEAP_TYPE type) :
+		_mType(type),
+		_mCurrentHeapIndex(0),
+		_mDescriptorSize(0),
+		_mRemainingFree(0),
+		_mCurrentHandle()
+	{}
+
 	D3D12_CPU_DESCRIPTOR_HANDLE DescriptorAllocator::Allocate(ID3D12Device* device, uint32_t count)
 	{
 		//TODO: add mutex lock for multithreading
@@ -40,6 +48,21 @@ namespace RE
 	}
 
 	//-----------------------------DescriptorAllocatorPage------------------------//
+	DescriptorAllocatorPage::DescriptorAllocatorPage(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t descriptorSize) :
+		_mDevice(device),
+		_mType(type),
+		_mDescriptorSize(descriptorSize),
+		_mRemainingSize(descriptorSize)
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC desc;
+		desc.Type = _mType;
+		desc.NumDescriptors = descriptorSize;
+		desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		desc.NodeMask = 1;
+		ThrowIfFailed(_mDevice->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&_mDescriptorHeap)));
+		_mCurrentHandle = _mDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	}
+
 	D3D12_CPU_DESCRIPTOR_HANDLE DescriptorAllocatorPage::Allocate(uint32_t count)
 	{
 		ASSERT(count <= _mRemainingSize);

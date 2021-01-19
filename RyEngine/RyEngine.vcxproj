@@ -60,16 +60,21 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>RE_DLL_BUILD;RE_WINDOWS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;..\bin\Debug-windows-x86_64\RyEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
+    <FxCompile>
+      <ShaderModel>6.0</ShaderModel>
+      <EntryPointName></EntryPointName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FxCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3dcompiler.lib;D3D12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dcompiler.lib;dxguid.lib;D3D12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>..\bin\Debug-windows-x86_64\RyEngine\RyEngine.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -82,7 +87,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>RE_DLL_BUILD;RE_WINDOWS;RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src;vendor\spdlog\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;vendor\spdlog\include;..\bin\Release-windows-x86_64\RyEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -91,11 +96,16 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
+    <FxCompile>
+      <ShaderModel>6.0</ShaderModel>
+      <EntryPointName></EntryPointName>
+      <ObjectFileOutput></ObjectFileOutput>
+    </FxCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3dcompiler.lib;D3D12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dcompiler.lib;dxguid.lib;D3D12.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ImportLibrary>..\bin\Release-windows-x86_64\RyEngine\RyEngine.lib</ImportLibrary>
     </Link>
     <PostBuildEvent>
@@ -116,11 +126,13 @@
     <ClInclude Include="src\Core\Error.h" />
     <ClInclude Include="src\Core\Exception\RyDXException.h" />
     <ClInclude Include="src\Core\Exception\RyException.h" />
+    <ClInclude Include="src\Core\GeometryHeap.h" />
     <ClInclude Include="src\Core\GlobalDefines.h" />
     <ClInclude Include="src\Core\GraphicsSystem.h" />
     <ClInclude Include="src\Core\IGraphicsAPI.h" />
     <ClInclude Include="src\Core\IGraphicsInit.h" />
     <ClInclude Include="src\Core\Log.h" />
+    <ClInclude Include="src\Core\Mesh.h" />
     <ClInclude Include="src\Core\Platform.h" />
     <ClInclude Include="src\Core\Resource.h" />
     <ClInclude Include="src\Core\RyEngineCore.h" />
@@ -136,12 +148,22 @@
     <ClInclude Include="src\Entry.h" />
     <ClInclude Include="src\Platform\DirectX\ColorBuffer.h" />
     <ClInclude Include="src\Platform\DirectX\CommandAllocatorPool.h" />
+    <ClInclude Include="src\Platform\DirectX\CommandContext.h" />
     <ClInclude Include="src\Platform\DirectX\CommandManager.h" />
     <ClInclude Include="src\Platform\DirectX\DescriptorAllocator.h" />
+    <ClInclude Include="src\Platform\DirectX\DirectXCore.h" />
     <ClInclude Include="src\Platform\DirectX\DirectxAPI.h" />
+    <ClInclude Include="src\Platform\DirectX\DxMath.h" />
     <ClInclude Include="src\Platform\DirectX\GpuResource.h" />
+    <ClInclude Include="src\Platform\DirectX\IndexBuffer.h" />
+    <ClInclude Include="src\Platform\DirectX\InputLayouts\ILColored.h" />
+    <ClInclude Include="src\Platform\DirectX\MeshGeometry.h" />
+    <ClInclude Include="src\Platform\DirectX\PipelineState.h" />
     <ClInclude Include="src\Platform\DirectX\PixelBuffer.h" />
-    <ClInclude Include="src\Platform\DirectX\RyDirectX.h" />
+    <ClInclude Include="src\Platform\DirectX\RootSignature.h" />
+    <ClInclude Include="src\Platform\DirectX\ShaderIncludes.h" />
+    <ClInclude Include="src\Platform\DirectX\UploadBuffer.h" />
+    <ClInclude Include="src\Platform\DirectX\VertexBuffer.h" />
     <ClInclude Include="src\Platform\DirectX\d3dx12.h" />
     <ClInclude Include="src\Platform\Windows\WindowClass.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
@@ -156,8 +178,10 @@
     <ClCompile Include="src\Core\Core.cpp" />
     <ClCompile Include="src\Core\CoreMath.cpp" />
     <ClCompile Include="src\Core\DirectXInit.cpp" />
+    <ClCompile Include="src\Core\GeometryHeap.cpp" />
     <ClCompile Include="src\Core\GraphicsSystem.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
+    <ClCompile Include="src\Core\Mesh.cpp" />
     <ClCompile Include="src\Core\SubSystem.cpp" />
     <ClCompile Include="src\Core\SubSystemManager.cpp" />
     <ClCompile Include="src\Core\Vertex.cpp" />
@@ -166,15 +190,43 @@
     <ClCompile Include="src\Core\Window\WindowSystem.cpp" />
     <ClCompile Include="src\Platform\DirectX\ColorBuffer.cpp" />
     <ClCompile Include="src\Platform\DirectX\CommandAllocatorPool.cpp" />
+    <ClCompile Include="src\Platform\DirectX\CommandContext.cpp" />
     <ClCompile Include="src\Platform\DirectX\CommandManager.cpp" />
     <ClCompile Include="src\Platform\DirectX\DescriptorAllocator.cpp" />
+    <ClCompile Include="src\Platform\DirectX\DirectXCore.cpp" />
+    <ClCompile Include="src\Platform\DirectX\IndexBuffer.cpp" />
+    <ClCompile Include="src\Platform\DirectX\MeshGeometry.cpp" />
+    <ClCompile Include="src\Platform\DirectX\PipelineState.cpp" />
     <ClCompile Include="src\Platform\DirectX\PixelBuffer.cpp" />
-    <ClCompile Include="src\Platform\DirectX\RyDirectX.cpp" />
+    <ClCompile Include="src\Platform\DirectX\RootSignature.cpp" />
+    <ClCompile Include="src\Platform\DirectX\UploadBuffer.cpp" />
+    <ClCompile Include="src\Platform\DirectX\VertexBuffer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowClass.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="assets\shaders\coloredPS.hlsl">
+      <ShaderType>Pixel</ShaderType>
+      <ShaderModel>6.0</ShaderModel>
+      <EntryPointName>PS</EntryPointName>
+      <VariableName>g_scoloredPS</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../bin/Debug-windows-x86_64/RyEngine/CompiledShaders/coloredPS.h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../bin/Release-windows-x86_64/RyEngine/CompiledShaders/coloredPS.h</HeaderFileOutput>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\coloredVS.hlsl">
+      <ShaderType>Vertex</ShaderType>
+      <ShaderModel>6.0</ShaderModel>
+      <EntryPointName>VS</EntryPointName>
+      <VariableName>g_scoloredVS</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">../bin/Debug-windows-x86_64/RyEngine/CompiledShaders/coloredVS.h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">../bin/Release-windows-x86_64/RyEngine/CompiledShaders/coloredVS.h</HeaderFileOutput>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\base.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

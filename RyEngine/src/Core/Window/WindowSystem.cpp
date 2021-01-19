@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "WindowSystem.h"
+#include "Window.h"
 #include "Platform/Windows/WindowsWindow.h"
 
 namespace RE
@@ -30,12 +31,19 @@ namespace RE
 		return _mMainWin;
 	}
 
-	Window* WindowSystem::AddWindow(const char* winTitle)
+	FLOAT WindowSystem::GetMainWindowAspect()
+	{
+		Window* window = GetMainWindow();
+		FLOAT aspect = window->GetAspect();
+		return window->GetAspect();
+	}
+
+	Window* WindowSystem::AddWindow(const wchar_t* winTitle)
 	{
 		return AddWindow(winTitle, WND_DEFAULT_WIDTH, WND_DEFAULT_HEIGHT);
 	}
 
-	Window* WindowSystem::AddWindow(const char* winTitle, UINT width, UINT height)
+	Window* WindowSystem::AddWindow(const wchar_t* winTitle, UINT width, UINT height)
 	{
 		Window* w = nullptr;
 

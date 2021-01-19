@@ -16,6 +16,8 @@ namespace RE
 	{
 		RE::SubSystemManager::Instance().RegisterSubSystems();
 		RE::SubSystemManager::Instance().SpinUpSubSystems();
+
+		OnStart();
 	}
 
 	void Application::Run()
@@ -32,8 +34,12 @@ namespace RE
 			}
 			else
 			{
+				//1. Engine update loop
 				SubSystemManager::Instance().OnUpdate();
 				SubSystemManager::Instance().OnRender();
+
+				//2. App update loop
+				OnUpdate();
 			}
 		}
 	}

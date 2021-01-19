@@ -2,29 +2,43 @@
 
 #include <string>
 
-#include "RyDirectX.h"
+#include "DirectXCore.h"
+#include "PipelineState.h"
+#include "RootSignature.h"
 #include "CommandManager.h"
+#include "CommandContext.h"
+#include "ColorBuffer.h"
+#include "UploadBuffer.h"
 #include "Core/Color.h"
 #include "Core/CoreMath.h"
 #include "Platform/Windows/WindowsWindow.h"
+#include "Core/SubSystemManager.h"
+#include "CompiledShaders/coloredPS.h"
+#include "CompiledShaders/coloredVS.h"
+#include "InputLayouts/ILColored.h"
 
 namespace RE
 {
-	RyDirectX::RyDirectX() : 
+	DirectXCore::DirectXCore() :
 		_mDisplayWidth(1920),
 		_mDisplayHeight(1080),
 		_mCurrentBuffer(0),
 		_mSwapChainFormat(DXGI_FORMAT_R8G8B8A8_UNORM),
 		_mCommandListManager(nullptr),
+		_mCurrentCommandContext(nullptr),
 		_mainView{}
-	{}
+	{
+		_mGeoManager = new GeometeryManager();
+	}
 
-	RyDirectX::~RyDirectX(){}
+	DirectXCore::~DirectXCore(){}
 
-	void RyDirectX::Init()
+	void DirectXCore::Init()
 	{
 		//TODO check feature support
 		RE_TRY
+
+		RE_CORE_LOG("Inside DXCore Init");
 #if DEBUG
 		//TODO This causes a memory leak! Potentially enable with a cusom flag.
 		ComPtr<ID3D12Debug> debugController;
@@ -32,13 +46,13 @@ namespace RE
 		debugController->EnableDebugLayer();
 #endif
 
-		ComPtr<IDXGIFactory6> pFactory;
-		ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&pFactory)));
+		IDXGIFactory6* factory;
+		ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&factory)));
 
 		ComPtr<IDXGIAdapter1> pAdapter;
 		size_t max = 0;
 
-		for (uint32_t i = 0; DXGI_ERROR_NOT_FOUND != pFactory->EnumAdapters1(i, &pAdapter); ++i)
+		for (uint32_t i = 0; DXGI_ERROR_NOT_FOUND != factory->EnumAdapters1(i, &pAdapter); ++i)
 		{
 			DXGI_ADAPTER_DESC1 desc;
 			pAdapter->GetDesc1(&desc);
@@ -59,32 +73,51 @@ namespace RE
 		if (_mDevice == nullptr)
 		{
 			RE_CORE_WARN("D3D12 hardware not found. Falling back to WARP");
-			ThrowIfFailed(pFactory->EnumWarpAdapter(IID_PPV_ARGS(&pAdapter)));
+			ThrowIfFailed(factory->EnumWarpAdapter(IID_PPV_ARGS(&pAdapter)));
 			ThrowIfFailed(D3D12CreateDevice(pAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&_mDevice)));
 		}
 
-		_mCommandListManager = new CommandListManager(_mDevice.Get());
+		//Set width and height from window system
+		WindowDimensions wd = SubSystemManager::Instance().Wnd()->GetMainWindow()->GetDimensions();
+		_mDisplayWidth = wd.width;
+		_mDisplayHeight = wd.height;
 
-		CreateSwapChain(pFactory.Get());
+		_mCommandListManager = new CommandListManager(_mDevice);
+		_mCurrentCommandContext = new CommandContext(D3D12_COMMAND_LIST_TYPE_DIRECT, _mCommandListManager);
+		_mCurrentCommandContext->Initialize();
+
+		CreateSwapChain(factory);
 
 		for (uint16_t i = 0; i < SWAP_CHAIN_BUFFER_COUNT; ++i)
 		{
-			ComPtr<ID3D12Resource> display;
+			ID3D12Resource* display;
 			ThrowIfFailed(_mSwapChain->GetBuffer(i, IID_PPV_ARGS(&display)));
-			_mDisplays[i].CreateFromSwapChain(display.Get());
+			D3D12_CPU_DESCRIPTOR_HANDLE handle = AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+			_mDisplays[i].CreateFromSwapChain(_mDevice, display, handle);
 		}
+
+		//Initialize PSO
+		//TODO will probably want to do this on demand somehow but this will work for now
+		_mRootSig = new RootSignature(_mDevice);
+		_mPSO = new GraphicsPipelineState();
+		_mPSO->SetRootSignature(_mRootSig);
+		_mPSO->SetInputLayout(2, gILColoredDesc);
+		_mPSO->SetPixelShader(g_scoloredPS, sizeof(g_scoloredPS));
+		_mPSO->SetVertexShader(g_scoloredVS, sizeof(g_scoloredVS));
+		_mPSO->SetTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+		_mPSO->Finalize(_mDevice);
 
 		//TODO get command list to init viewport
 		//_mainView = new ViewPort(_init->CommandList().Get(), 0.0f, 0.0f, static_cast<FLOAT>(_init->BufferWidth()), static_cast<FLOAT>(_init->BufferHeight()));
 		RE_CATCH_DX
 	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE RyDirectX::AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE type)
+	D3D12_CPU_DESCRIPTOR_HANDLE DirectXCore::AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE type)
 	{
-		return _mDescriptorAllocators[type].Allocate(_mDevice.Get(), 1);
+		return _mDescriptorAllocators[type].Allocate(_mDevice, 1);
 	}
 
-	void RyDirectX::CreateSwapChain(IDXGIFactory6* factory)
+	void DirectXCore::CreateSwapChain(IDXGIFactory6* factory)
 	{
 		WindowsWindow* wnd = static_cast<WindowsWindow*>(SubSystemManager::Instance().Wnd()->GetMainWindow());
 
@@ -105,20 +138,76 @@ namespace RE
 		swapChainDesc.OutputWindow = wnd->GetHandle();
 
 		//TODO: Use CreateSwapChainForHwind and CreateSwapChainforCoreWindow to support UWP using IDXGISwapChain1
-		ID3D12CommandQueue* comQueue = _mCommandListManager->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT);
+		ID3D12CommandQueue* comQueue = _mCommandListManager->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT)->GetCommandQueue();
 		ThrowIfFailed(factory->CreateSwapChain(comQueue, &swapChainDesc, &_mSwapChain));
 	}
 
-	void RyDirectX::Release()
+	void DirectXCore::Release()
 	{
 		_mCommandListManager->Shutdown();
 
 		delete _mCommandListManager;
 		delete _mainView;
+		delete _mPSO;
+		delete _mRootSig;
 	}
 
-	void RyDirectX::OnRender()
+	void DirectXCore::SetClearColor(Color color)
 	{
+		for (uint16_t i = 0; i < SWAP_CHAIN_BUFFER_COUNT; i++)
+		{
+			_mDisplays[i].SetClearColor(color);
+		}
+	}
+
+	void DirectXCore::UploadGeometery()
+	{
+		_mCurrentCommandContext->Start();
+		_mCurrentCommandContext->SetRootSignature(_mRootSig);
+		_mCurrentCommandContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		_mCurrentCommandContext->SetPipelineState(_mPSO);
+		_mCurrentCommandContext->UploadMeshes(_mDevice, _mGeoManager);
+		_mCurrentCommandContext->End();
+	}
+
+	void DirectXCore::SubmitGeometery(GeometryHeap* geo)
+	{
+		std::vector<Mesh*> meshes = geo->GetHeap();
+
+		std::vector<Mesh*>::iterator i = meshes.begin();
+		for (; i != meshes.end(); i++)
+		{
+			_mGeoManager->Submit(**i);
+		}
+	}
+
+	void DirectXCore::Update()
+	{
+		UploadGeometery();
+	}
+
+	void DirectXCore::OnRender()
+	{
+		//TODO update current back buffer
+		ColorBuffer curBackBuffer = _mDisplays[_mCurrentBuffer];
+		
+		_mCurrentCommandContext->Start();
+		_mCurrentCommandContext->SetRootSignature(_mRootSig);
+		_mCurrentCommandContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		_mCurrentCommandContext->SetPipelineState(_mPSO);
+		_mCurrentCommandContext->TransitionResource(curBackBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET);
+		_mCurrentCommandContext->SetRenderTarget(curBackBuffer.GetDescriptorHandle());
+		_mCurrentCommandContext->SetViewPortAndScissor(0, 0, _mDisplayWidth, _mDisplayHeight);
+		_mCurrentCommandContext->SetVertexBuffers(_mGeoManager, 0);
+		_mCurrentCommandContext->Draw(&curBackBuffer, _mGeoManager->VertexCount());
+		_mCurrentCommandContext->TransitionResource(curBackBuffer, D3D12_RESOURCE_STATE_PRESENT);
+
+		_mCurrentCommandContext->End();
+
+		ThrowIfFailed(_mSwapChain->Present(0, 0));
+
+		_mCurrentBuffer = (_mCurrentBuffer + 1) % SWAP_CHAIN_BUFFER_COUNT;
+
 		//PopulateCommandList();
 
 		//ID3D12CommandList* ppCommandLists[] = { _init->CommandList().Get() };
@@ -129,11 +218,11 @@ namespace RE
 		WaitForPreviousFrame();*/
 	}
 
-	void RyDirectX::PopulateCommandList()
+	void DirectXCore::PopulateCommandList()
 	{
-		/*ThrowIfFailed(_init->CommandAllocator()->Reset());
+		//ThrowIfFailed(_init->CommandAllocator()->Reset());
 
-		ThrowIfFailed(_init->CommandList()->Reset(_init->CommandAllocator().Get(), _init->PipelineState().Get()));
+		/*ThrowIfFailed(_init->CommandList()->Reset(_init->CommandAllocator().Get(), _init->PipelineState().Get()));
 		
 		_init->CommandList()->SetGraphicsRootSignature(_init->RootSignature().Get());
 		_mainView->Draw();
@@ -155,7 +244,7 @@ namespace RE
 		ThrowIfFailed(_init->CommandList()->Close());*/
 	}
 
-	void RyDirectX::WaitForPreviousFrame()
+	void DirectXCore::WaitForPreviousFrame()
 	{
 		/*const UINT64 fence = _init->FenceValue();
 		ThrowIfFailed(_init->CommandQueue()->Signal(_init->Fence().Get(), fence));
@@ -171,7 +260,7 @@ namespace RE
 	}
 
 	//TODO: test stuff
-	void RyDirectX::CreateTriangle()
+	void DirectXCore::CreateTriangle()
 	{
 		//Vertex verts[] =
 		//{
