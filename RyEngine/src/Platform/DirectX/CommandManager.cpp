@@ -7,7 +7,6 @@ namespace RE
 	//-----------CommandQueue-----------------//
 	CommandQueue::CommandQueue(D3D12_COMMAND_LIST_TYPE type) :
 		_mType(type),
-		_mNextFenceValue((uint64_t)type << 56 | 1),
 		_mCurrentFenceValue((uint64_t)type << 56),
 		_mAllocatorPool(type)
 	{}
@@ -33,6 +32,7 @@ namespace RE
 	{
 		ThrowIfFailed(((ID3D12GraphicsCommandList*)list)->Close());
 		_mCommandQueue->ExecuteCommandLists(1, &list);
+		_mCurrentFenceValue++;
 		_mCommandQueue->Signal(_mFence, _mCurrentFenceValue);
 		return _mCurrentFenceValue;
 	}
@@ -45,13 +45,10 @@ namespace RE
 	void CommandQueue::WaitForFence(uint64_t fence)
 	{
 		UINT64 completedFence = _mFence->GetCompletedValue();
-		_mNextFenceValue = _mCurrentFenceValue + 1;
-
-		if (completedFence < _mNextFenceValue)
+		if (completedFence < _mCurrentFenceValue)
 		{
 			_mFence->SetEventOnCompletion(_mCurrentFenceValue, _mFenceEventHandle);
 			WaitForSingleObject(_mFenceEventHandle, INFINITE);
-			_mCurrentFenceValue = _mNextFenceValue;
 		}
 	}
 

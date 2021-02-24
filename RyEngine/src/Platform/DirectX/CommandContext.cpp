@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CommandContext.h"
 #include "CommandManager.h"
+#include "DirectXCore.h"
 #include "VertexBuffer.h"
 #include "MeshGeometry.h"
 #include "ColorBuffer.h"
@@ -24,6 +25,29 @@ namespace RE
 		_mCommandList->Reset(_mCurrentAllocator, nullptr);
 	}
 
+	void CommandContext::SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type)
+	{
+		ID3D12DescriptorHeap* heap = DirectXCore::GetDescriptorHeap(type);
+		if (heap != nullptr)
+		{
+			ID3D12DescriptorHeap* heaps[] = { heap };
+			SetDescriptorHeaps(1, heaps);
+		}
+	}
+
+	void CommandContext::SetDescriptorHeaps(UINT count, ID3D12DescriptorHeap* heaps[])
+	{
+		if (count > 0)
+		{
+			_mCommandList->SetDescriptorHeaps(count, heaps);
+		}
+	}
+
+	void CommandContext::SetDescriptorTable(UINT index, D3D12_GPU_DESCRIPTOR_HANDLE handle)
+	{
+		_mCommandList->SetGraphicsRootDescriptorTable(index, handle);
+	}
+
 	void CommandContext::SetRootSignature(RootSignature* rootSig)
 	{
 		if (rootSig->GetRootSignature() != _mRootSignature)
@@ -38,9 +62,9 @@ namespace RE
 		_mCommandList->IASetPrimitiveTopology(topology);
 	}
 
-	void CommandContext::SetPipelineState(PipelineState* pso)
+	void CommandContext::SetPipelineState(PipelineState& pso)
 	{
-		ID3D12PipelineState* pipeline = pso->GetPipelineStateObject();
+		ID3D12PipelineState* pipeline = pso.GetPipelineStateObject();
 		if (_mPipelineState != pipeline)
 		{
 			_mPipelineState = pipeline;
@@ -93,16 +117,16 @@ namespace RE
 		_mCommandList->RSSetScissorRects(1, &rect);
 	}
 
-	void CommandContext::SetVertexBuffers(GeometeryManager* gm, UINT slot)
+	void CommandContext::SetVertexBuffers(GeometeryManager& gm, UINT slot)
 	{
-		if (gm->MeshCount() > 0)
+		if (gm.MeshCount() > 0)
 		{
-			UINT count = gm->MeshCount();
+			UINT count = gm.MeshCount();
 			std::vector<D3D12_VERTEX_BUFFER_VIEW> vbView;
 
 			for (int i = 0; i < count; i++)
 			{
-				D3D12_VERTEX_BUFFER_VIEW vbv = gm->GetMesh(i)->VertexBufferView();
+				D3D12_VERTEX_BUFFER_VIEW vbv = gm.GetMesh(i)->VertexBufferView();
 				vbView.push_back(vbv);
 			}
 
@@ -119,9 +143,14 @@ namespace RE
 		_mCommandList->DrawInstanced(vertexCount, 1, 0, 0);
 	}
 
-	void CommandContext::UploadMeshes(ID3D12Device* device, GeometeryManager* gm)
+	void CommandContext::UploadMeshes(ID3D12Device* device, GeometeryManager& gm)
 	{
-		gm->UploadAll(device, _mCommandList);
+		gm.UploadAll(device, _mCommandList);
+	}
+
+	void CommandContext::UploadConstantBuffers(ID3D12Device* device)
+	{
+
 	}
 
 	void CommandContext::End()

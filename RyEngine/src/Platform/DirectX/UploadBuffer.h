@@ -9,12 +9,12 @@ namespace RE
 	public:
 		UploadBuffer();
 
-		void Create(ID3D12Device* device, UINT numElements, UINT elementSize);
+		void Create(UINT numElements, UINT elementSize);
+		void CreateConstaintBufferView(uint32_t offset, uint32_t size, ID3D12Device* device, D3D12_CPU_DESCRIPTOR_HANDLE cbvDescriptorHandle);
 		void* Map();
 		void Unmap();
 
 	private:
-		ID3D12Device* _mDevice;
 		void* _mCpuVirtualAddress;
 	};
 }

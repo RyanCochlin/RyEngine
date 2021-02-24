@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CoreMath.h"
+#include "Math/Vector.h"
 
 namespace RE
 {

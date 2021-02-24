@@ -1,3 +1,8 @@
+cbuffer cbObj : register(b0)
+{
+	float4x4 gWorldViewProj;
+}
+
 struct VertIn
 {
 	float3 pos : POSITION;

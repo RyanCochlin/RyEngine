@@ -15,6 +15,11 @@ namespace RE
 
 	GeometeryManager::~GeometeryManager()
 	{
+		std::vector<MeshGeometry*>::iterator i = _mMeshes.begin();
+		for (; i != _mMeshes.end(); i++)
+		{
+			delete *i;
+		}
 		_mMeshes.clear();
 	}
 
@@ -35,7 +40,7 @@ namespace RE
 
 			VertexBuffer* vertBuf = geo->_mGpuResource;
 			UploadBuffer* upBuf = geo->_mUploadResource;
-			upBuf->Create(device, geo->Count(), geo->ElementSize());
+			upBuf->Create(geo->Count(), geo->ElementSize());
 			vertBuf->Create(device, geo->Count(), geo->ElementSize());
 
 			D3D12_SUBRESOURCE_DATA data = geo->GetResourceData();
@@ -105,6 +110,8 @@ namespace RE
 	MeshGeometry::~MeshGeometry()
 	{
 		_mVerticies.clear();
+		delete _mGpuResource;
+		delete _mUploadResource;
 	}
 
 	Vertex& MeshGeometry::operator[](int index)

@@ -37,6 +37,8 @@ namespace RE
 		const D3D12_RESOURCE_STATES GetCurrentState() const { return _mUsageStates; }
 		void SetCurrentState(D3D12_RESOURCE_STATES state) { _mUsageStates = state; }
 
+		const D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress() const { return _mGpuVirtualAddress; }
+
 	protected:
 		ID3D12Resource* _mResource;
 		D3D12_RESOURCE_STATES _mUsageStates;

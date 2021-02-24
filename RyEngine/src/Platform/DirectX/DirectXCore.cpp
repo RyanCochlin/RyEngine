@@ -9,16 +9,26 @@
 #include "CommandContext.h"
 #include "ColorBuffer.h"
 #include "UploadBuffer.h"
+#include "DXDrawCall.h"
 #include "Core/Color.h"
-#include "Core/CoreMath.h"
+#include "Core/Math/Vector.h"
 #include "Platform/Windows/WindowsWindow.h"
 #include "Core/SubSystemManager.h"
 #include "CompiledShaders/coloredPS.h"
 #include "CompiledShaders/coloredVS.h"
 #include "InputLayouts/ILColored.h"
+#include "Resources/ResColored.h"
 
 namespace RE
 {
+	DescriptorAllocator DirectXCore::sDescriptorAllocators[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES] = {
+		   D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
+		   D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER,
+		   D3D12_DESCRIPTOR_HEAP_TYPE_RTV,
+		   D3D12_DESCRIPTOR_HEAP_TYPE_DSV,
+	};
+	ID3D12Device* DirectXCore::sDevice;
+
 	DirectXCore::DirectXCore() :
 		_mDisplayWidth(1920),
 		_mDisplayHeight(1080),
@@ -26,12 +36,14 @@ namespace RE
 		_mSwapChainFormat(DXGI_FORMAT_R8G8B8A8_UNORM),
 		_mCommandListManager(nullptr),
 		_mCurrentCommandContext(nullptr),
-		_mainView{}
-	{
-		_mGeoManager = new GeometeryManager();
-	}
+		_mainView{},
+		_mGeoManager{},
+		_mRootSig{},
+		_mSwapChain{}
+	{}
 
-	DirectXCore::~DirectXCore(){}
+	DirectXCore::~DirectXCore()
+	{}
 
 	void DirectXCore::Init()
 	{
@@ -46,7 +58,7 @@ namespace RE
 		debugController->EnableDebugLayer();
 #endif
 
-		IDXGIFactory6* factory;
+		ComPtr<IDXGIFactory4> factory;
 		ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&factory)));
 
 		ComPtr<IDXGIAdapter1> pAdapter;
@@ -62,7 +74,7 @@ namespace RE
 				continue;
 			}
 
-			if (desc.DedicatedVideoMemory > max && SUCCEEDED(D3D12CreateDevice(pAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&_mDevice))))
+			if (desc.DedicatedVideoMemory > max && SUCCEEDED(D3D12CreateDevice(pAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&sDevice))))
 			{
 				pAdapter->GetDesc1(&desc);
 				RE_CORE_LOG("D3D12 hardware found: {0} ({1} MB)", WCharPToString(desc.Description), (desc.DedicatedVideoMemory >> 20));
@@ -70,11 +82,11 @@ namespace RE
 			}
 		}
 
-		if (_mDevice == nullptr)
+		if (sDevice == nullptr)
 		{
 			RE_CORE_WARN("D3D12 hardware not found. Falling back to WARP");
 			ThrowIfFailed(factory->EnumWarpAdapter(IID_PPV_ARGS(&pAdapter)));
-			ThrowIfFailed(D3D12CreateDevice(pAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&_mDevice)));
+			ThrowIfFailed(D3D12CreateDevice(pAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&sDevice)));
 		}
 
 		//Set width and height from window system
@@ -82,42 +94,52 @@ namespace RE
 		_mDisplayWidth = wd.width;
 		_mDisplayHeight = wd.height;
 
-		_mCommandListManager = new CommandListManager(_mDevice);
+		_mCommandListManager = new CommandListManager(sDevice);
 		_mCurrentCommandContext = new CommandContext(D3D12_COMMAND_LIST_TYPE_DIRECT, _mCommandListManager);
 		_mCurrentCommandContext->Initialize();
 
-		CreateSwapChain(factory);
+		CreateSwapChain(factory.Get());
 
 		for (uint16_t i = 0; i < SWAP_CHAIN_BUFFER_COUNT; ++i)
 		{
+			//TODO release descriptor. Might be a memory leak
 			ID3D12Resource* display;
 			ThrowIfFailed(_mSwapChain->GetBuffer(i, IID_PPV_ARGS(&display)));
 			D3D12_CPU_DESCRIPTOR_HANDLE handle = AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-			_mDisplays[i].CreateFromSwapChain(_mDevice, display, handle);
+			_mDisplays[i].CreateFromSwapChain(sDevice, display, handle);
 		}
+
+		//Create Constant buffer.
+		//TODO I think this should be done via draw call but I think it's okay here too
+		_mCurrentUploadResource = new ResColouredUploadResource();
+		_mCurrentUploadResource->Create();
 
 		//Initialize PSO
 		//TODO will probably want to do this on demand somehow but this will work for now
-		_mRootSig = new RootSignature(_mDevice);
-		_mPSO = new GraphicsPipelineState();
-		_mPSO->SetRootSignature(_mRootSig);
-		_mPSO->SetInputLayout(2, gILColoredDesc);
-		_mPSO->SetPixelShader(g_scoloredPS, sizeof(g_scoloredPS));
-		_mPSO->SetVertexShader(g_scoloredVS, sizeof(g_scoloredVS));
-		_mPSO->SetTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-		_mPSO->Finalize(_mDevice);
+		_mRootSig = new RootSignature(sDevice);
+		_mPSO.SetRootSignature(_mRootSig);
+		_mPSO.SetInputLayout(2, gILColoredDesc);
+		_mPSO.SetPixelShader(g_scoloredPS, sizeof(g_scoloredPS));
+		_mPSO.SetVertexShader(g_scoloredVS, sizeof(g_scoloredVS));
+		_mPSO.SetTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
+		_mPSO.Finalize(sDevice);
 
-		//TODO get command list to init viewport
-		//_mainView = new ViewPort(_init->CommandList().Get(), 0.0f, 0.0f, static_cast<FLOAT>(_init->BufferWidth()), static_cast<FLOAT>(_init->BufferHeight()));
+		//TODO get the shader working with identity matrix. That will show I'm uploading the data to the buffer correctly.
+
 		RE_CATCH_DX
 	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE DirectXCore::AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE type)
+	D3D12_CPU_DESCRIPTOR_HANDLE DirectXCore::AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE type, D3D12_DESCRIPTOR_HEAP_FLAGS flags)
 	{
-		return _mDescriptorAllocators[type].Allocate(_mDevice, 1);
+		return sDescriptorAllocators[type].Allocate(sDevice, 1, flags);
 	}
 
-	void DirectXCore::CreateSwapChain(IDXGIFactory6* factory)
+	ID3D12DescriptorHeap* DirectXCore::GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type)
+	{
+		return sDescriptorAllocators[type].GetCurrentDescriptorHeap();
+	}
+
+	void DirectXCore::CreateSwapChain(IDXGIFactory4* factory)
 	{
 		WindowsWindow* wnd = static_cast<WindowsWindow*>(SubSystemManager::Instance().Wnd()->GetMainWindow());
 
@@ -147,9 +169,14 @@ namespace RE
 		_mCommandListManager->Shutdown();
 
 		delete _mCommandListManager;
+		delete _mCurrentCommandContext;
 		delete _mainView;
-		delete _mPSO;
 		delete _mRootSig;
+	}
+
+	void DirectXCore::PushDrawCall(DrawCall d)
+	{
+		_mDrawCalls.push_back(d);
 	}
 
 	void DirectXCore::SetClearColor(Color color)
@@ -166,8 +193,16 @@ namespace RE
 		_mCurrentCommandContext->SetRootSignature(_mRootSig);
 		_mCurrentCommandContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		_mCurrentCommandContext->SetPipelineState(_mPSO);
-		_mCurrentCommandContext->UploadMeshes(_mDevice, _mGeoManager);
+		_mCurrentCommandContext->UploadMeshes(sDevice, _mGeoManager);
 		_mCurrentCommandContext->End();
+	}
+
+	void DirectXCore::UploadConstantBuffers()
+	{
+		//TODO figure out how to make multiple draw calls. For now just use first one
+		DXDrawCall dc = _mDrawCalls.back();
+		dynamic_cast<ResColouredUploadResource*>(_mCurrentUploadResource)->Upload(dc.GetMVP()/*I4*/);
+		_mDrawCalls.clear();
 	}
 
 	void DirectXCore::SubmitGeometery(GeometryHeap* geo)
@@ -177,12 +212,13 @@ namespace RE
 		std::vector<Mesh*>::iterator i = meshes.begin();
 		for (; i != meshes.end(); i++)
 		{
-			_mGeoManager->Submit(**i);
+			_mGeoManager.Submit(**i);
 		}
 	}
 
 	void DirectXCore::Update()
 	{
+		UploadConstantBuffers();
 		UploadGeometery();
 	}
 
@@ -193,13 +229,15 @@ namespace RE
 		
 		_mCurrentCommandContext->Start();
 		_mCurrentCommandContext->SetRootSignature(_mRootSig);
+		_mCurrentCommandContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 		_mCurrentCommandContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		_mCurrentCommandContext->SetPipelineState(_mPSO);
+		_mCurrentCommandContext->SetDescriptorTable(0, GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->GetGPUDescriptorHandleForHeapStart());
 		_mCurrentCommandContext->TransitionResource(curBackBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET);
 		_mCurrentCommandContext->SetRenderTarget(curBackBuffer.GetDescriptorHandle());
 		_mCurrentCommandContext->SetViewPortAndScissor(0, 0, _mDisplayWidth, _mDisplayHeight);
 		_mCurrentCommandContext->SetVertexBuffers(_mGeoManager, 0);
-		_mCurrentCommandContext->Draw(&curBackBuffer, _mGeoManager->VertexCount());
+		_mCurrentCommandContext->Draw(&curBackBuffer, _mGeoManager.VertexCount());
 		_mCurrentCommandContext->TransitionResource(curBackBuffer, D3D12_RESOURCE_STATE_PRESENT);
 
 		_mCurrentCommandContext->End();

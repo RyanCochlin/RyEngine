@@ -27,4 +27,9 @@ namespace RE
 
 		ThrowIfFailed(device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(), serializedRootSig->GetBufferSize(), IID_PPV_ARGS(&_mRootSig)));
 	}
+
+	RootSignature::~RootSignature()
+	{
+		delete _mRootSig;
+	}
 }

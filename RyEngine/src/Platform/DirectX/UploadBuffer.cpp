@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "UploadBuffer.h"
 #include "MeshGeometry.h"
+#include "DirectXCore.h"
+#include "Core/Math/CoreMath.h"
 
 namespace RE
 {
@@ -10,9 +12,10 @@ namespace RE
 		_mGpuVirtualAddress = D3D12_GPU_VIRTUAL_ADDRESS_NULL;
 	}
 
-	void UploadBuffer::Create(ID3D12Device* device, UINT numElements, UINT elementSize)
+	void UploadBuffer::Create(UINT numElements, UINT elementSize)
 	{
 		UINT size = numElements * elementSize;
+		ID3D12Device* device = DirectXCore::GetDevice();
 
 		HRESULT hr = device->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
@@ -29,6 +32,17 @@ namespace RE
 		}
 
 		_mGpuVirtualAddress = _mResource->GetGPUVirtualAddress();
+	}
+
+	void UploadBuffer::CreateConstaintBufferView(uint32_t offset, uint32_t size, ID3D12Device* device, D3D12_CPU_DESCRIPTOR_HANDLE cbvDescriptorHandle)
+	{
+		size = Math::Align(size, 16);
+
+		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+		cbvDesc.BufferLocation = _mGpuVirtualAddress + (size_t)offset;
+		cbvDesc.SizeInBytes = size;
+
+		device->CreateConstantBufferView(&cbvDesc, cbvDescriptorHandle);
 	}
 
 	void* UploadBuffer::Map()

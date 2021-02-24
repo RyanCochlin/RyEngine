@@ -24,6 +24,9 @@ namespace RE
 
 		_mGraphicsSystem = new GraphicsSystem();
 		Add(_mGraphicsSystem);
+
+		_mCameraManager = new CameraManager();
+		Add(_mCameraManager);
 	}
 
 	void SubSystemManager::Release()
@@ -38,6 +41,7 @@ namespace RE
 		//delete mLog;
 		delete _mWindowSystem;
 		delete _mGraphicsSystem;
+		delete _mCameraManager;
 	}
 
 	void SubSystemManager::SpinUpSubSystems()

@@ -2,7 +2,7 @@
 #include <vector>
 
 #include "Vertex.h"
-#include "CoreMath.h"
+#include "Math/Vector.h"
 #include "Color.h"
 
 namespace RE

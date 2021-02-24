@@ -43,7 +43,8 @@ project "RyEngine"
 		defines
 		{
 			"RE_DLL_BUILD",
-			"RE_WINDOWS"
+			"RE_WINDOWS",
+			"_USE_MATH_DEFINES"
 		}
 
 		links

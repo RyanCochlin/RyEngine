@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "GraphicsSystem.h"
+#include "SubSystemManager.h"
+#include "Camera.h"
 #include "Platform/DirectX/DirectxAPI.h"
 
 namespace RE
@@ -28,6 +30,8 @@ namespace RE
 	{
 		_mGraphicsAPI->Release();
 		delete _mGraphicsAPI;
+
+		delete _mGeo;
 	}
 
 	void GraphicsSystem::OnUpdate()
@@ -37,6 +41,17 @@ namespace RE
 			_mGraphicsAPI->SetGeometry(_mGeo);
 			_mNewMesh = false;
 		}
+
+		//TODO for now 1 draw call per camera. Probably want to reivew this later
+		std::vector<Camera*> cams = SubSystemManager::Instance().Cams()->GetCameras();
+		for (std::vector<Camera*>::iterator i = cams.begin(); i != cams.end(); i++)
+		{
+			Camera* cam = *i;
+			DrawCall dc;
+			dc.SetMVP(cam->GetModelView());
+			_mGraphicsAPI->PushDrawCall(dc);
+		}
+
 		_mGraphicsAPI->OnUpdate();
 	}
 

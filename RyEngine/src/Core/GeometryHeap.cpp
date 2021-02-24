@@ -8,8 +8,16 @@ namespace RE
 {
 	GeometryHeap::GeometryHeap() :
 		_mMeshHeap{}
-	{
+	{}
 
+	GeometryHeap::~GeometryHeap()
+	{
+		std::vector<Mesh*>::iterator i = _mMeshHeap.begin();
+		for (; i != _mMeshHeap.end(); i++)
+		{
+			delete *i;
+		}
+		_mMeshHeap.clear();
 	}
 
 	void GeometryHeap::PushMesh(Mesh* mesh)

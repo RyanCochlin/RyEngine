@@ -30,7 +30,6 @@ namespace RE
 		D3D12_COMMAND_LIST_TYPE _mType;
 		HANDLE _mFenceEventHandle;
 		CommandAllocatorPool _mAllocatorPool;
-		uint64_t _mNextFenceValue;
 		uint64_t _mCurrentFenceValue;
 	};
 

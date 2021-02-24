@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CoreMath.h"
+#include "Math/Vector.h"
 
 #define RE_WHITE ::RE::Color{1.0f, 1.0f, 1.0f, 1.0f}
 #define RE_BLACK ::RE::Color{0.0f, 0.0f, 0.0f, 1.0f}

@@ -4,6 +4,7 @@
 #include "SubSystem.h"
 #include "Window/WindowSystem.h"
 #include "GraphicsSystem.h"
+#include "CameraManager.h"
 
 #include <vector>
 
@@ -28,6 +29,11 @@ namespace RE
 			return _mGraphicsSystem;
 		}
 
+		CameraManager* Cams()
+		{
+			return _mCameraManager;
+		}
+
 		void SpinUpSubSystems();
 		void RegisterSubSystems();
 		void Release();
@@ -39,8 +45,10 @@ namespace RE
 		std::vector<SubSystem*> _mAllSubSystems;
 
 		//Refs to subsystems
+		//TODO do these need to be pointers?
 		WindowSystem* _mWindowSystem;
 		GraphicsSystem* _mGraphicsSystem;
+		CameraManager* _mCameraManager;
 		Log* _mLog;
 		
 		void Register(SubSystem* s);
@@ -51,3 +59,4 @@ namespace RE
 
 #define RE_GRAPHICS ::RE::SubSystemManager::Instance().GFX()
 #define RE_WINDOW ::RE::SubSystemManager::Instance().Wnd()
+#define RE_CAMS ::RE::SubSystemManager::Instance().Cams()

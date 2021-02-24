@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "Color.h"
 #include "GeometryHeap.h"
+#include "Graphics/DrawCall.h"
 #include "Platform/DirectX/DirectXCore.h"
 
 #ifndef __ry_graphics_api__

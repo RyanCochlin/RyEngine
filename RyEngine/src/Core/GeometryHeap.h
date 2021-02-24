@@ -10,6 +10,7 @@ namespace RE
 	{
 	public:
 		GeometryHeap();
+		~GeometryHeap();
 
 		void PushMesh(Mesh* mesh);
 		void RemoveMesh(Mesh* mesh);
