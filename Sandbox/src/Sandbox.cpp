@@ -3,6 +3,7 @@
 #include "Core/Mesh.h"
 #include "Core/Math/Vector.h"
 #include "Core/Color.h"
+#include "Core/Math/CoreMath.h"
 
 #include <vector>
 
@@ -21,22 +22,29 @@ private:
 	RE::Triangle* _mTriange3;
 	RE::Mesh* _mMesh;
 	RE::OrthographicCamera* _mCamera;
+	RE::PerspectiveCamera* _mPerCamera;
 };
 
 Sandbox::~Sandbox()
 {
 	delete _mMesh;
-	delete _mCamera;
+	delete _mPerCamera;
 }
 
 void Sandbox::OnStart()
 {
 	RE_GRAPHICS->BackgroundColor(RE_CYAN);
 
-	_mCamera = new RE::OrthographicCamera();
-	_mCamera->SetLens(-960, 960, 540, -540, -1, 1);
-	_mCamera->LookAt({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f }, {0.0f, 1.0f, 0.0f});
-	_mCamera->SetPosition({ 300.0f, 0.0f, 0.0f });
+	//_mCamera = new RE::OrthographicCamera();
+	//_mCamera->SetLens(1920, 1080, -1, 1);
+	//_mCamera->LookAt({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f }, {0.0f, 1.0f, 0.0f});
+	//_mCamera->SetPosition({ 300.0f, 200.0f, 0.0f });
+
+	_mPerCamera = new RE::PerspectiveCamera();
+	_mPerCamera->SetLens(RE::Math::degToRad(45.0f), 1.0f, 1, 100);
+	_mPerCamera->LookAt({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 1.0f, 0.0f });
+	//_mPerCamera->LookAt({ 0.0f, 0.0f, 0.0f }, { sinf(RE::Math::degToRad(45.0f)), 0.0f, -1.0f * cosf(RE::Math::degToRad(45.0f)) }, { 0.0f, 1.0f, 0.0f });
+	_mPerCamera->SetPosition({ 0.0f, 0.0f, 0.0f });
 
 	//RE::Vector3 p11{ 0.0f, 0.5f, 0.0f };
 	//RE::Vector3 p21{ 0.25f, 0.25f, 0.0f };
@@ -50,9 +58,9 @@ void Sandbox::OnStart()
 	//RE::Vector3 p23{ 0.0f, 0.0f, 0.0f };
 	//RE::Vector3 p33{ -0.5f, 0.0f, 0.0f };
 
-	RE::Vector3 p11{ 0.0f, 100.0f, 0.0f };
-	RE::Vector3 p21{ 400.0f, -50.0f, 0.0f };
-	RE::Vector3 p31{ -400.0f, -50.0f, 0.0f };
+	RE::Vector3 p11{ 0.0f, 10.0f, 20.0f };
+	RE::Vector3 p21{ 10.0f, 0.0f, 20.0f };
+	RE::Vector3 p31{ -10.0f, 0.0f, 20.0f };
 
 	/*RE::Vector3 p12{ 2.5f, 2.5f, 0.0f };
 	RE::Vector3 p22{ 5.0f, 0.0f, 0.0f };

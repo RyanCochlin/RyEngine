@@ -36,8 +36,6 @@ namespace RE
 		Vector3 _mLookAt;
 		float _mNear;
 		float _mFar;
-		float _mNearHeight;
-		float _mFarHeight;
 		float _mAspect;
 		bool _mDirty;
 	};
@@ -49,7 +47,7 @@ namespace RE
 		OrthographicCamera();
 		virtual ~OrthographicCamera();
 
-		void SetLens(float leftPlane, float rightPlane, float topPlane, float bottomPlane, float nearPlane, float farPlane);
+		void SetLens(float width, float height, float nearPlane, float farPlane);
 
 		virtual void Update() override;
 
@@ -58,21 +56,28 @@ namespace RE
 		virtual void CalculateProj() override;
 
 	private:
-		float _mLeft;
-		float _mRight;
-		float _mTop;
-		float _mBottom;
+		float _mWidth;
+		float _mHeight;
 	};
 
 	//------------------------------------------------//
-	class PerspectiveCamera : public Camera
+	class RE_API PerspectiveCamera : public Camera
 	{
 	public:
 		PerspectiveCamera();
 		virtual ~PerspectiveCamera();
 
-		//void SetLens(float fovY, float aspect, float zNear, float zFar) = 0;
+		void SetLens(float fovY, float aspect, float zNear, float zFar);
 
 		virtual void Update() override;
+
+	protected:
+		virtual void CalculateView() override;
+		virtual void CalculateProj() override;
+
+	private:
+		float _mFovY;
+		float _mNearHeight;
+		float _mFarHeight;
 	};
 }

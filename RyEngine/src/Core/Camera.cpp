@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <math.h>
 #include "Camera.h"
 #include "SubSystemManager.h"
 
@@ -12,8 +13,6 @@ namespace RE
 		_mLookAt(),
 		_mNear(0.0f),
 		_mFar(0.0f),
-		_mNearHeight(0.0f),
-		_mFarHeight(0.0f),
 		_mAspect(0.0f),
 		_mDirty(false)
 	{
@@ -63,11 +62,8 @@ namespace RE
 
 	//----------------------------------------------------------------------------------------//
 	OrthographicCamera::OrthographicCamera() :
-		Camera(),
-		_mLeft(0),
-		_mRight(0),
-		_mTop(0),
-		_mBottom(0)
+		_mWidth(0),
+		_mHeight(0)
 	{}
 
 	OrthographicCamera::~OrthographicCamera()
@@ -75,13 +71,11 @@ namespace RE
 		Camera::~Camera();
 	}
 
-	void OrthographicCamera::SetLens(float leftPlane, float rightPlane, float topPlane, float bottomPlane, float nearPlane, float farPlane)
+	void OrthographicCamera::SetLens(float width, float height, float nearPlane, float farPlane)
 	{
 		_mDirty = true;
-		_mLeft = leftPlane;
-		_mRight = rightPlane;
-		_mTop = topPlane;
-		_mBottom = bottomPlane;
+		_mWidth = width;
+		_mHeight = height;
 		_mNear = nearPlane;
 		_mFar = farPlane;
 	}
@@ -94,7 +88,7 @@ namespace RE
 		CalculateProj();
 		CalculateView();
 
-		_mViewProj = _mView * _mProj;
+		_mViewProj = _mProj * _mView;
 		_mDirty = false;
 	}
 
@@ -104,39 +98,92 @@ namespace RE
 		Vector3 y = _mUp;
 		Vector3 x = cross(z, y);
 		_mView = Matrix4{
-			Vector4{x.x, x.y, x.z, 0.0f/*-_mPos.x*/},
-			Vector4{y.x, y.y, y.z, 0.0f/*-_mPos.y*/},
-			Vector4{z.x, z.y, z.z, 0.0f/*-_mPos.z*/},
-			Vector4{-_mPos.x, -_mPos.y, -_mPos.z, 1.0}
-			//Vector4{0.0f, 0.0f, 0.0f, 1.0}
+			Vector4{x.x, x.y, x.z, -_mPos.x},
+			Vector4{y.x, y.y, y.z, -_mPos.y},
+			Vector4{z.x, z.y, z.z, -_mPos.z},
+			Vector4{0.0f, 0.0f, 0.0f, 1.0}
 		};
 	}
 
 	void OrthographicCamera::CalculateProj()
 	{
-		float wx = (_mRight + _mLeft) / (_mRight - _mLeft);
-		float wy = (_mTop + _mBottom) / (_mTop - _mBottom);
+		float right = _mWidth / 2.0f;
+		float left = -right;
+		float top = _mHeight / 2.0f;
+		float bottom = -top;
+		float wx = (right + left) / (right - left);
+		float wy = (top + bottom) / (top - bottom);
 		float wz = (_mFar + _mNear) / (_mFar - _mNear);
 		wx *= (wx == 0) ? 1.0 : -1.0;
 		wy *= (wy == 0) ? 1.0 : -1.0;
 		wz *= (wz == 0) ? 1.0 : -1.0;
 
-		Vector4 x{ 2.0f / (_mRight - _mLeft), 0.0f, 0.0f, 0.0f };
-		Vector4 y{ 0.0f, 2.0f / (_mTop - _mBottom), 0.0f, 0.0f };
-		Vector4 z{ 0.0f, 0.0f, 2.0f / (_mFar - _mNear), 0.0f };
-		Vector4 w{ wx, wy, wz, 1.0f };
+		Vector4 x{ 2.0f / (right - left), 0.0f, 0.0f, wx };
+		Vector4 y{ 0.0f, 2.0f / (top - bottom), 0.0f, wy };
+		Vector4 z{ 0.0f, 0.0f, 2.0f / (_mFar - _mNear), wz };
+		Vector4 w{ 0.0f, 0.0f, 0.0f, 1.0f };
 		_mProj = Matrix4(x, y, z, w);
 	}
 
-	//perspective set lens
-	/*_mDirty = true;
-	_mAspect = aspect;
-	_mNear = zNear;
-	_mFar = zFar;
+	//----------------------------------------------------------------------------------------//
+	PerspectiveCamera::PerspectiveCamera() :
+		_mNearHeight(0.0f),
+		_mFarHeight(0.0f)
+	{}
 
-	float width = _mFarHeight * _mAspect;
-	float halfWidth = width * 0.5f;
-	_mLeft = _mPos.x - halfWidth;
-	_mRight = _mPos.x + halfWidth;
-	_mTop =*/
+	PerspectiveCamera::~PerspectiveCamera()
+	{
+		Camera::~Camera();
+	}
+
+	void PerspectiveCamera::Update()
+	{
+		if (!_mDirty)
+			return;
+
+		CalculateProj();
+		CalculateView();
+
+		_mViewProj = _mProj * _mView;
+		_mDirty = false;
+	}
+
+	void PerspectiveCamera::CalculateView()
+	{
+		Vector3 z = _mLookAt;
+		Vector3 y = _mUp;
+		Vector3 x = cross(z, y);
+		_mView = Matrix4{
+			Vector4{x.x, x.y, x.z, -_mPos.x},
+			Vector4{y.x, y.y, y.z, -_mPos.y},
+			Vector4{z.x, z.y, z.z, -_mPos.z},
+			Vector4{0.0f, 0.0f, 0.0f, 1.0}
+		};
+	}
+	
+	void PerspectiveCamera::CalculateProj()
+	{
+		float y = 1.0f * tanf(_mFovY * 0.5f);
+		float x = y * _mAspect;
+		float q1 = _mFar / (_mNear - _mFar);
+		float q2 = q1 * _mNear;
+
+		_mProj = Matrix4(
+			Vector4{ x, 0.0f, 0.0f, 0.0f }, 
+			Vector4{ 0.0f, y, 0.0f, 0.0f }, 
+			Vector4{ 0.0f, 0.0f, q1, -1.0f }, 
+			Vector4{ 0.0f, 0.0f, q2, 0.0f }
+		);
+	}
+
+	void PerspectiveCamera::SetLens(float fovY, float aspect, float zNear, float zFar)
+	{
+		//perspective set lens
+		_mDirty = true;
+		_mAspect = aspect;
+		_mFovY = fovY;
+		_mNear = zNear;
+		_mFar = zFar;
+	}
+
 }

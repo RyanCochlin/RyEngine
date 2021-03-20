@@ -116,7 +116,8 @@ project "Sandbox"
 
 		defines
 		{
-			"RE_WINDOWS"
+			"RE_WINDOWS",
+			"_USE_MATH_DEFINES"
 		}
 
 	filter "configurations:Debug"
