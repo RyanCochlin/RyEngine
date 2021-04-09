@@ -164,7 +164,7 @@ namespace RE
 	void PerspectiveCamera::CalculateProj()
 	{
 		float y = 1.0f * tanf(_mFovY * 0.5f);
-		float x = y * _mAspect;
+		float x = y * (1.0f / _mAspect);
 		float q1 = _mFar / (_mNear - _mFar);
 		float q2 = q1 * _mNear;
 

@@ -7,6 +7,9 @@
 
 #include <vector>
 
+//TODO just a switch for camera type for now for testing
+#define ORTHO 0
+
 class Sandbox : public RE::Application
 {
 public:
@@ -28,23 +31,39 @@ private:
 Sandbox::~Sandbox()
 {
 	delete _mMesh;
+#if ORTHO
+	delete _mCamera;
+#else
 	delete _mPerCamera;
+#endif
 }
 
 void Sandbox::OnStart()
 {
 	RE_GRAPHICS->BackgroundColor(RE_CYAN);
 
-	//_mCamera = new RE::OrthographicCamera();
-	//_mCamera->SetLens(1920, 1080, -1, 1);
-	//_mCamera->LookAt({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f }, {0.0f, 1.0f, 0.0f});
-	//_mCamera->SetPosition({ 300.0f, 200.0f, 0.0f });
+#if ORTHO
+	_mCamera = new RE::OrthographicCamera();
+	_mCamera->SetLens(1920, 1080, -1, 1);
+	_mCamera->LookAt({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f }, {0.0f, 1.0f, 0.0f});
+	_mCamera->SetPosition({ 300.0f, 200.0f, 0.0f });
+
+	RE::Vector3 p11{ 0.0f, 100.0f, 0.0f };
+	RE::Vector3 p21{ 100.0f, 0.0f, 0.0f };
+	RE::Vector3 p31{ -100.0f, 0.0f, 0.0f };
+#else
 
 	_mPerCamera = new RE::PerspectiveCamera();
-	_mPerCamera->SetLens(RE::Math::degToRad(45.0f), 1.0f, 1, 100);
+	_mPerCamera->SetLens(RE::Math::degToRad(45.0f), (1920.0f / 1080.0f)/*1.0f*/, 1, 100);
 	_mPerCamera->LookAt({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 1.0f, 0.0f });
 	//_mPerCamera->LookAt({ 0.0f, 0.0f, 0.0f }, { sinf(RE::Math::degToRad(45.0f)), 0.0f, -1.0f * cosf(RE::Math::degToRad(45.0f)) }, { 0.0f, 1.0f, 0.0f });
 	_mPerCamera->SetPosition({ 0.0f, 0.0f, 0.0f });
+
+	RE::Vector3 p11{ 0.0f, 10.0f, 20.0f };
+	RE::Vector3 p21{ 10.0f, 0.0f, 20.0f };
+	RE::Vector3 p31{ -10.0f, 0.0f, 20.0f };
+
+#endif
 
 	//RE::Vector3 p11{ 0.0f, 0.5f, 0.0f };
 	//RE::Vector3 p21{ 0.25f, 0.25f, 0.0f };
@@ -58,9 +77,9 @@ void Sandbox::OnStart()
 	//RE::Vector3 p23{ 0.0f, 0.0f, 0.0f };
 	//RE::Vector3 p33{ -0.5f, 0.0f, 0.0f };
 
-	RE::Vector3 p11{ 0.0f, 10.0f, 20.0f };
-	RE::Vector3 p21{ 10.0f, 0.0f, 20.0f };
-	RE::Vector3 p31{ -10.0f, 0.0f, 20.0f };
+	//RE::Vector3 p11{ 0.0f, 10.0f, 20.0f };
+	//RE::Vector3 p21{ 10.0f, 0.0f, 20.0f };
+	//RE::Vector3 p31{ -10.0f, 0.0f, 20.0f };
 
 	/*RE::Vector3 p12{ 2.5f, 2.5f, 0.0f };
 	RE::Vector3 p22{ 5.0f, 0.0f, 0.0f };

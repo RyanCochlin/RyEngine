@@ -101,7 +101,6 @@ namespace RE
 		for (auto i = verts.begin(); i != verts.end(); i++)
 		{
 			Vector3 pos = *i;
-			pos.y *= aspect;
 			Vertex v{ pos, c };
 			_mVerticies.push_back( v );
 		}
