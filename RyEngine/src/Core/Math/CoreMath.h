@@ -4,6 +4,8 @@
 
 namespace RE::Math
 {
+#define RE_INDEX uint16_t
+
 	inline float degToRad( float deg )
 	{
 		return (deg * M_PI) / 180.0f;

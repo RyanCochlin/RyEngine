@@ -4,14 +4,14 @@
 
 #include "Log.h"
 #include "Exception/RyException.h"
-#include "Exception/RyDXException.h"
+#include "Platform/DirectX/ErrorHandling/DXException.h"
 #include "Utils.h"
 
 #ifndef ThrowIfFailed
 #define ThrowIfFailed(x) \
 { \
 	HRESULT hr__ = (x); \
-	if(FAILED(hr__)) { throw RE::RyDXException(hr__, __FILE__, __LINE__); } \
+	if(FAILED(hr__)) { throw RE::DXException(hr__, __FILE__, __LINE__); } \
 }
 #endif
 

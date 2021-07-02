@@ -23,6 +23,8 @@ private:
 	RE::Triangle* _mTriange1;
 	RE::Triangle* _mTriange2;
 	RE::Triangle* _mTriange3;
+	RE::Square* _mSquare;
+	RE::Cube* _mCube;
 	RE::Mesh* _mMesh;
 	RE::OrthographicCamera* _mCamera;
 	RE::PerspectiveCamera* _mPerCamera;
@@ -30,7 +32,6 @@ private:
 
 Sandbox::~Sandbox()
 {
-	delete _mMesh;
 #if ORTHO
 	delete _mCamera;
 #else
@@ -54,45 +55,34 @@ void Sandbox::OnStart()
 #else
 
 	_mPerCamera = new RE::PerspectiveCamera();
-	_mPerCamera->SetLens(RE::Math::degToRad(45.0f), (1920.0f / 1080.0f)/*1.0f*/, 1, 100);
+	_mPerCamera->SetLens(RE::Math::degToRad(90.0f), (1920.0f / 1080.0f), 1, 100);
 	_mPerCamera->LookAt({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 1.0f, 0.0f });
 	//_mPerCamera->LookAt({ 0.0f, 0.0f, 0.0f }, { sinf(RE::Math::degToRad(45.0f)), 0.0f, -1.0f * cosf(RE::Math::degToRad(45.0f)) }, { 0.0f, 1.0f, 0.0f });
 	_mPerCamera->SetPosition({ 0.0f, 0.0f, 0.0f });
-
-	RE::Vector3 p11{ 0.0f, 10.0f, 20.0f };
-	RE::Vector3 p21{ 10.0f, 0.0f, 20.0f };
-	RE::Vector3 p31{ -10.0f, 0.0f, 20.0f };
-
-#endif
-
-	//RE::Vector3 p11{ 0.0f, 0.5f, 0.0f };
-	//RE::Vector3 p21{ 0.25f, 0.25f, 0.0f };
-	//RE::Vector3 p31{ -0.25f, 0.25f, 0.0f };
-	//
-	//RE::Vector3 p12{ 0.25f, 0.25f, 0.0f };
-	//RE::Vector3 p22{ 0.5f, 0.0f, 0.0f };
-	//RE::Vector3 p32{ 0.0f, 0.0f, 0.0f };
-	//
-	//RE::Vector3 p13{ -0.25f, 0.25f, 0.0f };
-	//RE::Vector3 p23{ 0.0f, 0.0f, 0.0f };
-	//RE::Vector3 p33{ -0.5f, 0.0f, 0.0f };
 
 	//RE::Vector3 p11{ 0.0f, 10.0f, 20.0f };
 	//RE::Vector3 p21{ 10.0f, 0.0f, 20.0f };
 	//RE::Vector3 p31{ -10.0f, 0.0f, 20.0f };
 
-	/*RE::Vector3 p12{ 2.5f, 2.5f, 0.0f };
-	RE::Vector3 p22{ 5.0f, 0.0f, 0.0f };
-	RE::Vector3 p32{ 0.0f, 0.0f, 0.0f };
+	RE::Vector3 p11{ 10.0f, 10.0f, 20.0f };
+	RE::Vector3 p21{ 10.0f, 0.0f, 20.0f };
+	RE::Vector3 p31{ -10.0f, 0.0f, 20.0f };
 
-	RE::Vector3 p13{ -2.5f, 2.5f, 0.0f };
-	RE::Vector3 p23{ 0.0f, 0.0f, 0.0f };
-	RE::Vector3 p33{ -5.0f, 0.0f, 0.0f };*/
+	//RE::Vector3 p11{ 0.0f, 10.0f, 20.0f };
+	//RE::Vector3 p21{ 10.0f, 0.0f, 20.0f };
+	//RE::Vector3 p31{ -10.0f, 0.0f, 20.0f };
 
-	std::vector<RE::Vector3> v;
+#endif
+
+	/*std::vector<RE::Vector3> v;
 	v.push_back(p11);
 	v.push_back(p21);
 	v.push_back(p31);
+	std::vector<RE_INDEX> i;
+	i.push_back(0);
+	i.push_back(1);
+	i.push_back(2);*/
+
 	//v.push_back(p12);
 	//v.push_back(p22);
 	//v.push_back(p32);
@@ -100,17 +90,25 @@ void Sandbox::OnStart()
 	//v.push_back(p23);
 	//v.push_back(p33);
 
-	_mMesh = new RE::Mesh(v);
-	_mMesh->SetColor(RE_YELLOW);
-	_mMesh->Draw();
+	//_mMesh = new RE::Mesh(v, i);
+	//_mMesh->SetColor(RE_YELLOW);
+	//_mMesh->Draw();
 
-	/*_mTriange1 = new RE::Triangle(p11, p21, p31);
-	_mTriange1->SetColor(RE_YELLOW);
-	_mTriange1->Draw();
+	//_mSquare = new RE::Square(80, 40, { 0.0f, 0.0f, 20.0f });
+	//_mSquare->SetColor(RE_RED);
+	//_mSquare->Draw();
 
-	_mTriange2 = new RE::Triangle(p12, p22, p32);
-	_mTriange2->SetColor(RE_YELLOW);
-	_mTriange2->Draw();*/
+	_mCube = new RE::Cube(20, {20.0f, -15.0f, 40.0f});
+	_mCube->SetColor(RE_RED);
+	_mCube->Draw();
+
+	//_mTriange1 = new RE::Triangle(p11, p21, p31);
+	//_mTriange1->SetColor(RE_YELLOW);
+	//_mTriange1->Draw();
+
+	//_mTriange2 = new RE::Triangle(p11, p21, p31);
+	//_mTriange2->SetColor(RE_YELLOW);
+	//_mTriange2->Draw();
 }
 
 void Sandbox::OnUpdate()

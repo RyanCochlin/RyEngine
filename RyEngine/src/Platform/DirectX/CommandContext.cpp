@@ -134,13 +134,31 @@ namespace RE
 		}
 	}
 
-	void CommandContext::Draw(ColorBuffer* buffer, UINT vertexCount)
+	void CommandContext::SetIndexBuffers(GeometeryManager& gm)
+	{
+		if (gm.MeshCount() > 0)
+		{
+			UINT count = gm.MeshCount();
+			std::vector<D3D12_INDEX_BUFFER_VIEW> ibView;
+
+			for (int i = 0; i < count; i++)
+			{
+				D3D12_INDEX_BUFFER_VIEW vbv = gm.GetMesh(i)->IndexBufferView();
+				ibView.push_back(vbv);
+			}
+
+			_mCommandList->IASetIndexBuffer(ibView.data());
+		}
+	}
+
+	void CommandContext::Draw(ColorBuffer* buffer, UINT indexCount, UINT vertexCount)
 	{
 		Color clearColor = buffer->GetClearColor();;
 		D3D12_CPU_DESCRIPTOR_HANDLE rtv = buffer->GetDescriptorHandle();
 
-		_mCommandList->ClearRenderTargetView(rtv, clearColor.rbga, 0, nullptr);
-		_mCommandList->DrawInstanced(vertexCount, 1, 0, 0);
+		_mCommandList->ClearRenderTargetView(rtv, clearColor.rgba, 0, nullptr);
+		//_mCommandList->DrawInstanced(vertexCount, 1, 0, 0);
+		_mCommandList->DrawIndexedInstanced(indexCount, vertexCount, 0, 0, 0);
 	}
 
 	void CommandContext::UploadMeshes(ID3D12Device* device, GeometeryManager& gm)

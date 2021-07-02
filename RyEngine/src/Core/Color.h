@@ -19,16 +19,16 @@ namespace RE
 		{
 			FLOAT r, g, b, a;
 		} c;
-		FLOAT rbga[4];
+		FLOAT rgba[4];
 	};
 
 	inline Vector4 ColorToVector(Color c)
 	{
 		Vector4 ret{};
-		ret.x = c.rbga[0];
-		ret.y = c.rbga[1];
-		ret.z = c.rbga[2];
-		ret.w = c.rbga[3];
+		ret.x = c.rgba[0];
+		ret.y = c.rgba[1];
+		ret.z = c.rgba[2];
+		ret.w = c.rgba[3];
 
 		return ret;
 	}

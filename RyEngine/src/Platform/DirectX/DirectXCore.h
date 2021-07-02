@@ -73,6 +73,8 @@ namespace RE
 		void UploadConstantBuffers();
 		void SubmitGeometery(GeometryHeap* geo);
 
+		//TODO remove this when I have gotten uploading working properly 
+		bool _mUploaded;
 		//TODO: this is just test stuff to draw a triangle
 		void CreateTriangle();
 	};

@@ -29,8 +29,9 @@ namespace RE
 		void SetScissor(UINT left, UINT right, UINT top, UINT bottom);
 		void SetScissor(D3D12_RECT rect);
 		void SetVertexBuffers(GeometeryManager& gm, UINT slot);
+		void SetIndexBuffers(GeometeryManager& gm);
 		void SetDescriptorHeaps();
-		void Draw(ColorBuffer* rtv, UINT vertexCount);
+		void Draw(ColorBuffer* rtv, UINT indexCount, UINT vertexCount);
 		void UploadMeshes(ID3D12Device* device, GeometeryManager& gm);
 		void UploadConstantBuffers(ID3D12Device* device);
 		void End();

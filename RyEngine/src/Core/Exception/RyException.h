@@ -5,7 +5,6 @@
 
 #define RE_TRY try{
 #define RE_CATCH } catch(RE::RyException e) { RE_CORE_ERROR(e.ToString()); }
-#define RE_CATCH_DX } catch(RE::RyDXException e) { RE_CORE_ERROR(e.ToString()); }
 
 namespace RE
 {
