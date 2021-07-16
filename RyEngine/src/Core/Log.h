@@ -13,7 +13,13 @@ namespace RE
 	class RE_API Log : public SubSystem
 	{
 	public:
-		RE_SUBSYSTEM_OVERRIDE
+		RE_DELCARE_SUBSYSTEM(LoggingSystem)
+
+		void OnRegister() override;
+		void OnStart() override;
+		void OnUpdate() override;
+		void OnRender() override;
+		void Release() override;
 
 		inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return sCoreLogger; }
 		inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return sClientLogger; }

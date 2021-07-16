@@ -92,7 +92,7 @@ namespace RE
 			}
 
 			//Set width and height from window system
-			WindowDimensions wd = SubSystemManager::Instance().Wnd()->GetMainWindow()->GetDimensions();
+			WindowDimensions wd = SubSystemManager::Instance().GetSubSystem<WindowSystem>()->GetMainWindow()->GetDimensions();
 			_mDisplayWidth = wd.width;
 			_mDisplayHeight = wd.height;
 
@@ -146,7 +146,7 @@ namespace RE
 
 	void DirectXCore::CreateSwapChain(IDXGIFactory4* factory)
 	{
-		WindowsWindow* wnd = static_cast<WindowsWindow*>(SubSystemManager::Instance().Wnd()->GetMainWindow());
+		WindowsWindow* wnd = static_cast<WindowsWindow*>(SubSystemManager::Instance().GetSubSystem<WindowSystem>()->GetMainWindow());
 
 		DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 		swapChainDesc.BufferDesc.Width = _mDisplayWidth;
@@ -262,7 +262,7 @@ namespace RE
 
 		_mCurrentCommandContext->End();
 
-		ThrowIfFailed(_mSwapChain->Present(0, 0));
+		ThrowIfFailed(_mSwapChain->Present(1, 0));
 
 		_mCurrentBuffer = (_mCurrentBuffer + 1) % SWAP_CHAIN_BUFFER_COUNT;
 

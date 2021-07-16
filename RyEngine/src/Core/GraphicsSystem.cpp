@@ -43,7 +43,7 @@ namespace RE
 		}
 
 		//TODO for now 1 draw call per camera. Probably want to reivew this later
-		std::vector<Camera*> cams = SubSystemManager::Instance().Cams()->GetCameras();
+		std::vector<Camera*> cams = SubSystemManager::Instance().GetSubSystem<CameraManager>()->GetCameras();
 		for (std::vector<Camera*>::iterator i = cams.begin(); i != cams.end(); i++)
 		{
 			Camera* cam = *i;

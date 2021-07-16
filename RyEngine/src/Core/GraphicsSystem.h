@@ -34,12 +34,18 @@ namespace RE
 	class RE_API GraphicsSystem : public SubSystem
 	{
 	public:
-		RE_SUBSYSTEM_OVERRIDE
+		RE_DELCARE_SUBSYSTEM(GraphicsSystem)
 
 		IGraphicsAPI* GraphicsAPI();
 		void AddMeshForDraw(Mesh* mesh);
 		void RemoveMesh(Mesh* mesh);
 		void BackgroundColor(Color color);
+
+		void OnRegister() override;
+		void OnStart() override;
+		void OnUpdate() override;
+		void OnRender() override;
+		void Release() override;
 
 	private:
 		IGraphicsAPI* _mGraphicsAPI;

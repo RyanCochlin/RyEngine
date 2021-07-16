@@ -11,11 +11,18 @@ namespace RE
 		CameraManager();
 		~CameraManager();
 
+		RE_DELCARE_SUBSYSTEM(CameraSystem)
+
 		void AddCamera(Camera* cam);
 		void RemoveCamera(Camera* cam);
 		std::vector<Camera*> GetCameras() const;
 
-		RE_SUBSYSTEM_OVERRIDE
+		void OnRegister() override;
+		void OnStart() override;
+		void OnUpdate() override;
+		void OnRender() override;
+		void Release() override;
+
 
 	private:
 		std::vector<Camera*> _mCameras;

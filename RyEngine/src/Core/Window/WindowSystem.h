@@ -22,10 +22,16 @@ namespace RE
 	class WindowSystem : public SubSystem
 	{
 	public:
-		RE_SUBSYSTEM_OVERRIDE
-		
+		RE_DELCARE_SUBSYSTEM(WindowSystem)
+
 		Window* GetMainWindow();
 		FLOAT GetMainWindowAspect();
+
+		void OnRegister() override;
+		void OnStart() override;
+		void OnUpdate() override;
+		void OnRender() override;
+		void Release() override;
 
 	private:
 		Window* _mMainWin = NULL;

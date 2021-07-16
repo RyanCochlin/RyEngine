@@ -10,10 +10,10 @@ namespace RE
 	class Window
 	{
 	public:
+		Window() = default;
 		virtual ~Window();
-
 		virtual void Release() = 0;
-
+		virtual bool ProcessEvents() = 0;
 		WindowDimensions GetDimensions();
 		FLOAT GetAspect();
 

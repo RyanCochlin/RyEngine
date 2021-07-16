@@ -16,7 +16,7 @@ namespace RE
 		_mAspect(0.0f),
 		_mDirty(false)
 	{
-		SubSystemManager::Instance().Cams()->AddCamera(this);
+		SubSystemManager::Instance().GetSubSystem<CameraManager>()->AddCamera(this);
 	}
 
 	Vector3 Camera::GetPosition() const

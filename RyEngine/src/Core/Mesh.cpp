@@ -86,6 +86,6 @@ namespace RE
 
 	void Mesh::Draw()
 	{
-		SubSystemManager::Instance().GFX()->AddMeshForDraw(this);
+		SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->AddMeshForDraw(this);
 	}
 }

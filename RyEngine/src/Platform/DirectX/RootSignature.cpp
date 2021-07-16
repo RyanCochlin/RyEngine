@@ -30,6 +30,7 @@ namespace RE
 
 	RootSignature::~RootSignature()
 	{
-		delete _mRootSig;
+		//TODO look into this it throws an exception 
+		//delete _mRootSig;
 	}
 }

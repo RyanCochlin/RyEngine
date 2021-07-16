@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "Application.h"
 #include "Core/SubSystemManager.h"
+#include "Window/Window.h"
 
 namespace RE
 {
-	Application::Application()
+	Application::Application() :
+		_mMainWindow(0)
 	{
 	}
 
@@ -14,8 +16,10 @@ namespace RE
 
 	void Application::Start()
 	{
-		RE::SubSystemManager::Instance().RegisterSubSystems();
-		RE::SubSystemManager::Instance().SpinUpSubSystems();
+		SubSystemManager::Instance().RegisterSubSystems();
+		SubSystemManager::Instance().SpinUpSubSystems();
+
+		_mMainWindow = SubSystemManager::Instance().GetSubSystem<WindowSystem>()->GetMainWindow();
 
 		OnStart();
 	}
@@ -24,62 +28,23 @@ namespace RE
 	{
 		MSG msg = {};
 
-		while (msg.message != WM_QUIT)
+		while (true)
 		{
-			//TODO: Handle input
-			if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+			if (!_mMainWindow->ProcessEvents())
 			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
+				break;
 			}
-			else
-			{
-				//1. Engine update loop
-				SubSystemManager::Instance().OnUpdate();
-				SubSystemManager::Instance().OnRender();
 
-				//2. App update loop
-				OnUpdate();
-			}
+			//1. Engine update loop
+			SubSystemManager::Instance().OnUpdate();
+			SubSystemManager::Instance().OnRender();
+
+			//2. App update loop
+			OnUpdate();
 		}
+
+		SubSystemManager::Instance().Release();
+
+		//TODO return exit code
 	}
 }
-
-// TODO: Reference from RyEngine.cpp
-//LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-//{
-//    switch (message)
-//    {
-//    case WM_COMMAND:
-//        {
-//            int wmId = LOWORD(wParam);
-//            // Parse the menu selections:
-//            switch (wmId)
-//            {
-//            case IDM_ABOUT:
-//                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-//                break;
-//            case IDM_EXIT:
-//                DestroyWindow(hWnd);
-//                break;
-//            default:
-//                return DefWindowProc(hWnd, message, wParam, lParam);
-//            }
-//        }
-//        break;
-//    case WM_PAINT:
-//        {
-//            PAINTSTRUCT ps;
-//            HDC hdc = BeginPaint(hWnd, &ps);
-//            // TODO: Add any drawing code that uses hdc here...
-//            EndPaint(hWnd, &ps);
-//        }
-//        break;
-//    case WM_DESTROY:
-//        PostQuitMessage(0);
-//        break;
-//    default:
-//        return DefWindowProc(hWnd, message, wParam, lParam);
-//    }
-//    return 0;
-//}

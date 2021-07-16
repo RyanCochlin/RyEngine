@@ -13,26 +13,23 @@ namespace RE
 	class RE_API SubSystemManager : public Singleton<SubSystemManager>
 	{
 	public:
-		//Getter for every subsystem. Maybe figure out a better way to do this
-		Log* Logger()
+		template<typename T>
+		T* GetSubSystem()
 		{
-			return _mLog;
+			SubSystemType type = T::GetStaticType();
+			for (auto i = _mAllSubSystems.begin(); i != _mAllSubSystems.end(); i++)
+			{
+				SubSystem* subSystem = *i;
+				if (subSystem->GetSubSystemType() == type)
+				{
+					return dynamic_cast<T*>(subSystem);
+				}
+			}
+
+			return nullptr;
 		}
 
-		WindowSystem* Wnd()
-		{
-			return _mWindowSystem;
-		}
-
-		GraphicsSystem* GFX()
-		{
-			return _mGraphicsSystem;
-		}
-
-		CameraManager* Cams()
-		{
-			return _mCameraManager;
-		}
+		/////////////////////////////////////////////////////////////////////////////
 
 		void SpinUpSubSystems();
 		void RegisterSubSystems();
@@ -43,20 +40,7 @@ namespace RE
 
 	private:
 		std::vector<SubSystem*> _mAllSubSystems;
-
-		//Refs to subsystems
-		//TODO do these need to be pointers?
-		WindowSystem* _mWindowSystem;
-		GraphicsSystem* _mGraphicsSystem;
-		CameraManager* _mCameraManager;
-		Log* _mLog;
 		
-		void Register(SubSystem* s);
-		void Add(SubSystem* s);
 		void AddAllSubSystems();
 	};
 }
-
-#define RE_GRAPHICS ::RE::SubSystemManager::Instance().GFX()
-#define RE_WINDOW ::RE::SubSystemManager::Instance().Wnd()
-#define RE_CAMS ::RE::SubSystemManager::Instance().Cams()

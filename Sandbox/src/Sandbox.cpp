@@ -41,7 +41,8 @@ Sandbox::~Sandbox()
 
 void Sandbox::OnStart()
 {
-	RE_GRAPHICS->BackgroundColor(RE_CYAN);
+	//TODO: should NOT be directly accessing the Graphics Engine from the client. Background color should be set by the camera
+	::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->BackgroundColor(RE_CYAN);
 
 #if ORTHO
 	_mCamera = new RE::OrthographicCamera();
@@ -98,7 +99,7 @@ void Sandbox::OnStart()
 	//_mSquare->SetColor(RE_RED);
 	//_mSquare->Draw();
 
-	_mCube = new RE::Cube(20, {20.0f, -15.0f, 40.0f});
+	_mCube = new RE::Cube(20, {-20.0f, 15.0f, 40.0f});
 	_mCube->SetColor(RE_RED);
 	_mCube->Draw();
 

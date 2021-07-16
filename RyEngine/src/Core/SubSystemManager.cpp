@@ -10,23 +10,16 @@ namespace RE
 		std::vector<SubSystem*>::iterator it = _mAllSubSystems.begin();
 		for (;it != _mAllSubSystems.end(); it++)
 		{
-			Register(*it);
+			(*it)->OnRegister();
 		}
 	}
 
 	void SubSystemManager::AddAllSubSystems()
 	{
-		_mLog = new Log();
-		Add(_mLog);
-
-		_mWindowSystem = new WindowSystem();
-		Add(_mWindowSystem);
-
-		_mGraphicsSystem = new GraphicsSystem();
-		Add(_mGraphicsSystem);
-
-		_mCameraManager = new CameraManager();
-		Add(_mCameraManager);
+		_mAllSubSystems.push_back(new Log());
+		_mAllSubSystems.push_back(new WindowSystem());
+		_mAllSubSystems.push_back(new GraphicsSystem());
+		_mAllSubSystems.push_back(new CameraManager());
 	}
 
 	void SubSystemManager::Release()
@@ -37,11 +30,6 @@ namespace RE
 		}
 
 		_mAllSubSystems.clear();
-
-		//delete mLog;
-		delete _mWindowSystem;
-		delete _mGraphicsSystem;
-		delete _mCameraManager;
 	}
 
 	void SubSystemManager::SpinUpSubSystems()
@@ -66,15 +54,5 @@ namespace RE
 		{
 			_mAllSubSystems[i]->OnRender();
 		}
-	}
-
-	void SubSystemManager::Add(SubSystem* s)
-	{
-		_mAllSubSystems.push_back(s);
-	}
-
-	void SubSystemManager::Register(SubSystem* s)
-	{
-		s->OnRegister();
 	}
 }

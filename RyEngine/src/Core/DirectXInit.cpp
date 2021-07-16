@@ -4,6 +4,7 @@
 #include "d3d12.h"
 #include "dxgi.h"
 #include "SubSystemManager.h"
+#include "SubSystem.h"
 #include "DirectXInit.h"
 #include "Vertex.h"
 #include "Assert.h"
@@ -169,7 +170,7 @@ namespace RE
 
 	void DirectXInit::CreateSwapChain()
 	{
-		Window* w = SubSystemManager::Instance().Wnd()->GetMainWindow();
+		Window* w = SubSystemManager::Instance().GetSubSystem<WindowSystem>()->GetMainWindow();
 		//DXGI_SWAP_CHAIN_DESC sd;
 		//SecureZeroMemory(&sd, sizeof(sd));
 

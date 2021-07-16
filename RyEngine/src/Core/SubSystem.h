@@ -1,16 +1,23 @@
 #pragma once
 
-#define RE_SUBSYSTEM_OVERRIDE void OnRegister() override; \
-void OnStart() override; \
-void OnUpdate() override; \
-void OnRender() override; \
-void Release() override;
+#define RE_DELCARE_SUBSYSTEM(type) static SubSystemType GetStaticType() { return SubSystemType::##type; }\
+									virtual SubSystemType GetSubSystemType() const override { return GetStaticType(); }
 
 namespace RE
 {
+	enum class SubSystemType
+	{
+		RE_NONE = 0,
+		WindowSystem,
+		LoggingSystem,
+		GraphicsSystem,
+		CameraSystem
+	};
+
 	class SubSystem
 	{
 	public:
+		virtual SubSystemType GetSubSystemType() const = 0;
 		virtual void OnRegister() = 0;
 		virtual void OnStart() = 0;
 		virtual void OnUpdate() = 0;

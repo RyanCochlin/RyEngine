@@ -122,7 +122,7 @@ namespace RE
 		_mUploaded(false),
 		_mVerticies{}
 	{
-		FLOAT aspect = RE_WINDOW->GetMainWindowAspect();
+		FLOAT aspect = SubSystemManager::Instance().GetSubSystem<WindowSystem>()->GetMainWindowAspect();
 		_mGpuResource = new VertexBuffer();
 		_mVertexUploadResource = new UploadBuffer();
 		_mIndexUploadResource = new UploadBuffer();

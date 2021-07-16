@@ -8,6 +8,9 @@ namespace RE
 #define REGISTER_CLASS(name) 
 #define CLASS_MAIN_NAME L"RyEngine"
 
+	typedef void (*WindowEventHandler)(UINT, WPARAM, LPARAM);
+	typedef void (*InputEventHandler)(UINT, WPARAM, LPARAM);
+
 	enum WIND_CLASS_TYPE
 	{
 		WIND_CLASS_TYPE_NONE = 0x00,
@@ -17,7 +20,7 @@ namespace RE
 	class WindowClass
 	{
 	public:
-		WindowClass(const wchar_t* name);
+		WindowClass(const wchar_t* name, WindowEventHandler windowEvent, InputEventHandler inputEvent);
 
 		virtual ~WindowClass() {}
 
@@ -37,15 +40,23 @@ namespace RE
 		HICON _mIconSm;
 		HCURSOR _mCursor;
 		HBRUSH _mBackground;
+		WindowEventHandler _mWindowEvent;
+		InputEventHandler _mInputEvent;
 
-		void InternalRegister(HINSTANCE resHandle, WNDPROC wndProc);
+		void InternalRegister(HINSTANCE resHandle);
+
+	private:
+		static LRESULT CALLBACK WindowProcSetup(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+		LRESULT HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	};
 
 	class WindowClassMain : public WindowClass
 	{
 	public:
-		WindowClassMain(HINSTANCE resHandle, WNDPROC wndProc) :
-			WindowClass(CLASS_MAIN_NAME)
+		WindowClassMain(HINSTANCE resHandle, WindowEventHandler windowEvent, InputEventHandler inputEvent) :
+			WindowClass(CLASS_MAIN_NAME, windowEvent, inputEvent)
 		{
 			_mSize = sizeof(WNDCLASSEX);
 			_mStyle = CS_HREDRAW | CS_VREDRAW;
@@ -54,20 +65,20 @@ namespace RE
 			_mCursor = LoadCursor(nullptr, IDC_ARROW);
 			_mBackground = (HBRUSH)(COLOR_WINDOW + 1);
 
-			InternalRegister(resHandle, wndProc);
+			InternalRegister(resHandle);
 		}
 	};
 
 	class WindowClassManager
 	{
 	public:
-		static const wchar_t* RegisterWindowClass(WIND_CLASS_TYPE type, HINSTANCE resHandle, WNDPROC wndProc);
+		static WindowClass* RegisterWindowClass(WIND_CLASS_TYPE type, HINSTANCE resHandle, WindowEventHandler windowEvent, InputEventHandler inputEvent);
 		static void ReleaseWindowClass(WIND_CLASS_TYPE type, HINSTANCE resHandle);
 
 	private:
 		static std::map<WIND_CLASS_TYPE, WindowClass*> _sRegisteredClasses;
 
-		static WindowClass* CreateClass(WIND_CLASS_TYPE type, HINSTANCE resHandle, WNDPROC wndProc);
+		static WindowClass* CreateClass(WIND_CLASS_TYPE type, HINSTANCE resHandle, WindowEventHandler windowEvent, InputEventHandler inputEvent);
 		static WindowClass* GetClass(WIND_CLASS_TYPE type);
 	};
 }
