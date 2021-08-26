@@ -18,6 +18,7 @@ namespace RE
 	{
 		_mAllSubSystems.push_back(new Log());
 		_mAllSubSystems.push_back(new WindowSystem());
+		_mAllSubSystems.push_back(new InputSystem());
 		_mAllSubSystems.push_back(new GraphicsSystem());
 		_mAllSubSystems.push_back(new CameraManager());
 	}

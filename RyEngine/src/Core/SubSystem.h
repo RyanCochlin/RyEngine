@@ -9,6 +9,7 @@ namespace RE
 	{
 		RE_NONE = 0,
 		WindowSystem,
+		InputSystem,
 		LoggingSystem,
 		GraphicsSystem,
 		CameraSystem

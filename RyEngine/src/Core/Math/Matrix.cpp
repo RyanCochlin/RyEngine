@@ -22,17 +22,17 @@ namespace RE
 		return {(*this)[0][i], (*this)[1][i], (*this)[2][i]};
 	}
 
-	Vector3 operator*(const Matrix3& m, const Vector3& v)
+	Vector3 Matrix3::operator*(Vector3& v)
 	{
 		Vector3 r;
-		r.x = dot(m._arr[0], v);
-		r.y = dot(m._arr[1], v);
-		r.z = dot(m._arr[2], v);
+		r.x = dot(_arr[0], v);
+		r.y = dot(_arr[1], v);
+		r.z = dot(_arr[2], v);
 
 		return r;
 	}
 
-	Vector3 operator*(const Vector3& v, Matrix3& m)
+	Vector3 operator*(Vector3& v, Matrix3& m)
 	{
 		Vector3 r;
 		r.x = dot(v, m.col(0));
@@ -59,7 +59,7 @@ namespace RE
 	}
 
 	//---------------------------------------------------------------------------//
-	Vector4& Matrix4::operator[](UINT i)
+	Vector4& Matrix4::operator[](UINT i) 
 	{
 		ASSERT(i < 4);
 		return _arr[i];
@@ -74,27 +74,27 @@ namespace RE
 	Vector4 Matrix4::col(UINT i)
 	{
 		ASSERT(i < 4);
-		return { (*this)[0][i], (*this)[1][i], (*this)[2][i], (*this)[3][i] };
+		return { _arr[0][i], _arr[1][i], _arr[2][i], _arr[3][i] };
 	}
 
-	Vector4 operator*(const Matrix4& m, const Vector4& v)
-	{
-		Vector4 r;
-		r.x = dot(m._arr[0], v);
-		r.y = dot(m._arr[1], v);
-		r.z = dot(m._arr[2], v);
-		r.w = dot(m._arr[3], v);
-
-		return r;
-	}
-
-	Vector4 operator*(const Vector4& v, Matrix4& m)
+	Vector4 operator*(Vector4& v, Matrix4& m)
 	{
 		Vector4 r;
 		r.x = dot(v, m.col(0));
 		r.y = dot(v, m.col(1));
 		r.z = dot(v, m.col(2));
 		r.w = dot(v, m.col(3));
+
+		return r;
+	}
+
+	Vector4 Matrix4::operator*(Vector4& v)
+	{
+		Vector4 r;
+		r.x = dot(_arr[0], v);
+		r.y = dot(_arr[1], v);
+		r.z = dot(_arr[2], v);
+		r.w = dot(_arr[3], v);
 
 		return r;
 	}

@@ -2,6 +2,7 @@
 
 #include "Core/Window/Window.h"
 #include "WindowClass.h"
+#include "Core/Events/KeyboardEvents.h"
 
 namespace RE
 {
@@ -14,12 +15,14 @@ namespace RE
 		virtual bool ProcessEvents() override;
 		HWND GetHandle() const { return _mWindHandle; }
 
+		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+		LRESULT HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	private:
 		HWND _mWindHandle;
 
-		static void OnWindowEvent(UINT message, WPARAM wParam, LPARAM lParam);
-		static void OnInputEvent(UINT message, WPARAM wParam, LPARAM lParam);
-
-		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+		void OnWindowEvent(UINT message, WPARAM wParam, LPARAM lParam);
+		void OnInputEvent(UINT message, WPARAM wParam, LPARAM lParam);
+		void OnMouseEvent(UINT message, WPARAM wParam, LPARAM lParam);
+		void ProcessEvent(Event& e);
 	};
 }

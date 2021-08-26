@@ -15,4 +15,9 @@ namespace RE
 		FLOAT aspect = (FLOAT)_mWidth / (FLOAT)_mHeight;
 		return aspect;
 	}
+
+	void Window::SetEventCallback(EventCallback callback, void* callee)
+	{
+		_mEventCallbacks[callee] = callback;
+	}
 }

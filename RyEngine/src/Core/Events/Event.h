@@ -34,4 +34,30 @@ namespace RE
 		virtual const char* GetEventTypeName() const = 0;
 		virtual std::string ToString() const { return GetEventTypeName(); }
 	};
+
+	class EventDispatcher
+	{
+	public:
+		template<typename T>
+		using EventFunction = std::function<void(T&)>;
+
+		EventDispatcher(Event& e) :
+			_mEvent(e)
+		{}
+
+		template<typename T>
+		bool DispatchEvent(EventFunction<T> func)
+		{
+			if (_mEvent.GetEventType() == T::StaticEventType())
+			{
+				func(*(T*)&_mEvent);
+				return true;
+			}
+
+			return false;
+		}
+
+	private:
+		Event& _mEvent;
+	};
 }

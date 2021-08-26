@@ -4,6 +4,9 @@
 #include "Core/Math/Vector.h"
 #include "Core/Color.h"
 #include "Core/Math/CoreMath.h"
+#include "Core/Input/InputSystem.h"
+#include "Core/Input/KeyCodes.h"
+#include "Core/Input/Mouse.h"
 
 #include <vector>
 
@@ -18,6 +21,8 @@ public:
 
 	virtual void OnStart() override;
 	virtual void OnUpdate() override;
+
+	void OnMouseEvent(RE::MouseEvent& mouseEvent, RE::EventType eventType);
 
 private:
 	RE::Triangle* _mTriange1;
@@ -43,6 +48,10 @@ void Sandbox::OnStart()
 {
 	//TODO: should NOT be directly accessing the Graphics Engine from the client. Background color should be set by the camera
 	::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->BackgroundColor(RE_CYAN);
+
+	//TODO this function binding is so ugly. Should be able to just pass the function pointer in
+	auto func = std::bind(&Sandbox::OnMouseEvent, this, std::placeholders::_1, std::placeholders::_2);
+	RE::Mouse::AddMouseEventHandler(func, RE::EventType::RE_MOUSE_SCROLL);
 
 #if ORTHO
 	_mCamera = new RE::OrthographicCamera();
@@ -99,7 +108,7 @@ void Sandbox::OnStart()
 	//_mSquare->SetColor(RE_RED);
 	//_mSquare->Draw();
 
-	_mCube = new RE::Cube(20, {-20.0f, 15.0f, 40.0f});
+	_mCube = new RE::Cube(20, {-20.0f, 15.0f, 50.0f});
 	_mCube->SetColor(RE_RED);
 	_mCube->Draw();
 
@@ -114,6 +123,73 @@ void Sandbox::OnStart()
 
 void Sandbox::OnUpdate()
 {
+	RE::Camera* cam;
+
+#if ORTHO 
+	cam = _mCamera;
+#else
+	cam = _mPerCamera;
+#endif
+
+	if (RE::Keyboard::KeyDown(RE_UP))
+	{
+		//TODO define += for Vectors
+		RE::Vector3 position = cam->GetPosition();
+		position = position + RE::Vector3{ 0.0f, 0.5f, 0.0f };
+		cam->SetPosition(position);
+	}
+
+	if (RE::Keyboard::KeyDown(RE_DOWN))
+	{
+		//TODO define += for Vectors
+		RE::Vector3 position = cam->GetPosition();
+		position = position + RE::Vector3{ 0.0f, -0.5f, 0.0f };
+		cam->SetPosition(position);
+	}
+
+	if (RE::Keyboard::KeyDown(RE_LEFT))
+	{
+		//TODO define += for Vectors
+		RE::Vector3 position = cam->GetPosition();
+		position = position + RE::Vector3{ -0.5f, 0.0f, 0.0f };
+		cam->SetPosition(position);
+	}
+
+	if (RE::Keyboard::KeyDown(RE_RIGHT))
+	{
+		//TODO define += for Vectors
+		RE::Vector3 position = cam->GetPosition();
+		position = position + RE::Vector3{ 0.5f, 0.0f, 0.0f };
+		cam->SetPosition(position);
+	}
+}
+
+void Sandbox::OnMouseEvent(RE::MouseEvent& mouseEvent, RE::EventType eventType)
+{
+	if (eventType == RE::EventType::RE_MOUSE_SCROLL)
+	{
+		RE::MouseScrollEvent& scrollEvent = dynamic_cast<RE::MouseScrollEvent&>(mouseEvent);
+		int wheelDelta = (int)scrollEvent.GetWheelDelta();
+#if ORTHO
+		RE::Vector3 position = _mCamera->GetPosition();
+#else
+		RE::Vector3 position = _mPerCamera->GetPosition();
+#endif
+
+		if (wheelDelta > 0)
+		{
+			position = position + RE::Vector3{ 0.0f, 0.0f, 5.0f };
+		}
+		else
+		{
+			position = position + RE::Vector3{ 0.0f, 0.0f, -5.0f };
+		}
+#if ORTHO
+		_mCamera->SetPosition(position);
+#else
+		_mPerCamera->SetPosition(position);
+#endif
+	}
 }
 
 RE::Application* RE::GetApplication()

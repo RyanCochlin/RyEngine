@@ -3,6 +3,11 @@
 #include "Core/SubSystemManager.h"
 #include "Window/Window.h"
 
+//TODO delete these includes
+#include "Math/Matrix.h"
+#include "Math/Vector.h"
+#include "Graphics/Transform.h"
+
 namespace RE
 {
 	Application::Application() :
@@ -27,6 +32,11 @@ namespace RE
 	void Application::Run()
 	{
 		MSG msg = {};
+
+		//TODO delete this. Just a test
+		Transform t;
+		t.Translate({ 1, 2, 3 });
+		t.GetWorld();
 
 		while (true)
 		{

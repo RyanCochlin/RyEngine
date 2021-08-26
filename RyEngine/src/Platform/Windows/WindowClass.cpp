@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "WindowClass.h"
+#include "WindowsWindow.h"
 
 namespace RE
 {
-	WindowClass::WindowClass(const wchar_t* name, WindowEventHandler windowEvent, InputEventHandler inputEvent) :
+	WindowClass::WindowClass(const wchar_t* name) :
 		_mName(name),
 		_mMenuName(""),
 		_mWndRefCount(0),
@@ -12,9 +13,7 @@ namespace RE
 		_mIcon{},
 		_mIconSm{},
 		_mCursor{},
-		_mBackground{},
-		_mWindowEvent(windowEvent),
-		_mInputEvent(inputEvent)
+		_mBackground{}
 	{}
 
 	void WindowClass::Release(HINSTANCE resHandle)
@@ -50,36 +49,14 @@ namespace RE
 		if (message == WM_NCCREATE)
 		{
 			const CREATESTRUCTW* const create = reinterpret_cast<CREATESTRUCTW*>(lParam);
-			WindowClass* const wndClass = static_cast<WindowClass*>(create->lpCreateParams);
+			WindowsWindow* const window = static_cast<WindowsWindow*>(create->lpCreateParams);
 
-			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(wndClass));
-			SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&WindowClass::WindowProc));
+			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
+			SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&WindowsWindow::WindowProc));
 
-			return wndClass->HandleMessage(hWnd, message, wParam, lParam);
+			return window->HandleMessage(hWnd, message, wParam, lParam);
 		}
 
-		return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-
-	LRESULT CALLBACK WindowClass::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-	{
-		WindowClass* const wndClass = reinterpret_cast<WindowClass*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-		return wndClass->HandleMessage(hWnd, message, wParam, lParam);
-	}
-
-	LRESULT WindowClass::HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-	{
-		switch (message)
-		{
-		case WM_DESTROY:
-			(*_mWindowEvent)(message, wParam, lParam);
-			break;
-		case WM_KEYDOWN:
-		case WM_KEYUP:
-		case WM_CHAR:
-			(*_mInputEvent)(message, wParam, lParam);
-			break;
-		}
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
@@ -87,12 +64,12 @@ namespace RE
 
 	std::map<WIND_CLASS_TYPE, WindowClass*> WindowClassManager::_sRegisteredClasses{};
 
-	WindowClass* WindowClassManager::RegisterWindowClass(WIND_CLASS_TYPE type, HINSTANCE resHandle, WindowEventHandler windowEvent, InputEventHandler inputEvent)
+	WindowClass* WindowClassManager::RegisterWindowClass(WIND_CLASS_TYPE type, HINSTANCE resHandle)
 	{
 		WindowClass* wndClass;
 		if (_sRegisteredClasses.find(type) == _sRegisteredClasses.end())
 		{
-			wndClass = CreateClass(type, resHandle, windowEvent, inputEvent);
+			wndClass = CreateClass(type, resHandle);
 			ASSERT(wndClass != nullptr);
 
 			_sRegisteredClasses[type] = wndClass;
@@ -121,12 +98,12 @@ namespace RE
 		}
 	}
 
-	WindowClass* WindowClassManager::CreateClass(WIND_CLASS_TYPE type, HINSTANCE resHandle, WindowEventHandler windowEvent, InputEventHandler inputEvent)
+	WindowClass* WindowClassManager::CreateClass(WIND_CLASS_TYPE type, HINSTANCE resHandle)
 	{
 		switch (type)
 		{
 		case RE::WIND_CLASS_TYPE_MAIN:
-			return new WindowClassMain(resHandle, windowEvent, inputEvent);
+			return new WindowClassMain(resHandle);
 		default:
 			return nullptr;
 		}
