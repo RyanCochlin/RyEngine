@@ -25,7 +25,7 @@ namespace RE
 		RE_DELCARE_SUBSYSTEM(WindowSystem)
 
 		Window* GetMainWindow();
-		FLOAT GetMainWindowAspect();
+		float GetMainWindowAspect();
 
 		void OnRegister() override;
 		void OnStart() override;
@@ -34,7 +34,7 @@ namespace RE
 		void Release() override;
 
 	private:
-		Window* _mMainWin = NULL;
+		Window* _mMainWin = nullptr;
 		std::vector<Window*> _mWindows;
 
 		Window* AddWindow(const wchar_t* winTitle);

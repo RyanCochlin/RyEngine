@@ -46,7 +46,7 @@ namespace RE
 		dispatcher.DispatchEvent<KeyUpEvent>(std::bind(&Keyboard::OnKeyUp, _mKeyboard, std::placeholders::_1));
 
 		dispatcher.DispatchEvent<MouseDownEvent>(std::bind(&Mouse::OnMouseDown, _mMouse, std::placeholders::_1));
-		dispatcher.DispatchEvent<MouseUpEvent>(std::bind(&Mouse::OnMouseDown, _mMouse, std::placeholders::_1));
+		dispatcher.DispatchEvent<MouseUpEvent>(std::bind(&Mouse::OnMouseUp, _mMouse, std::placeholders::_1));
 		dispatcher.DispatchEvent<MouseMoveEvent>(std::bind(&Mouse::OnMouseMove, _mMouse, std::placeholders::_1));
 		dispatcher.DispatchEvent<MouseScrollEvent>(std::bind(&Mouse::OnMouseScroll, _mMouse, std::placeholders::_1));
 	}

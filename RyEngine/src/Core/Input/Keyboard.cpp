@@ -17,6 +17,7 @@ namespace RE
 	void Keyboard::OnKeyDown(KeyDownEvent& e)
 	{
 		RE_KEYCODE keycode = e.GetKeyCode();
+		// TODO delete this logging
 		if (e.GetKeyCode() >= 'A' && e.GetKeyCode() <= 'Z')
 		{
 			char c[2] = { keycode, 0 };
@@ -33,6 +34,7 @@ namespace RE
 	void Keyboard::OnKeyUp(KeyUpEvent& e)
 	{
 		RE_KEYCODE keycode = e.GetKeyCode();
+		// TODO delete logging code
 		if (e.GetKeyCode() >= 'A' && e.GetKeyCode() <= 'Z')
 		{
 			char c[2] = { keycode, 0 };
