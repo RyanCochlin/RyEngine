@@ -6,6 +6,7 @@ namespace RE
 {
 	void Mouse::AddMouseEventHandler(std::function<void(MouseEvent&, EventType)> callback, EventType eventType)
 	{
+		// TODO check for duplicate callbacks
 		Mouse* mouse = SubSystemManager::Instance().GetSubSystem<InputSystem>()->GetMouse();
 		mouse->SetMouseEventHandler(callback, eventType);
 	}

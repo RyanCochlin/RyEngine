@@ -7,7 +7,7 @@ namespace RE
 	{
 		AddAllSubSystems();
 		
-		std::vector<SubSystem*>::iterator it = _mAllSubSystems.begin();
+		auto it = _mAllSubSystems.begin();
 		for (;it != _mAllSubSystems.end(); it++)
 		{
 			(*it)->OnRegister();
@@ -25,6 +25,7 @@ namespace RE
 
 	void SubSystemManager::Release()
 	{
+		// TODO make all loops range based
 		for (size_t i = 0; i < _mAllSubSystems.size(); i++)
 		{
 			_mAllSubSystems[i]->Release();

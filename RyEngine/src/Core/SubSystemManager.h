@@ -18,6 +18,7 @@ namespace RE
 		T* GetSubSystem()
 		{
 			SubSystemType type = T::GetStaticType();
+			// TODO use range looping
 			for (auto i = _mAllSubSystems.begin(); i != _mAllSubSystems.end(); i++)
 			{
 				SubSystem* subSystem = *i;
