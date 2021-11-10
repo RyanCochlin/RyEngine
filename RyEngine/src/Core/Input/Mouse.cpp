@@ -6,6 +6,7 @@ namespace RE
 {
 	void Mouse::AddMouseEventHandler(std::function<void(MouseEvent&, EventType)> callback, EventType eventType)
 	{
+		// TODO check for duplicate callbacks
 		Mouse* mouse = SubSystemManager::Instance().GetSubSystem<InputSystem>()->GetMouse();
 		mouse->SetMouseEventHandler(callback, eventType);
 	}
@@ -13,12 +14,6 @@ namespace RE
 	void Mouse::SetMouseEventHandler(OnMouseEventCallback callback, EventType eventType)
 	{
 		ASSERT(eventType == EventType::RE_MOUSE_DOWN || eventType == EventType::RE_MOUSE_UP || eventType == EventType::RE_MOUSE_MOVE || eventType == EventType::RE_MOUSE_SCROLL);
-
-		if (_mEventCallbacks.find(eventType) != _mEventCallbacks.end())
-		{
-			RE_CORE_WARN("Mouse.SetMouseEventHandler: Callback already exists for type {0}", eventType);
-			return;
-		}
 
 		_mEventCallbacks[eventType].push_back(callback);
 	}
