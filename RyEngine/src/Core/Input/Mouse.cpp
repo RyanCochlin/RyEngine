@@ -18,14 +18,6 @@ namespace RE
 		_mEventCallbacks[eventType].push_back(callback);
 	}
 
-	void Mouse::RemoveMouseEventHandler(EventType eventType)
-	{
-		if (_mEventCallbacks.find(eventType) != _mEventCallbacks.end()) 
-		{
-			_mEventCallbacks.erase(eventType);
-		}
-	}
-
 	Mouse::Mouse() :
 		_mEventCallbacks()
 	{}
