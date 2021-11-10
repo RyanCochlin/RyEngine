@@ -18,10 +18,8 @@ namespace RE
 		T* GetSubSystem()
 		{
 			SubSystemType type = T::GetStaticType();
-			// TODO use range looping
-			for (auto i = _mAllSubSystems.begin(); i != _mAllSubSystems.end(); i++)
+			for (auto subSystem : _mAllSubSystems)
 			{
-				SubSystem* subSystem = *i;
 				if (subSystem->GetSubSystemType() == type)
 				{
 					return dynamic_cast<T*>(subSystem);

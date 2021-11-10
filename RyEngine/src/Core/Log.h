@@ -13,7 +13,7 @@ namespace RE
 	class RE_API Log : public SubSystem
 	{
 	public:
-		RE_DELCARE_SUBSYSTEM(LoggingSystem)
+		RE_DECLARE_SUBSYSTEM(LoggingSystem)
 
 		void OnRegister() override;
 		void OnStart() override;

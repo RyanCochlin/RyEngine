@@ -34,7 +34,7 @@ namespace RE
 	class RE_API GraphicsSystem : public SubSystem
 	{
 	public:
-		RE_DELCARE_SUBSYSTEM(GraphicsSystem)
+		RE_DECLARE_SUBSYSTEM(GraphicsSystem)
 
 		IGraphicsAPI* GraphicsAPI();
 		void AddMeshForDraw(Mesh* mesh);

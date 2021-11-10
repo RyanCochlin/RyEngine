@@ -10,7 +10,7 @@ namespace RE
 	class InputSystem : public SubSystem
 	{
 	public:
-		RE_DELCARE_SUBSYSTEM(InputSystem)
+		RE_DECLARE_SUBSYSTEM(InputSystem)
 
 		virtual void OnRegister() override {}
 		virtual void OnStart() override;

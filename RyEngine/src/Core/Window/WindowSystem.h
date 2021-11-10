@@ -22,7 +22,7 @@ namespace RE
 	class WindowSystem : public SubSystem
 	{
 	public:
-		RE_DELCARE_SUBSYSTEM(WindowSystem)
+		RE_DECLARE_SUBSYSTEM(WindowSystem)
 
 		Window* GetMainWindow();
 		float GetMainWindowAspect();
