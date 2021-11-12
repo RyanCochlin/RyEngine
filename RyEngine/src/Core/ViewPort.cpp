@@ -3,7 +3,7 @@
 
 namespace RE
 {
-	ViewPort::ViewPort(FLOAT topLeftX, FLOAT topLeftY, FLOAT width, FLOAT height, FLOAT minDepth, FLOAT maxDepth)
+	ViewPort::ViewPort(float topLeftX, float topLeftY, float width, float height, float minDepth, float maxDepth)
 	{
 		//_commandList = commandList;
 		_viewPort.TopLeftX = topLeftX;

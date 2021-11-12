@@ -10,9 +10,9 @@ namespace RE
 		return WindowDimensions{ _mWidth, _mHeight }; 
 	}
 
-	FLOAT Window::GetAspect()
+	float Window::GetAspect()
 	{
-		FLOAT aspect = (FLOAT)_mWidth / (FLOAT)_mHeight;
+		float aspect = (float)_mWidth / (float)_mHeight;
 		return aspect;
 	}
 

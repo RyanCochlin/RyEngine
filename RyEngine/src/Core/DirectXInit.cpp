@@ -416,7 +416,7 @@ namespace RE
 
 	void DirectXInit::LoadTriangleTest()
 	{
-		FLOAT aspect = _dxBufferWidth / _dxBufferHeight;
+		float aspect = _dxBufferWidth / _dxBufferHeight;
 
 		Vertex triangleVerts[] =
 		{
