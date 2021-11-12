@@ -1,7 +1,6 @@
 #pragma once
 
-// TODO Fix typo DELCARE -> DECLARE
-#define RE_DELCARE_SUBSYSTEM(type) static SubSystemType GetStaticType() { return SubSystemType::##type; }\
+#define RE_DECLARE_SUBSYSTEM(type) static SubSystemType GetStaticType() { return SubSystemType::##type; }\
 									virtual SubSystemType GetSubSystemType() const override { return GetStaticType(); }
 
 namespace RE
