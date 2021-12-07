@@ -11,7 +11,7 @@ namespace RE
 		CameraManager();
 		~CameraManager();
 
-		RE_DELCARE_SUBSYSTEM(CameraSystem)
+		RE_DECLARE_SUBSYSTEM(CameraSystem)
 
 		void AddCamera(Camera* cam);
 		void RemoveCamera(Camera* cam);

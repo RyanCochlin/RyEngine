@@ -22,10 +22,10 @@ namespace RE
 	class WindowSystem : public SubSystem
 	{
 	public:
-		RE_DELCARE_SUBSYSTEM(WindowSystem)
+		RE_DECLARE_SUBSYSTEM(WindowSystem)
 
 		Window* GetMainWindow();
-		FLOAT GetMainWindowAspect();
+		float GetMainWindowAspect();
 
 		void OnRegister() override;
 		void OnStart() override;
@@ -34,7 +34,7 @@ namespace RE
 		void Release() override;
 
 	private:
-		Window* _mMainWin = NULL;
+		Window* _mMainWin = nullptr;
 		std::vector<Window*> _mWindows;
 
 		Window* AddWindow(const wchar_t* winTitle);

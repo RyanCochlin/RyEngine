@@ -7,10 +7,9 @@ namespace RE
 	{
 		AddAllSubSystems();
 		
-		std::vector<SubSystem*>::iterator it = _mAllSubSystems.begin();
-		for (;it != _mAllSubSystems.end(); it++)
+		for (auto subSystem : _mAllSubSystems)
 		{
-			(*it)->OnRegister();
+			subSystem->OnRegister();
 		}
 	}
 
@@ -25,9 +24,9 @@ namespace RE
 
 	void SubSystemManager::Release()
 	{
-		for (size_t i = 0; i < _mAllSubSystems.size(); i++)
+		for (auto subSystem : _mAllSubSystems)
 		{
-			_mAllSubSystems[i]->Release();
+			subSystem->Release();
 		}
 
 		_mAllSubSystems.clear();
@@ -35,25 +34,25 @@ namespace RE
 
 	void SubSystemManager::SpinUpSubSystems()
 	{
-		for (size_t i = 0; i < _mAllSubSystems.size(); i++)
+		for (auto subSystem : _mAllSubSystems)
 		{
-			_mAllSubSystems[i]->OnStart();
+			subSystem->OnStart();
 		}
 	}
 
 	void SubSystemManager::OnUpdate()
 	{
-		for (size_t i = 0; i < _mAllSubSystems.size(); i++)
+		for (auto subSystem : _mAllSubSystems)
 		{
-			_mAllSubSystems[i]->OnUpdate();
+			subSystem->OnUpdate();
 		}
 	}
 
 	void SubSystemManager::OnRender()
 	{
-		for (size_t i = 0; i < _mAllSubSystems.size(); i++)
+		for (auto subSystem : _mAllSubSystems)
 		{
-			_mAllSubSystems[i]->OnRender();
+			subSystem->OnRender();
 		}
 	}
 }

@@ -17,31 +17,12 @@ namespace RE
 	void Keyboard::OnKeyDown(KeyDownEvent& e)
 	{
 		RE_KEYCODE keycode = e.GetKeyCode();
-		if (e.GetKeyCode() >= 'A' && e.GetKeyCode() <= 'Z')
-		{
-			char c[2] = { keycode, 0 };
-			RE_LOG("Key down: {0}", c);
-		}
-		else
-		{
-			RE_LOG("Key down: {0}", keycode);
-		}
-
 		_sKeyStates[keycode] = true;
 	}
 
 	void Keyboard::OnKeyUp(KeyUpEvent& e)
 	{
 		RE_KEYCODE keycode = e.GetKeyCode();
-		if (e.GetKeyCode() >= 'A' && e.GetKeyCode() <= 'Z')
-		{
-			char c[2] = { keycode, 0 };
-			RE_LOG("Key up: {0}", c);
-		}
-		else
-		{
-			RE_LOG("Key up: {0}", keycode);
-		}
 		_sKeyStates[keycode] = false;
 	}
 }

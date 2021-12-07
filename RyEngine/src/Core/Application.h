@@ -14,6 +14,7 @@ namespace RE
 		void Run();
 
 		//TODO I don't think this is the right way to do this, but I need an update loop in the application prior to creating an ECS
+		// TODO Make these pure virtual
 		virtual void OnStart() {}
 		virtual void OnUpdate() {}
 

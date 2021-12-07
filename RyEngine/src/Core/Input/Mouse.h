@@ -21,6 +21,7 @@ namespace RE
 		void OnMouseMove(MouseEvent& mouseEvent);
 		void OnMouseScroll(MouseEvent& mouseEvent);
 		void SetMouseEventHandler(OnMouseEventCallback callback, EventType eventType);
+		// TODO add remove event handler method
 
 	private:
 		void FireMouseEvent(EventType eventType, MouseEvent& mouseEvent);

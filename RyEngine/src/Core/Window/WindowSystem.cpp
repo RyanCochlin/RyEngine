@@ -31,10 +31,10 @@ namespace RE
 		return _mMainWin;
 	}
 
-	FLOAT WindowSystem::GetMainWindowAspect()
+	float WindowSystem::GetMainWindowAspect()
 	{
 		Window* window = GetMainWindow();
-		FLOAT aspect = window->GetAspect();
+		float aspect = window->GetAspect();
 		return window->GetAspect();
 	}
 
