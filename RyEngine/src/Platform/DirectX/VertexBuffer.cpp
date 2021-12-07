@@ -2,23 +2,30 @@
 #include "VertexBuffer.h"
 #include "Core/Vertex.h"
 #include "MeshGeometry.h"
+#include "DirectXCore.h"
 
 namespace RE
 {
-	VertexBuffer::VertexBuffer() : 
-		_mVertStride(sizeof(Vertex)),
-		_mCount(0),
-		_mVertex(nullptr)
-	{}
-
-	VertexBuffer::~VertexBuffer()
+	VertexBuffer::VertexBuffer(std::vector<Vertex>& verts)
 	{
-		delete _mVertex;
+		_mVerticies = verts;
+		_mVertStride = sizeof(Vertex);
+		_mCount = _mVerticies.size();
+		Create();
 	}
 
-	void VertexBuffer::Create(ID3D12Device* device, UINT numElements, UINT elementSize)
+	VertexBuffer::VertexBuffer(std::vector<Vertex>&& verts)
 	{
-		UINT byteSize = numElements * elementSize;
+		_mVerticies = verts;
+		_mVertStride = sizeof(Vertex);
+		_mCount = _mVerticies.size();
+		Create();
+	}
+
+	void VertexBuffer::Create()
+	{
+		ID3D12Device* device = DirectXCore::GetDevice();
+		UINT byteSize = _mVertStride * _mCount;
 
 		ThrowIfFailed(device->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),

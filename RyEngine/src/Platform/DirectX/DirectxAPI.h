@@ -3,8 +3,8 @@
 #include "DirectXCore.h"
 #include "DXDrawCall.h"
 #include "Core/Color.h"
-#include "Core/IGraphicsAPI.h"
-#include "Core/GeometryHeap.h"
+#include "Core/Graphics/IGraphicsAPI.h"
+#include "Core/Graphics/MeshHeap.h"
 #include "Core/Graphics/DrawCall.h"
 
 
@@ -31,9 +31,13 @@ namespace RE
 			_mDirectX.Update();
 		}
 
+		void PushMeshData(const MeshHeapData& meshHeap) override 
+		{
+			_mDirectX.SubmitMeshHeap(meshHeap);
+		}
 
 		void SetClearColor(Color color) override { _mDirectX.SetClearColor(color); }
-		void SetGeometry(GeometryHeap* geo) override { _mDirectX.SubmitGeometery(geo); }
+		void SetGeometry(MeshHeap* geo) override { _mDirectX.SubmitGeometery(geo); }
 		
 		void PushDrawCall(DrawCall dc) override
 		{
@@ -43,7 +47,7 @@ namespace RE
 
 	private:
 		DirectXCore _mDirectX;
-		GeometryHeap* _mGeo;
+		MeshHeap* _mGeo;
 		std::vector<DXDrawCall> _mDrawCalls;
 	};
 }

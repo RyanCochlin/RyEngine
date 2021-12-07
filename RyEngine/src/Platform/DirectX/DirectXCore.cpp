@@ -9,6 +9,8 @@
 #include "CommandContext.h"
 #include "ColorBuffer.h"
 #include "UploadBuffer.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 #include "DXDrawCall.h"
 #include "Core/Color.h"
 #include "Core/Math/Vector.h"
@@ -41,8 +43,7 @@ namespace RE
 		_mainView{},
 		_mGeoManager{},
 		_mRootSig{},
-		_mSwapChain{},
-		_mUploaded(false)
+		_mSwapChain{}
 	{}
 
 	DirectXCore::~DirectXCore()
@@ -197,6 +198,7 @@ namespace RE
 		if (_mCurrentCommandContext == nullptr)
 			return;
 
+		// TODO some of these calls should be moved. Need to figure that out later
 		_mCurrentCommandContext->Start();
 		_mCurrentCommandContext->SetRootSignature(_mRootSig);
 		_mCurrentCommandContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -211,30 +213,38 @@ namespace RE
 		if (_mCurrentUploadResource != nullptr)
 		{
 			DXDrawCall dc = _mDrawCalls.back();
-			dynamic_cast<ResColouredUploadResource*>(_mCurrentUploadResource)->Upload(dc.GetMVP()/*I4*/);
+			dynamic_cast<ResColouredUploadResource*>(_mCurrentUploadResource)->Upload(dc.GetMVP());
 			_mDrawCalls.clear();
 		}
 	}
 
-	void DirectXCore::SubmitGeometery(GeometryHeap* geo)
+	void DirectXCore::SubmitGeometery(MeshHeap* meshHeap)
 	{
-		std::vector<Mesh*> meshes = geo->GetHeap();
-
-		std::vector<Mesh*>::iterator i = meshes.begin();
-		for (; i != meshes.end(); i++)
+		Mesh mesh("");
+		while(meshHeap->ConsumeMesh(mesh))
 		{
-			_mGeoManager.Submit(**i);
+			_mGeoManager.Submit(mesh);
 		}
+	}
+
+	void DirectXCore::SubmitMeshHeap(const MeshHeapData& meshHeap)
+	{
+		meshHeap.subMeshData;
+		std::vector<Vertex> verts = meshHeap.vertexHeap;
+		std::vector<RE_INDEX> indicies = meshHeap.indexHeap;
+		VertexBuffer vb(verts);
+		IndexBuffer ib(indicies);
+
+		MeshGeometry mesh(vb, ib, meshHeap.subMeshData);
+		_mGeoManager.AddMesh(mesh);
 	}
 
 	void DirectXCore::Update()
 	{
 		UploadConstantBuffers();
-		//TODO I need to figure out how to upload only when the geometry changes
-		if (!_mUploaded)
+		if (_mGeoManager.IsDirty())
 		{
 			UploadGeometery();
-			_mUploaded = true;
 		}
 	}
 

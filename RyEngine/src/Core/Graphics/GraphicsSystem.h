@@ -1,12 +1,16 @@
 #pragma once
 
 #include "pch.h"
-#include "SubSystem.h"
+
+#include <memory>
+
+#include "Core/SubSystem.h"
 #include "IGraphicsAPI.h"
+#include "MeshManager.h"
 #include "Mesh.h"
-#include "Color.h"
-#include "GeometryHeap.h"
-#include "Graphics/DrawCall.h"
+#include "Core/Color.h"
+#include "MeshHeap.h"
+#include "DrawCall.h"
 #include "Platform/DirectX/DirectXCore.h"
 
 #ifndef __ry_graphics_api__
@@ -35,10 +39,14 @@ namespace RE
 	{
 	public:
 		RE_DELCARE_SUBSYSTEM(GraphicsSystem)
+		
+		GraphicsSystem();
+		GraphicsSystem(const GraphicsSystem&) = delete;
+		GraphicsSystem& operator=(const GraphicsSystem&) = delete;
 
 		IGraphicsAPI* GraphicsAPI();
-		void AddMeshForDraw(Mesh* mesh);
-		void RemoveMesh(Mesh* mesh);
+		void AddMeshForDraw(Mesh& mesh);
+		void AddMesh(Mesh& mesh, Transform& trans);
 		void BackgroundColor(Color color);
 
 		void OnRegister() override;
@@ -49,7 +57,8 @@ namespace RE
 
 	private:
 		IGraphicsAPI* _mGraphicsAPI;
-		GeometryHeap* _mGeo;
+		std::unique_ptr<MeshManager> _mMeshManager;
+		MeshHeap* _mMeshHeap;
 		bool _mNewMesh;
 	};
 }

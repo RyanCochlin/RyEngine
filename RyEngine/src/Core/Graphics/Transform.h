@@ -8,16 +8,16 @@ namespace RE
 	class Transform
 	{
 	public:
-		Transform();
-		~Transform() = default;
+		RE_API Transform();
+		RE_API ~Transform() = default;
 
-		Vector3 GetTranslation();
-		Vector3 GetRotation();
-		Vector3 GetScale();
-		void Translate(Vector3 translation);
-		void Rotate(Vector3 rotation);
-		void Scale(Vector3 scale);
-		Matrix4 GetWorld();
+		RE_API Vector3 GetTranslation();
+		RE_API Vector3 GetRotation();
+		RE_API Vector3 GetScale();
+		RE_API void Translate(Vector3 translation);
+		RE_API void Rotate(Vector3 rotation);
+		RE_API void Scale(Vector3 scale);
+		RE_API Matrix4 GetWorld();
 
 	private:
 		Matrix4 _mTRSMatrix;

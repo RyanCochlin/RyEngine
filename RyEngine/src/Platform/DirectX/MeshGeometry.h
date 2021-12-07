@@ -1,8 +1,12 @@
 #pragma once
 
 #include "Core/Vertex.h"
-#include "Core/Mesh.h"
+#include "Core/Graphics/Mesh.h"
+#include "Core/Graphics/MeshManager.h"
 #include "Core/Math/CoreMath.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
+#include "UploadBuffer.h"
 
 #include <vector>
 
@@ -18,31 +22,28 @@ namespace RE
 
 	public:
 		MeshGeometry();
-		MeshGeometry(Mesh mesh);
-		~MeshGeometry();
+		MeshGeometry(VertexBuffer& vb, IndexBuffer& ib, std::vector<SubMeshData> subMeshData);
+		MeshGeometry(MeshGeometry&&) = default;
+		~MeshGeometry() = default;
 
-		Vertex& operator[](int index);
-		Vertex* GetData();
 		D3D12_VERTEX_BUFFER_VIEW VertexBufferView();
 		D3D12_INDEX_BUFFER_VIEW IndexBufferView();
-		D3D12_SUBRESOURCE_DATA GetResourceData();
+		D3D12_SUBRESOURCE_DATA GetVertexResourceData();
 		D3D12_SUBRESOURCE_DATA GetIndexResourceData();
 
-		inline size_t VertexCount() { return _mVerticies.size(); }
-		inline size_t IndexCount() { return _mIndicies.size(); }
-		inline UINT ElementSize() { return sizeof(Vertex); }
+		inline size_t VertexCount() { return _mVertexBuffer.GetCount(); }
+		inline size_t IndexCount() { return _mIndexBuffer.GetCount(); }
+		inline UINT VertexElementSize() { return sizeof(Vertex); }
 		inline UINT IndexElementSize() { return sizeof(RE_INDEX); }
-		inline size_t VertexSize() { return VertexCount() * ElementSize(); }
+		inline size_t VertexSize() { return VertexCount() * VertexElementSize(); }
 		inline size_t IndexSize() { return IndexCount() * IndexElementSize(); }
 
 	private:
-		std::vector<Vertex> _mVerticies;
-		std::vector<RE_INDEX> _mIndicies;
-		VertexBuffer* _mGpuResource;
-		IndexBuffer* _mIndexBuffer;
-		UploadBuffer* _mVertexUploadResource;
-		UploadBuffer* _mIndexUploadResource;
-		bool _mUploaded; //TODO figure out a better way to do this
+		VertexBuffer _mVertexBuffer;
+		IndexBuffer _mIndexBuffer;
+		UploadBuffer _mVertexUploadResource;
+		UploadBuffer _mIndexUploadResource;
+		std::vector<SubMeshData> _mSubMeshData;
 	};
 
 	class GeometeryManager
@@ -51,14 +52,18 @@ namespace RE
 		GeometeryManager();
 		~GeometeryManager();
 
-		void Submit(Mesh mesh);
-		void UploadAll(ID3D12Device* device, ID3D12GraphicsCommandList* commandList);
+		void Submit(Mesh& mesh);
+		void UploadAll(ID3D12GraphicsCommandList* commandList);
 		UINT MeshCount();
 		UINT VertexCount();
 		UINT IndexCount();
-		MeshGeometry* GetMesh(int index);
+		void AddMesh(MeshGeometry& mesh);
+		MeshGeometry& GetMesh(int index);
+
+		bool IsDirty() const { return _mDirty; }
 
 	private:
-		std::vector<MeshGeometry*> _mMeshes;
+		std::vector<MeshGeometry> _mMeshes;
+		bool _mDirty;
 	};
 }

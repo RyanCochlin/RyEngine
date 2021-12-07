@@ -416,11 +416,11 @@ namespace RE
 
 	void DirectXInit::LoadTriangleTest()
 	{
-		FLOAT aspect = _dxBufferWidth / _dxBufferHeight;
+		/*FLOAT aspect = _dxBufferWidth / _dxBufferHeight;
 
 		Vertex triangleVerts[] =
 		{
-			{ { 0.0f, 0.25f * aspect, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
+			( { 0.0f, 0.25f * aspect, 0.0f }, {1.0f, 0.0f, 0.0f, 1.0f} ),
 			{ { 0.25f, -0.25f * aspect, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } },
 			{ { -0.25f, -0.25f * aspect, 0.0f }, {1.0f, 0.0f, 1.0f, 1.0f } }
 		};
@@ -444,7 +444,7 @@ namespace RE
 
 		_vertexBufferView.BufferLocation = _vertexBuffer->GetGPUVirtualAddress();
 		_vertexBufferView.StrideInBytes = sizeof(Vertex);
-		_vertexBufferView.SizeInBytes = vertBufferSize;
+		_vertexBufferView.SizeInBytes = vertBufferSize;*/
 	}
 
 #pragma endregion
