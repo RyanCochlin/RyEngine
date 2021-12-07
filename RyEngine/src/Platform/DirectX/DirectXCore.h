@@ -3,8 +3,9 @@
 #include <vector>
 #include "Core/DirectXInit.h"
 #include "Core/Color.h"
-#include "Core/GeometryHeap.h"
+#include "Core/Graphics/MeshHeap.h"
 #include "Core/Graphics/DrawCall.h"
+#include "Core/Graphics/MeshManager.h"
 #include "CommandManager.h"
 #include "CommandContext.h"
 #include "PipelineState.h"
@@ -71,10 +72,9 @@ namespace RE
 		void WaitForPreviousFrame();
 		void UploadGeometery();
 		void UploadConstantBuffers();
-		void SubmitGeometery(GeometryHeap* geo);
+		void SubmitGeometery(MeshHeap* meshHeap); // TODO remove this once new system is working
+		void SubmitMeshHeap(const MeshHeapData& meshHeap);
 
-		//TODO remove this when I have gotten uploading working properly 
-		bool _mUploaded;
 		//TODO: this is just test stuff to draw a triangle
 		void CreateTriangle();
 	};

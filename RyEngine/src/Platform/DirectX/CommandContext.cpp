@@ -121,16 +121,23 @@ namespace RE
 	{
 		if (gm.MeshCount() > 0)
 		{
-			UINT count = gm.MeshCount();
+			//TODO need to fix this count for new Mesh type
+			size_t count = gm.MeshCount();
+			UINT validCount = 0;
 			std::vector<D3D12_VERTEX_BUFFER_VIEW> vbView;
 
 			for (int i = 0; i < count; i++)
 			{
-				D3D12_VERTEX_BUFFER_VIEW vbv = gm.GetMesh(i)->VertexBufferView();
-				vbView.push_back(vbv);
+				MeshGeometry& mg = gm.GetMesh(i);
+				if (mg.VertexCount() > 0)
+				{
+					D3D12_VERTEX_BUFFER_VIEW vbv = mg.VertexBufferView();
+					vbView.push_back(vbv);
+					validCount++;
+				}
 			}
 
-			_mCommandList->IASetVertexBuffers(0, count, vbView.data());
+			_mCommandList->IASetVertexBuffers(0, validCount, vbView.data());
 		}
 	}
 
@@ -138,13 +145,17 @@ namespace RE
 	{
 		if (gm.MeshCount() > 0)
 		{
-			UINT count = gm.MeshCount();
+			size_t count = gm.MeshCount();
 			std::vector<D3D12_INDEX_BUFFER_VIEW> ibView;
 
 			for (int i = 0; i < count; i++)
 			{
-				D3D12_INDEX_BUFFER_VIEW vbv = gm.GetMesh(i)->IndexBufferView();
-				ibView.push_back(vbv);
+				MeshGeometry& mg = gm.GetMesh(i);
+				if (mg.IndexCount() > 0)
+				{
+					D3D12_INDEX_BUFFER_VIEW vbv = mg.IndexBufferView();
+					ibView.push_back(vbv);
+				}
 			}
 
 			_mCommandList->IASetIndexBuffer(ibView.data());
@@ -163,7 +174,7 @@ namespace RE
 
 	void CommandContext::UploadMeshes(ID3D12Device* device, GeometeryManager& gm)
 	{
-		gm.UploadAll(device, _mCommandList);
+		gm.UploadAll(_mCommandList);
 	}
 
 	void CommandContext::UploadConstantBuffers(ID3D12Device* device)

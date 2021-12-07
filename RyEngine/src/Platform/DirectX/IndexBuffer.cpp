@@ -1,19 +1,29 @@
 #include "pch.h"
 #include "IndexBuffer.h"
+#include "DirectXCore.h"
 
 namespace RE
 {
-	IndexBuffer::IndexBuffer() : 
-		_mIndexStride(sizeof(UINT)),
-		_mCount(0)
-	{}
-
-	IndexBuffer::~IndexBuffer()
-	{}
-
-	void IndexBuffer::Create(ID3D12Device* device, UINT numElements, UINT elementSize)
+	IndexBuffer::IndexBuffer(std::vector<RE_INDEX>& indicies)
 	{
-		UINT byteSize = numElements * elementSize;
+		_mIndicies = indicies;
+		_mIndexStride = sizeof(RE_INDEX);
+		_mCount = _mIndicies.size();
+		Create();
+	}
+
+	IndexBuffer::IndexBuffer(std::vector<RE_INDEX>&& indicies)
+	{
+		_mIndicies = indicies;
+		_mIndexStride = sizeof(RE_INDEX);
+		_mCount = _mIndicies.size();
+		Create();
+	}
+
+	void IndexBuffer::Create()
+	{
+		ID3D12Device* device = DirectXCore::GetDevice();
+		UINT byteSize = _mIndexStride * _mCount;
 
 		ThrowIfFailed(device->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),

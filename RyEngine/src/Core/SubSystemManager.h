@@ -4,7 +4,7 @@
 #include "SubSystem.h"
 #include "Window/WindowSystem.h"
 #include "Input/InputSystem.h"
-#include "GraphicsSystem.h"
+#include "Graphics/GraphicsSystem.h"
 #include "CameraManager.h"
 
 #include <vector>

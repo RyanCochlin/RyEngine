@@ -56,4 +56,15 @@ namespace RE
 	{
 		_mResource->Unmap(0, nullptr);
 	}
+
+	void UploadBuffer::UploadResource(ID3D12GraphicsCommandList* commandList, GpuResource* resource, D3D12_SUBRESOURCE_DATA data)
+	{
+		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(resource->GetResource(), resource->GetCurrentState(), D3D12_RESOURCE_STATE_COPY_DEST));
+		resource->SetCurrentState(D3D12_RESOURCE_STATE_COPY_DEST);
+		
+		UpdateSubresources<1>(commandList, resource->GetResource(), GetResource(), 0, 0, 1, &data);
+
+		commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(resource->GetResource(), resource->GetCurrentState(), D3D12_RESOURCE_STATE_GENERIC_READ));
+		resource->SetCurrentState(D3D12_RESOURCE_STATE_GENERIC_READ);
+	}
 }

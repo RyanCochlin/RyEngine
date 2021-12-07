@@ -1,6 +1,7 @@
 #include "RyEngine.h"
 #include "Entry.h"
-#include "Core/Mesh.h"
+#include "Core/Graphics/Mesh.h"
+#include "Core/Graphics/GeometryGenerator.h"
 #include "Core/Math/Vector.h"
 #include "Core/Color.h"
 #include "Core/Math/CoreMath.h"
@@ -29,7 +30,7 @@ private:
 	RE::Triangle* _mTriange2;
 	RE::Triangle* _mTriange3;
 	RE::Square* _mSquare;
-	RE::Cube* _mCube;
+	RE::Cube _mCube;
 	RE::Mesh* _mMesh;
 	RE::OrthographicCamera* _mCamera;
 	RE::PerspectiveCamera* _mPerCamera;
@@ -65,7 +66,7 @@ void Sandbox::OnStart()
 #else
 
 	_mPerCamera = new RE::PerspectiveCamera();
-	_mPerCamera->SetLens(RE::Math::degToRad(90.0f), (1920.0f / 1080.0f), 1, 100);
+	_mPerCamera->SetLens(RE::Math::degToRad(100.0f), (1920.0f / 1080.0f), 1, 100);
 	_mPerCamera->LookAt({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 1.0f, 0.0f });
 	//_mPerCamera->LookAt({ 0.0f, 0.0f, 0.0f }, { sinf(RE::Math::degToRad(45.0f)), 0.0f, -1.0f * cosf(RE::Math::degToRad(45.0f)) }, { 0.0f, 1.0f, 0.0f });
 	_mPerCamera->SetPosition({ 0.0f, 0.0f, 0.0f });
@@ -77,10 +78,13 @@ void Sandbox::OnStart()
 	RE::Vector3 p11{ 10.0f, 10.0f, 20.0f };
 	RE::Vector3 p21{ 10.0f, 0.0f, 20.0f };
 	RE::Vector3 p31{ -10.0f, 0.0f, 20.0f };
+	//RE::Triangle t = RE::GeometryGenerator::GetTriangle(p11, p21, p31);
 
-	//RE::Vector3 p11{ 0.0f, 10.0f, 20.0f };
-	//RE::Vector3 p21{ 10.0f, 0.0f, 20.0f };
-	//RE::Vector3 p31{ -10.0f, 0.0f, 20.0f };
+	//RE::Triangle2 t2(p11, p21, p31);
+	/*RE::Vector3 p12{ 0.0f, 10.0f, 20.0f };
+	RE::Vector3 p22{ 10.0f, 0.0f, 20.0f };
+	RE::Vector3 p32{ -10.0f, 0.0f, 20.0f };
+	RE::Triangle2 t22(p12, p22, p32);*/
 
 #endif
 
@@ -108,9 +112,9 @@ void Sandbox::OnStart()
 	//_mSquare->SetColor(RE_RED);
 	//_mSquare->Draw();
 
-	_mCube = new RE::Cube(20, {-20.0f, 15.0f, 50.0f});
-	_mCube->SetColor(RE_RED);
-	_mCube->Draw();
+	//_mCube = new RE::Cube(20, {-20.0f, 15.0f, 50.0f});
+	_mCube = RE::GeometryGenerator::GetCube(20, { -20.0f, 15.0f, 50.0f });
+	_mCube.SetColor(RE_RED);
 
 	//_mTriange1 = new RE::Triangle(p11, p21, p31);
 	//_mTriange1->SetColor(RE_YELLOW);

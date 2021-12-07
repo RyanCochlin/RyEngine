@@ -1,11 +1,22 @@
 #include "pch.h"
+
+#include <memory>
+
 #include "GraphicsSystem.h"
-#include "SubSystemManager.h"
-#include "Camera.h"
+#include "MeshManager.h"
+#include "Core/SubSystemManager.h"
+#include "Core/Camera.h"
 #include "Platform/DirectX/DirectxAPI.h"
 
 namespace RE
 {
+	GraphicsSystem::GraphicsSystem() :
+		_mGraphicsAPI()
+		, _mMeshManager()
+		, _mMeshHeap()
+		, _mNewMesh(false)
+	{}
+
 	void GraphicsSystem::OnRegister()
 	{
 		switch (CURRENT_GRAPHICS_API)
@@ -18,7 +29,8 @@ namespace RE
 		}
 
 		_mNewMesh = false;
-		_mGeo = new GeometryHeap();
+		_mMeshHeap = new MeshHeap();
+		_mMeshManager = std::make_unique<MeshManager>();
 	}
 
 	void GraphicsSystem::OnStart()
@@ -30,18 +42,18 @@ namespace RE
 	{
 		_mGraphicsAPI->Release();
 		delete _mGraphicsAPI;
-
-		delete _mGeo;
+		delete _mMeshHeap;
 	}
 
 	void GraphicsSystem::OnUpdate()
 	{
 		if (_mNewMesh)
 		{
-			_mGraphicsAPI->SetGeometry(_mGeo);
+			_mGraphicsAPI->SetGeometry(_mMeshHeap);
 			_mNewMesh = false;
 		}
 
+		//TODO update what I'm calling draw calls. This isn't right
 		//TODO for now 1 draw call per camera. Probably want to reivew this later
 		std::vector<Camera*> cams = SubSystemManager::Instance().GetSubSystem<CameraManager>()->GetCameras();
 		for (std::vector<Camera*>::iterator i = cams.begin(); i != cams.end(); i++)
@@ -50,6 +62,14 @@ namespace RE
 			DrawCall dc;
 			dc.SetMVP(cam->GetModelView());
 			_mGraphicsAPI->PushDrawCall(dc);
+		}
+
+		_mMeshManager->OnUpdate();
+
+		MeshHeapData instanceData;
+		if (_mMeshManager->FlushMeshData(instanceData))
+		{
+			_mGraphicsAPI->PushMeshData(instanceData);
 		}
 
 		_mGraphicsAPI->OnUpdate();
@@ -65,16 +85,16 @@ namespace RE
 		return _mGraphicsAPI;
 	}
 
-	void GraphicsSystem::AddMeshForDraw(Mesh* mesh)
+	void GraphicsSystem::AddMeshForDraw(Mesh& mesh)
 	{
 		//TODO want to only set geometery once per frame. Need to figure out how to manage them
-		_mGeo->PushMesh(mesh);
+		_mMeshHeap->PushMesh(mesh);
 		_mNewMesh = true;
 	}
 
-	void GraphicsSystem::RemoveMesh(Mesh* mesh)
+	void GraphicsSystem::AddMesh(Mesh& mesh, Transform& trans)
 	{
-		_mGeo->RemoveMesh(mesh);
+		_mMeshManager->AddMesh(mesh, trans);
 	}
 
 	void GraphicsSystem::BackgroundColor(Color color)
