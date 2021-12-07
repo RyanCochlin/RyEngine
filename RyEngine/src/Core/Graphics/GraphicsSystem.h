@@ -38,7 +38,7 @@ namespace RE
 	class RE_API GraphicsSystem : public SubSystem
 	{
 	public:
-		RE_DELCARE_SUBSYSTEM(GraphicsSystem)
+		RE_DECLARE_SUBSYSTEM(GraphicsSystem)
 		
 		GraphicsSystem();
 		GraphicsSystem(const GraphicsSystem&) = delete;

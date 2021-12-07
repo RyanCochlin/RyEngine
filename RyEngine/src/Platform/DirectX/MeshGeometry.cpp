@@ -43,35 +43,20 @@ namespace RE
 		ID3D12Device* device = DirectXCore::GetDevice();
 		for (auto& geo : _mMeshes)
 		{
-			// TODO Get rid of this uploaded flag once everything is converted
 			if (geo.VertexCount() <= 0 || geo.IndexCount() <= 0)
 				continue;
 
-			//TODO this stuff should be put into it's own method to remove code replication
 			VertexBuffer& vertBuf = geo._mVertexBuffer;
 			UploadBuffer& vertUploadBuf = geo._mVertexUploadResource;
 
-			//D3D12_SUBRESOURCE_DATA data = geo->GetResourceData();
 			vertUploadBuf.Create(geo.VertexCount(), geo.VertexElementSize());
 			vertUploadBuf.UploadResource(commandList, &vertBuf, geo.GetVertexResourceData());
-			/*commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(vertBuf.GetResource(), vertBuf.GetCurrentState(), D3D12_RESOURCE_STATE_COPY_DEST));
-			vertBuf.SetCurrentState(D3D12_RESOURCE_STATE_COPY_DEST);
-			UpdateSubresources<1>(commandList, vertBuf.GetResource(), upBuf.GetResource(), 0, 0, 1, &data);
-			commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(vertBuf.GetResource(), vertBuf.GetCurrentState(), D3D12_RESOURCE_STATE_GENERIC_READ));
-			vertBuf.SetCurrentState(D3D12_RESOURCE_STATE_GENERIC_READ);*/
-
 
 			IndexBuffer& indBuf = geo._mIndexBuffer;
 			UploadBuffer& indexUploadBuf = geo._mIndexUploadResource;
 			indexUploadBuf.Create(geo.IndexCount(), geo.IndexElementSize());
 
 			indexUploadBuf.UploadResource(commandList, &indBuf, geo.GetIndexResourceData());
-			/*D3D12_SUBRESOURCE_DATA indexData = geo->GetIndexResourceData();
-			commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(indBuf.GetResource(), indBuf.GetCurrentState(), D3D12_RESOURCE_STATE_COPY_DEST));
-			indBuf.SetCurrentState(D3D12_RESOURCE_STATE_COPY_DEST);
-			UpdateSubresources<1>(commandList, indBuf.GetResource(), indUpBuf.GetResource(), 0, 0, 1, &indexData);
-			commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(indBuf.GetResource(), indBuf.GetCurrentState(), D3D12_RESOURCE_STATE_GENERIC_READ));
-			indBuf.SetCurrentState(D3D12_RESOURCE_STATE_GENERIC_READ);*/
 		}
 		_mDirty = false;
 	}
