@@ -14,6 +14,7 @@ project "RyEngine"
 	kind "SharedLib"
 	language "C++"
 	staticruntime "off"
+	toolset "msc-v143"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -89,6 +90,7 @@ project "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
 	staticruntime "off"
+	toolset "msc-v143"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
