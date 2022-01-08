@@ -45,8 +45,7 @@ namespace RE
 		GraphicsSystem& operator=(const GraphicsSystem&) = delete;
 
 		IGraphicsAPI* GraphicsAPI();
-		void AddMeshForDraw(Mesh& mesh);
-		void AddMesh(Mesh& mesh, Transform& trans);
+		void AddMesh(Mesh* mesh, Transform* trans);
 		void BackgroundColor(Color color);
 
 		void OnRegister() override;
@@ -59,6 +58,5 @@ namespace RE
 		IGraphicsAPI* _mGraphicsAPI;
 		std::unique_ptr<MeshManager> _mMeshManager;
 		MeshHeap* _mMeshHeap;
-		bool _mNewMesh;
 	};
 }

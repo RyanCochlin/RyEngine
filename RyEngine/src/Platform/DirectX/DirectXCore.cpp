@@ -30,7 +30,7 @@ namespace RE
 		   D3D12_DESCRIPTOR_HEAP_TYPE_RTV,
 		   D3D12_DESCRIPTOR_HEAP_TYPE_DSV,
 	};
-	ID3D12Device* DirectXCore::sDevice;
+	ComPtr<ID3D12Device> DirectXCore::sDevice;
 
 	DirectXCore::DirectXCore() :
 		_mDisplayWidth(1920),
@@ -39,7 +39,8 @@ namespace RE
 		_mSwapChainFormat(DXGI_FORMAT_R8G8B8A8_UNORM),
 		_mCommandListManager(nullptr),
 		_mCurrentCommandContext(nullptr),
-		_mCurrentUploadResource(nullptr),
+		_mCurrentPassUploadResource(),
+		_mCurrentObjectUploadResource(),
 		_mainView{},
 		_mGeoManager{},
 		_mRootSig{},
@@ -97,7 +98,7 @@ namespace RE
 			_mDisplayWidth = wd.width;
 			_mDisplayHeight = wd.height;
 
-			_mCommandListManager = new CommandListManager(sDevice);
+			_mCommandListManager = new CommandListManager(sDevice.Get());
 			_mCurrentCommandContext = new CommandContext(D3D12_COMMAND_LIST_TYPE_DIRECT, _mCommandListManager);
 			_mCurrentCommandContext->Initialize();
 
@@ -109,25 +110,23 @@ namespace RE
 				ID3D12Resource* display;
 				ThrowIfFailed(_mSwapChain->GetBuffer(i, IID_PPV_ARGS(&display)));
 				D3D12_CPU_DESCRIPTOR_HANDLE handle = AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-				_mDisplays[i].CreateFromSwapChain(sDevice, display, handle);
+				_mDisplays[i].CreateFromSwapChain(display, handle);
 			}
 
 			//Create Constant buffer.
-			//TODO I think this should be done via draw call but I think it's okay here too
-			_mCurrentUploadResource = new ResColouredUploadResource();
-			_mCurrentUploadResource->Create();
+			// TODO I think this should be done via draw call but I think it's okay here too
+			_mCurrentPassUploadResource.Create();
+			_mCurrentObjectUploadResource.Create();
 
 			//Initialize PSO
 			//TODO will probably want to do this on demand somehow but this will work for now
-			_mRootSig = new RootSignature(sDevice);
+			_mRootSig = new RootSignature(sDevice.Get());
 			_mPSO.SetRootSignature(_mRootSig);
 			_mPSO.SetInputLayout(2, gILColoredDesc);
 			_mPSO.SetPixelShader(g_scoloredPS, sizeof(g_scoloredPS));
 			_mPSO.SetVertexShader(g_scoloredVS, sizeof(g_scoloredVS));
 			_mPSO.SetTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
-			_mPSO.Finalize(sDevice);
-
-			//TODO get the shader working with identity matrix. That will show I'm uploading the data to the buffer correctly.
+			_mPSO.Finalize(sDevice.Get());
 		}
 		catch (DXException e)
 		{
@@ -135,14 +134,24 @@ namespace RE
 		}
 	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE DirectXCore::AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE type, D3D12_DESCRIPTOR_HEAP_FLAGS flags)
+	D3D12_CPU_DESCRIPTOR_HANDLE DirectXCore::TestDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE type)
 	{
-		return sDescriptorAllocators[type].Allocate(sDevice, 1, flags);
+		return sDescriptorAllocators[type].DescriptorAllocatorTest();
 	}
 
-	ID3D12DescriptorHeap* DirectXCore::GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type)
+	D3D12_CPU_DESCRIPTOR_HANDLE DirectXCore::AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE type, D3D12_DESCRIPTOR_HEAP_FLAGS flags)
+	{
+		return sDescriptorAllocators[type].Allocate(1, flags);
+	}
+
+	ComPtr<ID3D12DescriptorHeap> DirectXCore::GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type)
 	{
 		return sDescriptorAllocators[type].GetCurrentDescriptorHeap();
+	}
+
+	UINT DirectXCore::GetDescriptorIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE type)
+	{
+		return sDescriptorAllocators[type].GetDescriptorIncrementSize();
 	}
 
 	void DirectXCore::CreateSwapChain(IDXGIFactory4* factory)
@@ -167,7 +176,7 @@ namespace RE
 
 		//TODO: Use CreateSwapChainForHwind and CreateSwapChainforCoreWindow to support UWP using IDXGISwapChain1
 		ID3D12CommandQueue* comQueue = _mCommandListManager->GetCommandQueue(D3D12_COMMAND_LIST_TYPE_DIRECT)->GetCommandQueue();
-		ThrowIfFailed(factory->CreateSwapChain(comQueue, &swapChainDesc, &_mSwapChain));
+		ThrowIfFailed(factory->CreateSwapChain(comQueue, &swapChainDesc, _mSwapChain.GetAddressOf()));
 	}
 
 	void DirectXCore::Release()
@@ -195,6 +204,7 @@ namespace RE
 
 	void DirectXCore::UploadGeometery()
 	{
+		// TODO most of this should be based on inforation from a draw call but I haven't implemented those yet
 		if (_mCurrentCommandContext == nullptr)
 			return;
 
@@ -203,33 +213,35 @@ namespace RE
 		_mCurrentCommandContext->SetRootSignature(_mRootSig);
 		_mCurrentCommandContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		_mCurrentCommandContext->SetPipelineState(_mPSO);
-		_mCurrentCommandContext->UploadMeshes(sDevice, _mGeoManager);
+		_mCurrentCommandContext->UploadMeshes(sDevice.Get(), _mGeoManager);
 		_mCurrentCommandContext->End();
 	}
 
-	void DirectXCore::UploadConstantBuffers()
+	void DirectXCore::UploadPassConstantBuffers()
 	{
 		//TODO figure out how to make multiple draw calls. For now just use first one
-		if (_mCurrentUploadResource != nullptr)
-		{
-			DXDrawCall dc = _mDrawCalls.back();
-			dynamic_cast<ResColouredUploadResource*>(_mCurrentUploadResource)->Upload(dc.GetMVP());
-			_mDrawCalls.clear();
-		}
+		DXDrawCall dc = _mDrawCalls.back();
+		ResColoredPassConstants pc{ dc.GetMVP() };
+		_mCurrentPassUploadResource.Upload(pc);
+		_mDrawCalls.clear();
 	}
 
-	void DirectXCore::SubmitGeometery(MeshHeap* meshHeap)
+	void DirectXCore::UploadObjectConstantBuffers()
 	{
-		Mesh mesh("");
-		while(meshHeap->ConsumeMesh(mesh))
+		for (int i = 0; i < _mGeoManager.MeshCount(); ++i)
 		{
-			_mGeoManager.Submit(mesh);
+			MeshGeometry& mesh = _mGeoManager.GetMesh(i);
+			for (int j = 0; j < mesh.SubMeshCount(); ++j)
+			{
+				SubMeshData& subMesh = mesh.GetSubMeshData(j);
+				ResColoredObjectConstants oc{ subMesh.transform->GetWorld() };
+				_mCurrentObjectUploadResource.Upload(oc);
+			}
 		}
 	}
 
 	void DirectXCore::SubmitMeshHeap(const MeshHeapData& meshHeap)
 	{
-		meshHeap.subMeshData;
 		std::vector<Vertex> verts = meshHeap.vertexHeap;
 		std::vector<RE_INDEX> indicies = meshHeap.indexHeap;
 		VertexBuffer vb(verts);
@@ -239,9 +251,30 @@ namespace RE
 		_mGeoManager.AddMesh(mesh);
 	}
 
+	void DirectXCore::DrawGeometery()
+	{
+		//This should just be for setting buffers
+		for (int i = 0; i < _mGeoManager.MeshCount(); ++i)
+		{
+			MeshGeometry& mesh = _mGeoManager.GetMesh(i);
+
+			_mCurrentCommandContext->SetVertexBuffers(mesh, 0);
+			_mCurrentCommandContext->SetIndexBuffers(mesh);
+
+			for (int j = 0; j < mesh.SubMeshCount(); ++j)
+			{
+				// TODO need to keep better track of the offsets and indicies for constat buffers
+				uint32_t offset = j + 1;
+				_mCurrentPassUploadResource.SetDescriptor(_mCurrentCommandContext, 1, offset);
+			}
+		}
+	}
+
 	void DirectXCore::Update()
 	{
-		UploadConstantBuffers();
+		UploadPassConstantBuffers();
+		UploadObjectConstantBuffers();
+
 		if (_mGeoManager.IsDirty())
 		{
 			UploadGeometery();
@@ -258,15 +291,20 @@ namespace RE
 		
 		_mCurrentCommandContext->Start();
 		_mCurrentCommandContext->SetRootSignature(_mRootSig);
-		_mCurrentCommandContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 		_mCurrentCommandContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 		_mCurrentCommandContext->SetPipelineState(_mPSO);
-		_mCurrentCommandContext->SetDescriptorTable(0, GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->GetGPUDescriptorHandleForHeapStart());
+		_mCurrentCommandContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+		_mCurrentPassUploadResource.SetDescriptor(_mCurrentCommandContext, 0, 0);
+		//_mCurrentCommandContext->SetDescriptorTable(0, GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)->GetGPUDescriptorHandleForHeapStart());
+		
 		_mCurrentCommandContext->TransitionResource(curBackBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET);
 		_mCurrentCommandContext->SetRenderTarget(curBackBuffer.GetDescriptorHandle());
 		_mCurrentCommandContext->SetViewPortAndScissor(0, 0, _mDisplayWidth, _mDisplayHeight);
-		_mCurrentCommandContext->SetVertexBuffers(_mGeoManager, 0);
-		_mCurrentCommandContext->SetIndexBuffers(_mGeoManager);
+
+		DrawGeometery();
+
 		_mCurrentCommandContext->Draw(&curBackBuffer, _mGeoManager.IndexCount(), _mGeoManager.VertexCount());
 		_mCurrentCommandContext->TransitionResource(curBackBuffer, D3D12_RESOURCE_STATE_PRESENT);
 
@@ -275,64 +313,5 @@ namespace RE
 		ThrowIfFailed(_mSwapChain->Present(1, 0));
 
 		_mCurrentBuffer = (_mCurrentBuffer + 1) % SWAP_CHAIN_BUFFER_COUNT;
-
-		//PopulateCommandList();
-
-		//ID3D12CommandList* ppCommandLists[] = { _init->CommandList().Get() };
-		//_init->CommandQueue()->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
-
-		/*ThrowIfFailed(_init->SwapChain()->Present(0, 0));
-
-		WaitForPreviousFrame();*/
-	}
-
-	void DirectXCore::PopulateCommandList()
-	{
-		//ThrowIfFailed(_init->CommandAllocator()->Reset());
-
-		/*ThrowIfFailed(_init->CommandList()->Reset(_init->CommandAllocator().Get(), _init->PipelineState().Get()));
-		
-		_init->CommandList()->SetGraphicsRootSignature(_init->RootSignature().Get());
-		_mainView->Draw();
-
-		_init->CommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_init->GetCurrentBackBuffer(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
-
-		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(_init->RTVHeap()->GetCPUDescriptorHandleForHeapStart(), _init->CurrentFrame(), _init->RTVDescSize());
-		_init->CommandList()->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
-
-		Color clearColor = { 0.0f, 1.0f, 1.0f, 1.0f };
-		_init->CommandList()->ClearRenderTargetView(rtvHandle, clearColor.rbga, 0, nullptr);
-
-		_init->CommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		_init->CommandList()->IASetVertexBuffers(0, 1, &(_init->VertexBufferView()));
-		_init->CommandList()->DrawInstanced(3, 1, 0, 0);
-
-		_init->CommandList()->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(_init->GetCurrentBackBuffer(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
-
-		ThrowIfFailed(_init->CommandList()->Close());*/
-	}
-
-	void DirectXCore::WaitForPreviousFrame()
-	{
-		/*const UINT64 fence = _init->FenceValue();
-		ThrowIfFailed(_init->CommandQueue()->Signal(_init->Fence().Get(), fence));
-		_init->UpdateCurrentFence();
-
-		if (_init->Fence()->GetCompletedValue() < fence)
-		{
-			ThrowIfFailed(_init->Fence()->SetEventOnCompletion(fence, _init->FenceEvent()));
-			WaitForSingleObject(_init->FenceEvent(), INFINITE);
-		}
-
-		_init->UpdateCurrentBuffer();*/
-	}
-
-	//TODO: test stuff
-	void DirectXCore::CreateTriangle()
-	{
-		//Vertex verts[] =
-		//{
-		//	{{0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}
-		//};
 	}
 }  

@@ -18,18 +18,7 @@ namespace RE
 
 	GeometeryManager::~GeometeryManager()
 	{
-		/*std::vector<MeshGeometry*>::iterator i = _mMeshes.begin();
-		for (; i != _mMeshes.end(); i++)
-		{
-			delete *i;
-		}*/
 		_mMeshes.clear();
-	}
-
-	void GeometeryManager::Submit(Mesh& mesh)
-	{
-		//MeshGeometry* m = new MeshGeometry(mesh);
-		//_mMeshes.push_back(m);
 	}
 
 	void GeometeryManager::AddMesh(MeshGeometry& mesh)
@@ -40,7 +29,6 @@ namespace RE
 
 	void GeometeryManager::UploadAll(ID3D12GraphicsCommandList* commandList)
 	{
-		ID3D12Device* device = DirectXCore::GetDevice();
 		for (auto& geo : _mMeshes)
 		{
 			if (geo.VertexCount() <= 0 || geo.IndexCount() <= 0)
@@ -150,5 +138,10 @@ namespace RE
 		resource.SlicePitch = resource.RowPitch;
 
 		return resource;
+	}
+
+	SubMeshData& MeshGeometry::GetSubMeshData(int index)
+	{
+		return _mSubMeshData[index];
 	}
 }

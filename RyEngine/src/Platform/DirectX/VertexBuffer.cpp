@@ -24,10 +24,9 @@ namespace RE
 
 	void VertexBuffer::Create()
 	{
-		ID3D12Device* device = DirectXCore::GetDevice();
 		UINT byteSize = _mVertStride * _mCount;
 
-		ThrowIfFailed(device->CreateCommittedResource(
+		ThrowIfFailed(DirectXCore::GetDevice()->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 			D3D12_HEAP_FLAG_NONE,
 			&CD3DX12_RESOURCE_DESC::Buffer(byteSize),

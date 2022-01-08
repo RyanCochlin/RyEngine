@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "DescriptorAllocator.h"
 #include "Core/Assert.h"
+#include "DirectXCore.h"
 
 namespace RE
 {
@@ -13,17 +14,14 @@ namespace RE
 		_mCurrentHandle()
 	{}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE DescriptorAllocator::Allocate(ID3D12Device* device, uint32_t count, D3D12_DESCRIPTOR_HEAP_FLAGS flags)
+	D3D12_CPU_DESCRIPTOR_HANDLE DescriptorAllocator::Allocate(uint32_t count, D3D12_DESCRIPTOR_HEAP_FLAGS flags)
 	{
 		//TODO: add mutex lock for multithreading
 
 		DescriptorAllocatorPage* nextPage = nullptr;
-
-		std::vector<DescriptorAllocatorPage*>::iterator iter = _mDescriptorHeapPool.begin();
-		for (; iter != _mDescriptorHeapPool.end(); ++iter)
+		for(auto& allocatorPage : _mDescriptorHeapPool)
 		{
 			//find first heap with enough space
-			DescriptorAllocatorPage* allocatorPage = *iter;
 			if (allocatorPage != nullptr && allocatorPage->GetRemainingSize() > count)
 			{
 				nextPage = allocatorPage;
@@ -34,7 +32,7 @@ namespace RE
 		if (nextPage == nullptr)
 		{
 			//no allocator page found. Allocate new
-			DescriptorAllocatorPage* newPage = new DescriptorAllocatorPage(device, _mType, DESCRIPTORS_PER_HEAP, flags);
+			DescriptorAllocatorPage* newPage = new DescriptorAllocatorPage(_mType, DESCRIPTORS_PER_HEAP, flags);
 			_mDescriptorHeapPool.push_back(newPage);
 			nextPage = newPage;
 		}
@@ -42,9 +40,9 @@ namespace RE
 		return nextPage->Allocate(count);
 	}
 
-	ID3D12DescriptorHeap* DescriptorAllocator::GetCurrentDescriptorHeap()
+	ComPtr<ID3D12DescriptorHeap> DescriptorAllocator::GetCurrentDescriptorHeap()
 	{
-		ID3D12DescriptorHeap* heap = nullptr;
+		ComPtr<ID3D12DescriptorHeap> heap;
 		DescriptorAllocatorPage* page;
 		if (_mDescriptorHeapPool.size() > 0)
 		{
@@ -54,25 +52,50 @@ namespace RE
 		return heap;// (_mDescriptorHeapPool.size() > 0) ? _mDescriptorHeapPool.back()->GetDescriptorHeap() : nullptr;
 	}
 
+	UINT DescriptorAllocator::GetDescriptorIncrementSize()
+	{
+		UINT incrementSize = 0;
+		DescriptorAllocatorPage* page;
+		if (_mDescriptorHeapPool.size() > 0)
+		{
+			page = _mDescriptorHeapPool.back();
+			incrementSize = page->GetDescriptorIncrementSize();
+		}
+
+		return incrementSize;
+	}
+
 	void DescriptorAllocator::ReleaseStale(uint64_t frame)
 	{
 		//TODO need to release descriptors. I'm leaking memory
 	}
 
+	D3D12_CPU_DESCRIPTOR_HANDLE DescriptorAllocator::DescriptorAllocatorTest()
+	{
+		D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
+		cbvHeapDesc.NumDescriptors = 2;
+		cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		cbvHeapDesc.NodeMask = 0;
+		ThrowIfFailed(DirectXCore::GetDevice()->CreateDescriptorHeap(&cbvHeapDesc,
+			IID_PPV_ARGS(&_mTestHeap)));
+		return _mTestHeap->GetCPUDescriptorHandleForHeapStart();
+	}
+
 	//-----------------------------DescriptorAllocatorPage------------------------//
-	DescriptorAllocatorPage::DescriptorAllocatorPage(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors, D3D12_DESCRIPTOR_HEAP_FLAGS flags) :
-		_mDevice(device),
+	DescriptorAllocatorPage::DescriptorAllocatorPage(D3D12_DESCRIPTOR_HEAP_TYPE type, uint32_t numDescriptors, D3D12_DESCRIPTOR_HEAP_FLAGS flags) :
 		_mType(type),
 		_mNumDescriptors(numDescriptors),
 		_mRemainingDescriptors(numDescriptors),
-		_mDescriptorSize(0)
+		_mDescriptorSize(0),
+		_mCurrentOffset(0)
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC desc;
 		desc.Type = _mType;
 		desc.NumDescriptors = _mNumDescriptors;
 		desc.Flags = flags;
 		desc.NodeMask = 0; //TODO sort out the node mask for multi adapter
-		ThrowIfFailed(_mDevice->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&_mDescriptorHeap)));
+		ThrowIfFailed(DirectXCore::GetDevice()->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&_mDescriptorHeap)));
 		_mCurrentHandle = _mDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 	}
 
@@ -82,13 +105,25 @@ namespace RE
 
 		if (_mDescriptorSize == 0)
 		{
-			_mDescriptorSize = _mDevice->GetDescriptorHandleIncrementSize(_mType);
+			_mDescriptorSize = DirectXCore::GetDevice()->GetDescriptorHandleIncrementSize(_mType);
 		}
 
+		// TODO need to keep track of current descriptor offset
 		D3D12_CPU_DESCRIPTOR_HANDLE cur = _mCurrentHandle;
-		_mCurrentHandle.ptr += count * _mDescriptorSize;
+		_mCurrentOffset += count * _mDescriptorSize;
+		_mCurrentHandle.ptr += _mCurrentOffset;
 		_mRemainingDescriptors -= count;
 		return cur;
+	}
+
+	UINT DescriptorAllocatorPage::GetDescriptorIncrementSize()
+	{
+		if (_mDescriptorSize == 0)
+		{
+			_mDescriptorSize = DirectXCore::GetDevice()->GetDescriptorHandleIncrementSize(_mType);
+		}
+
+		return _mDescriptorSize;
 	}
 
 	void DescriptorAllocatorPage::Clear()

@@ -29,7 +29,9 @@ namespace RE
 		void SetScissor(UINT left, UINT right, UINT top, UINT bottom);
 		void SetScissor(D3D12_RECT rect);
 		void SetVertexBuffers(GeometeryManager& gm, UINT slot);
+		void SetVertexBuffers(MeshGeometry& mesh, UINT slot);
 		void SetIndexBuffers(GeometeryManager& gm);
+		void SetIndexBuffers(MeshGeometry& mesh);
 		void SetDescriptorHeaps();
 		void Draw(ColorBuffer* rtv, UINT indexCount, UINT vertexCount);
 		void UploadMeshes(ID3D12Device* device, GeometeryManager& gm);
@@ -40,7 +42,6 @@ namespace RE
 		CommandListManager* _mCommandManager;
 		ID3D12GraphicsCommandList* _mCommandList;
 		ID3D12CommandAllocator* _mCurrentAllocator;
-		ID3D12RootSignature* _mRootSignature;
 		ID3D12PipelineState* _mPipelineState;
 		D3D12_COMMAND_LIST_TYPE _mType;
 	};

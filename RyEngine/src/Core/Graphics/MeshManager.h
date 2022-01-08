@@ -32,8 +32,8 @@ namespace RE
 	struct SubMeshData
 	{
 		SubMeshData() = default;
-		SubMeshData(Transform t, uint32_t bv, uint32_t bi, uint32_t ic) : transform(t), baseVertex(bv), baseIndex(bi), indexCount(ic) {}
-		Transform transform;
+		SubMeshData(Transform* t, uint32_t bv, uint32_t bi, uint32_t ic) : transform(t), baseVertex(bv), baseIndex(bi), indexCount(ic) {}
+		Transform* transform;
 		uint32_t baseVertex;
 		uint32_t baseIndex;
 		uint32_t indexCount;
@@ -62,12 +62,12 @@ namespace RE
 
 	struct MeshInstanceData
 	{
-		MeshInstanceData(Mesh& m, Transform& t) : mesh(m)
+		MeshInstanceData(Mesh* m, Transform* t) : mesh(m)
 		{
 			instanceTransforms.push_back(std::move(t));
 		}
-		Mesh mesh;
-		std::vector<Transform> instanceTransforms;
+		Mesh* mesh;
+		std::vector<Transform*> instanceTransforms;
 	};
 
 	class MeshManager
@@ -79,8 +79,8 @@ namespace RE
 
 		const std::vector<MeshInstanceData>& GetMeshData() const { return _mInstancedMeshes; }
 		void OnUpdate();
-		void AddMesh(Mesh& mesh, Transform& trans);
-		void AddInstance(const char* id, Transform& trans);
+		void AddMesh(Mesh* mesh, Transform* trans);
+		void AddInstance(const char* id, Transform* trans);
 		bool FlushMeshData(MeshHeapData& meshData);
 
 	private:

@@ -39,7 +39,7 @@ namespace RE
 	};
 
 	//-------------------------Mesh--------------------------------//
-	class RE_API Mesh
+	class RE_API Mesh //: public Component
 	{
 	public:
 		Mesh(const char* id);
@@ -57,19 +57,12 @@ namespace RE
 		uint32_t GetSize();
 		void SetColor(Color color);
 		Color GetColor();
-		void AddVertex(Vector3 pos, Color color = { -1.0f });
-		void AddIndex(RE_INDEX ind);
-		void AddVertAndIndex(Vector3 pos, RE_INDEX ind, Color color = { -1.0f });
 		void SetSubmesh(uint32_t indexCount);
 		void AddSubmesh(uint32_t indexCount, std::vector<Vertex>& mesh);
 
 	protected:
 		MeshData _mMeshData;
 		std::vector<SubMesh> _mSubMeshes;
-
-		// These should be removed once MeshDatas are working
-		std::vector<Vertex> _mVerticies;
-		std::vector<RE_INDEX> _mIndices;
 		const char* _mId;
 		Color _mColor;
 	};
@@ -85,7 +78,6 @@ namespace RE
 		BasicGeometryType geometryType;
 	};
 
-	// TODO this is just a test of the new mesh data object. Should delete this once it's working!
 	class RE_API Triangle : public BasicGeometry
 	{
 	public:
@@ -115,17 +107,18 @@ namespace RE
 			float halfHeight = height / 2.0f;
 			float fDepth = (float)center.z;
 
-			AddVertex({halfWidth, halfHeight, fDepth});
-			AddVertex({ halfWidth, -halfHeight, fDepth });
-			AddVertex({-halfWidth, -halfHeight, fDepth});
-			AddVertex({-halfWidth, halfHeight, fDepth});
+			MeshData md;
+			md.verticies.emplace_back(Vector3{ halfWidth, halfHeight, fDepth }, ColorToVector(RE_WHITE));
+			md.verticies.emplace_back(Vector3{ halfWidth, -halfHeight, fDepth }, ColorToVector(RE_WHITE));
+			md.verticies.emplace_back(Vector3{ -halfWidth, -halfHeight, fDepth }, ColorToVector(RE_WHITE));
+			md.verticies.emplace_back(Vector3{ -halfWidth, halfHeight, fDepth }, ColorToVector(RE_WHITE));
 
-			AddIndex(0);
-			AddIndex(1);
-			AddIndex(2);
-			AddIndex(0);
-			AddIndex(2);
-			AddIndex(3);
+			md.indicies.push_back(0);
+			md.indicies.push_back(1);
+			md.indicies.push_back(2);
+			md.indicies.push_back(0);
+			md.indicies.push_back(2);
+			md.indicies.push_back(3);
 		}
 	};
 
@@ -160,6 +153,14 @@ namespace RE
 			md.indicies.push_back(0);
 			md.indicies.push_back(2);
 			md.indicies.push_back(3);
+
+			//back face
+			md.indicies.push_back(4);
+			md.indicies.push_back(6);
+			md.indicies.push_back(5);
+			md.indicies.push_back(4);
+			md.indicies.push_back(7);
+			md.indicies.push_back(6);
 
 			//left face
 			md.indicies.push_back(3);

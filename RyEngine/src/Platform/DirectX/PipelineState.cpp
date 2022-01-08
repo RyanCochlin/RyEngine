@@ -38,7 +38,7 @@ namespace RE
 
 	void GraphicsPipelineState::Finalize(ID3D12Device* device)
 	{
-		_mPSODescriptor.pRootSignature = _mRootSignature->GetRootSignature();
+		_mPSODescriptor.pRootSignature = _mRootSignature->GetRootSignature().Get();
 
 		ThrowIfFailed(device->CreateGraphicsPipelineState(&_mPSODescriptor, IID_PPV_ARGS(&_mPipelineState)));
 	}

@@ -6,6 +6,7 @@
 #include "Input/InputSystem.h"
 #include "Graphics/GraphicsSystem.h"
 #include "CameraManager.h"
+#include "ECS/ECS.h"
 
 #include <vector>
 

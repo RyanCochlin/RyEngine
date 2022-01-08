@@ -30,6 +30,7 @@ namespace RE
 		D3D12_INDEX_BUFFER_VIEW IndexBufferView();
 		D3D12_SUBRESOURCE_DATA GetVertexResourceData();
 		D3D12_SUBRESOURCE_DATA GetIndexResourceData();
+		SubMeshData& GetSubMeshData(int index);
 
 		inline size_t VertexCount() { return _mVertexBuffer.GetCount(); }
 		inline size_t IndexCount() { return _mIndexBuffer.GetCount(); }
@@ -37,6 +38,7 @@ namespace RE
 		inline UINT IndexElementSize() { return sizeof(RE_INDEX); }
 		inline size_t VertexSize() { return VertexCount() * VertexElementSize(); }
 		inline size_t IndexSize() { return IndexCount() * IndexElementSize(); }
+		inline size_t SubMeshCount() { return _mSubMeshData.size(); }
 
 	private:
 		VertexBuffer _mVertexBuffer;
@@ -52,7 +54,6 @@ namespace RE
 		GeometeryManager();
 		~GeometeryManager();
 
-		void Submit(Mesh& mesh);
 		void UploadAll(ID3D12GraphicsCommandList* commandList);
 		UINT MeshCount();
 		UINT VertexCount();

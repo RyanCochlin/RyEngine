@@ -11,8 +11,6 @@ namespace RE
 {
 	Mesh::Mesh(const char* id) :
 		_mId(id),
-		_mVerticies(),
-		_mIndices(),
 		_mSubMeshes(),
 		_mColor(RE_WHITE)
 	{}
@@ -60,11 +58,6 @@ namespace RE
 		return _mMeshData.indicies;
 	}
 
-	Vertex& Mesh::operator[](int index)
-	{
-		return _mVerticies[index];
-	}
-
 	void Mesh::SetColor(Color color)
 	{
 		_mColor = color;
@@ -73,25 +66,6 @@ namespace RE
 	Color Mesh::GetColor()
 	{
 		return _mColor;
-	}
-
-
-	void Mesh::AddVertex(Vector3 pos, Color color /*= { -1.0f }*/)
-	{
-		Color c = (color.rgba[0] == -1.0f) ? _mColor : color;
-		_mVerticies.push_back({ pos, ColorToVector(c) });
-	}
-
-	void Mesh::AddIndex(RE_INDEX ind)
-	{
-		_mIndices.push_back(ind);
-	}
-
-	void Mesh::AddVertAndIndex(Vector3 pos, RE_INDEX ind, Color color /*= { -1.0f }*/)
-	{
-		Color c = (color.rgba[0] == -1.0f) ? _mColor : color;
-		_mVerticies.push_back({ pos, ColorToVector(c) });
-		_mIndices.push_back(ind);
 	}
 
 	void Mesh::SetSubmesh(uint32_t indexCount)
@@ -104,7 +78,6 @@ namespace RE
 
 	void Mesh::AddSubmesh(uint32_t indexCount, std::vector<Vertex>& mesh)
 	{
-		_mVerticies.insert(_mVerticies.end(), mesh.begin(), mesh.end());
 		SetSubmesh(indexCount);
 	}
 }
