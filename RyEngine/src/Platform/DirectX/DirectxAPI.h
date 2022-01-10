@@ -37,7 +37,6 @@ namespace RE
 		}
 
 		void SetClearColor(Color color) override { _mDirectX.SetClearColor(color); }
-		void SetGeometry(MeshHeap* geo) override { _mDirectX.SubmitGeometery(geo); }
 		
 		void PushDrawCall(DrawCall dc) override
 		{

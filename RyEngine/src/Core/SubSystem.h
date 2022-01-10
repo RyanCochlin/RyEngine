@@ -12,7 +12,8 @@ namespace RE
 		InputSystem,
 		LoggingSystem,
 		GraphicsSystem,
-		CameraSystem
+		CameraSystem,
+		EcsSystem
 	};
 
 	class SubSystem

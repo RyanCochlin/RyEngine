@@ -5,7 +5,7 @@
 
 namespace RE
 {
-	class Transform
+	class Transform //: public Component
 	{
 	public:
 		RE_API Transform();

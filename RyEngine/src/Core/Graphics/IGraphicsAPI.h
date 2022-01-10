@@ -19,8 +19,6 @@ namespace RE
 		virtual void OnRender() = 0;
 
 		virtual void SetClearColor(Color color) = 0;
-		virtual void SetGeometry(MeshHeap* geo) = 0;
-
 		virtual void PushDrawCall(DrawCall dc) = 0;
 		virtual void PushMeshData(const MeshHeapData& meshHeap) = 0;
 

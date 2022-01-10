@@ -4,7 +4,9 @@ VertOut VS(VertIn vIn)
 {
 	VertOut vOut;
 
-	vOut.posH = mul(float4(vIn.pos, 1), gWorldViewProj);
+	float4 pos = float4(vIn.pos, 1);
+	pos = mul(pos, gWorld);
+	vOut.posH = mul(pos, gViewProj);
 	vOut.color = vIn.color;
 
 	return vOut;

@@ -15,9 +15,8 @@ namespace RE
 	void UploadBuffer::Create(UINT numElements, UINT elementSize)
 	{
 		UINT size = numElements * elementSize;
-		ID3D12Device* device = DirectXCore::GetDevice();
 
-		HRESULT hr = device->CreateCommittedResource(
+		HRESULT hr = DirectXCore::GetDevice()->CreateCommittedResource(
 			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 			D3D12_HEAP_FLAG_NONE,
 			&CD3DX12_RESOURCE_DESC::Buffer(size),
