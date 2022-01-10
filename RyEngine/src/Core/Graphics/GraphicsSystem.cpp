@@ -81,6 +81,16 @@ namespace RE
 		_mMeshManager->AddMesh(mesh, trans);
 	}
 
+	Mesh* GraphicsSystem::GetMeshInstance(const char* id)
+	{
+		return _mMeshManager->GetInstance(id);
+	}
+
+	void GraphicsSystem::AddMeshInstance(const char* id, Transform* trans)
+	{
+		_mMeshManager->AddInstance(id, trans);
+	}
+
 	void GraphicsSystem::BackgroundColor(Color color)
 	{
 		_mGraphicsAPI->SetClearColor(color);

@@ -46,6 +46,8 @@ namespace RE
 
 		IGraphicsAPI* GraphicsAPI();
 		void AddMesh(Mesh* mesh, Transform* trans);
+		Mesh* GetMeshInstance(const char* id);
+		void AddMeshInstance(const char* id, Transform* trans);
 		void BackgroundColor(Color color);
 
 		void OnRegister() override;

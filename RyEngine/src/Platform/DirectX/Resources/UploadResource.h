@@ -23,10 +23,10 @@ namespace RE
 			delete _mUploadBuffer;
 		}
 
-		void Create()
+		void Create(uint32_t count)
 		{
 			_mSize = sizeof(T);
-			_mCount = 1;
+			_mCount = count;
 			ASSERT(_mSize > 0);
 
 			_mUploadBuffer->Create(_mCount, _mSize);

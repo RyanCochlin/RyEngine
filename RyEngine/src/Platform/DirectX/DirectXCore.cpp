@@ -115,8 +115,8 @@ namespace RE
 
 			//Create Constant buffer.
 			// TODO I think this should be done via draw call but I think it's okay here too
-			_mCurrentPassUploadResource.Create();
-			_mCurrentObjectUploadResource.Create();
+			_mCurrentPassUploadResource.Create(1);
+			_mCurrentObjectUploadResource.Create(1);
 
 			//Initialize PSO
 			//TODO will probably want to do this on demand somehow but this will work for now

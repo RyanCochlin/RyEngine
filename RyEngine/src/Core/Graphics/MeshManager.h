@@ -81,6 +81,7 @@ namespace RE
 		void OnUpdate();
 		void AddMesh(Mesh* mesh, Transform* trans);
 		void AddInstance(const char* id, Transform* trans);
+		Mesh* GetInstance(const char* id);
 		bool FlushMeshData(MeshHeapData& meshData);
 
 	private:

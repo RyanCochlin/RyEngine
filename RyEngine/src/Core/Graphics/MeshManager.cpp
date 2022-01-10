@@ -1,5 +1,6 @@
 #include "pch.h"
 #include <cstring>
+#include <algorithm>
 #include "MeshManager.h"
 #include "IGraphicsAPI.h"
 
@@ -118,6 +119,15 @@ namespace RE
 				break;
 			}
 		}
+	}
+
+	Mesh* MeshManager::GetInstance(const char* id)
+	{
+		auto& item = std::find_if(_mInstancedMeshes.begin(), _mInstancedMeshes.end(), [&](MeshInstanceData inst) {
+			return inst.mesh->GetID() == id;
+		});
+
+		return item != _mInstancedMeshes.end() ? item->mesh : nullptr;
 	}
 
 	bool MeshManager::FlushMeshData(MeshHeapData& meshData)
