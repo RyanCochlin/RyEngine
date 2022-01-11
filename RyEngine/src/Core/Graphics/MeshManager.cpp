@@ -80,13 +80,13 @@ namespace RE
 
 			for (auto& meshInstance : _mInstancedMeshes)
 			{
-				Mesh& mesh = meshInstance.mesh;
-				MeshData& meshData = mesh.GetMeshData();
+				Mesh* mesh = meshInstance.mesh;
+				MeshData& meshData = mesh->GetMeshData();
 				indexCount = meshData.indicies.size();
 
 				_mMeshHeapData.vertexHeap.insert(_mMeshHeapData.vertexHeap.end(), meshData.verticies.begin(), meshData.verticies.end());
 				_mMeshHeapData.indexHeap.insert(_mMeshHeapData.indexHeap.end(), meshData.indicies.begin(), meshData.indicies.end());
-				for (auto& transform : meshInstance.instanceTransforms)
+				for (auto transform : meshInstance.instanceTransforms)
 				{
 					_mMeshHeapData.subMeshData.emplace_back(transform, baseVertex, baseIndex, indexCount);
 				}
@@ -99,20 +99,20 @@ namespace RE
 		}
 	}
 
-	void MeshManager::AddMesh(Mesh& mesh, Transform& trans)
+	void MeshManager::AddMesh(Mesh* mesh, Transform* trans)
 	{
 		MeshInstanceData instance( mesh, trans );
 		_mInstancedMeshes.push_back(instance);
-		_mTotalVerts += mesh.GetVerticies().size();
-		_mTotalIndicis += mesh.GetIndicies().size();
+		_mTotalVerts += mesh->GetVerticies().size();
+		_mTotalIndicis += mesh->GetIndicies().size();
 		_mDirty = true;
 	}
 
-	void MeshManager::AddInstance(const char* id, Transform& trans)
+	void MeshManager::AddInstance(const char* id, Transform* trans)
 	{
 		for (auto& instance : _mInstancedMeshes)
 		{
-			if (strcmp(instance.mesh.GetID(), id) == 0)
+			if (strcmp(instance.mesh->GetID(), id) == 0)
 			{
 				instance.instanceTransforms.push_back(trans);
 				break;

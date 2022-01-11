@@ -27,10 +27,10 @@ namespace RE
 
 	void CommandContext::SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type)
 	{
-		ID3D12DescriptorHeap* heap = DirectXCore::GetDescriptorHeap(type);
+		ComPtr<ID3D12DescriptorHeap> heap = DirectXCore::GetDescriptorHeap(type);
 		if (heap != nullptr)
 		{
-			ID3D12DescriptorHeap* heaps[] = { heap };
+			ID3D12DescriptorHeap* heaps[] = { heap.Get()};
 			SetDescriptorHeaps(1, heaps);
 		}
 	}
@@ -50,11 +50,7 @@ namespace RE
 
 	void CommandContext::SetRootSignature(RootSignature* rootSig)
 	{
-		if (rootSig->GetRootSignature() != _mRootSignature)
-		{
-			_mRootSignature = rootSig->GetRootSignature();
-		}
-		_mCommandList->SetGraphicsRootSignature(_mRootSignature);
+		_mCommandList->SetGraphicsRootSignature(rootSig->GetRootSignature().Get());
 	}
 
 	void CommandContext::SetPrimitiveTopology(D3D12_PRIMITIVE_TOPOLOGY topology)
@@ -141,6 +137,17 @@ namespace RE
 		}
 	}
 
+	void CommandContext::SetVertexBuffers(MeshGeometry& mesh, UINT slot)
+	{
+		std::vector<D3D12_VERTEX_BUFFER_VIEW> vbView;
+		if (mesh.VertexCount() > 0)
+		{
+			D3D12_VERTEX_BUFFER_VIEW vbv = mesh.VertexBufferView();
+			vbView.push_back(vbv);
+			_mCommandList->IASetVertexBuffers(0, 1, vbView.data());
+		}
+	}
+
 	void CommandContext::SetIndexBuffers(GeometeryManager& gm)
 	{
 		if (gm.MeshCount() > 0)
@@ -160,6 +167,18 @@ namespace RE
 
 			_mCommandList->IASetIndexBuffer(ibView.data());
 		}
+	}
+
+	void CommandContext::SetIndexBuffers(MeshGeometry & mesh)
+	{
+		std::vector<D3D12_INDEX_BUFFER_VIEW> ibView;
+		if (mesh.IndexCount() > 0)
+		{
+			D3D12_INDEX_BUFFER_VIEW ibv = mesh.IndexBufferView();
+			ibView.push_back(ibv);
+		}
+
+		_mCommandList->IASetIndexBuffer(ibView.data());
 	}
 
 	void CommandContext::Draw(ColorBuffer* buffer, UINT indexCount, UINT vertexCount)

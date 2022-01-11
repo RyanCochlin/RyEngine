@@ -70,15 +70,15 @@ namespace RE
 
 		Matrix4 ry;
 		ry[0][0] = cos(yRad);
-		ry[0][2] = sin(xRad);
-		ry[2][0] = -sin(xRad);
-		ry[2][2] = cos(xRad);
+		ry[0][2] = sin(yRad);
+		ry[2][0] = -sin(yRad);
+		ry[2][2] = cos(yRad);
 
 		Matrix4 rz;
-		rz[0][0] = cos(yRad);
-		rz[0][1] = -sin(xRad);
-		rz[1][0] = sin(xRad);
-		rz[1][1] = cos(xRad);
+		rz[0][0] = cos(zRad);
+		rz[0][1] = -sin(zRad);
+		rz[1][0] = sin(zRad);
+		rz[1][1] = cos(zRad);
 
 		Matrix4 R = rx * ry * rz;
 

@@ -2,12 +2,14 @@
 #include "Entry.h"
 #include "Core/Graphics/Mesh.h"
 #include "Core/Graphics/GeometryGenerator.h"
+#include "Core/Graphics/Transform.h"
 #include "Core/Math/Vector.h"
 #include "Core/Color.h"
 #include "Core/Math/CoreMath.h"
 #include "Core/Input/InputSystem.h"
 #include "Core/Input/KeyCodes.h"
 #include "Core/Input/Mouse.h"
+#include "Core/ECS/ECS.h"
 
 #include <vector>
 
@@ -30,10 +32,12 @@ private:
 	RE::Triangle* _mTriange2;
 	RE::Triangle* _mTriange3;
 	RE::Square* _mSquare;
+	RE::Entity _mCubeEntity;
 	RE::Cube _mCube;
 	RE::Mesh* _mMesh;
 	RE::OrthographicCamera* _mCamera;
 	RE::PerspectiveCamera* _mPerCamera;
+	RE::Vector3 _lookAt;
 };
 
 Sandbox::~Sandbox()
@@ -67,9 +71,10 @@ void Sandbox::OnStart()
 
 	_mPerCamera = new RE::PerspectiveCamera();
 	_mPerCamera->SetLens(RE::Math::degToRad(100.0f), (1920.0f / 1080.0f), 1, 100);
-	_mPerCamera->LookAt({ 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, -1.0f }, { 0.0f, 1.0f, 0.0f });
+	_lookAt = { 0.0f, 0.0f, -1.0f };
+	_mPerCamera->LookAt({ 0.0f, 0.0f, 0.0f }, _lookAt, { 0.0f, 1.0f, 0.0f });
 	//_mPerCamera->LookAt({ 0.0f, 0.0f, 0.0f }, { sinf(RE::Math::degToRad(45.0f)), 0.0f, -1.0f * cosf(RE::Math::degToRad(45.0f)) }, { 0.0f, 1.0f, 0.0f });
-	_mPerCamera->SetPosition({ 0.0f, 0.0f, 0.0f });
+	_mPerCamera->SetPosition({ 0.0f, 20.0f, 0.0f });
 
 	//RE::Vector3 p11{ 0.0f, 10.0f, 20.0f };
 	//RE::Vector3 p21{ 10.0f, 0.0f, 20.0f };
@@ -113,8 +118,10 @@ void Sandbox::OnStart()
 	//_mSquare->Draw();
 
 	//_mCube = new RE::Cube(20, {-20.0f, 15.0f, 50.0f});
-	_mCube = RE::GeometryGenerator::GetCube(20, { -20.0f, 15.0f, 50.0f });
-	_mCube.SetColor(RE_RED);
+	_mCubeEntity = RE::GeometryGenerator::GetCube(10, { 0.0f, 0.0f, 0.0f });
+	_mCubeEntity.transform->Translate({ 0.0f, 0.0f, 100.0f });
+	_mCubeEntity.transform->Scale({ 1.5f, 1.5f, 1.5f});
+	//_mCube.SetColor(RE_RED);
 
 	//_mTriange1 = new RE::Triangle(p11, p21, p31);
 	//_mTriange1->SetColor(RE_YELLOW);
@@ -135,36 +142,49 @@ void Sandbox::OnUpdate()
 	cam = _mPerCamera;
 #endif
 
+	RE::Vector3 rotation = _mCubeEntity.transform->GetRotation();
+	rotation.y += 1.0f;
+	if (rotation.y >= 360.0f)
+		rotation.y = 0.0f;
+	_mCubeEntity.transform->Rotate(rotation);
 	if (RE::Keyboard::KeyDown(RE_UP))
 	{
 		//TODO define += for Vectors
-		RE::Vector3 position = cam->GetPosition();
+		RE::Vector3 position = _mCubeEntity.transform->GetTranslation();//cam->GetPosition();
 		position = position + RE::Vector3{ 0.0f, 0.5f, 0.0f };
-		cam->SetPosition(position);
+		_mCubeEntity.transform->Translate(position);
+		//cam->SetPosition(position);
+		/*RE::Vector3 position = cam->GetPosition();
+		position = position + RE::Vector3{ 0.0f, 0.5f, 0.0f };
+		_lookAt = { _lookAt.x, sin(_lookAt.y - 0.01f), cos(_lookAt.z - 0.01f)};
+		cam->LookAt(position, _lookAt, { 0.0f, 1.0f, 0.0f });*/
 	}
 
 	if (RE::Keyboard::KeyDown(RE_DOWN))
 	{
 		//TODO define += for Vectors
-		RE::Vector3 position = cam->GetPosition();
+		RE::Vector3 position = _mCubeEntity.transform->GetTranslation();//cam->GetPosition();
 		position = position + RE::Vector3{ 0.0f, -0.5f, 0.0f };
-		cam->SetPosition(position);
+		_mCubeEntity.transform->Translate(position);
+		//cam->SetPosition(position);
 	}
 
 	if (RE::Keyboard::KeyDown(RE_LEFT))
 	{
 		//TODO define += for Vectors
-		RE::Vector3 position = cam->GetPosition();
+		RE::Vector3 position = _mCubeEntity.transform->GetTranslation();//cam->GetPosition();
 		position = position + RE::Vector3{ -0.5f, 0.0f, 0.0f };
-		cam->SetPosition(position);
+		_mCubeEntity.transform->Translate(position);
+		//cam->SetPosition(position);
 	}
 
 	if (RE::Keyboard::KeyDown(RE_RIGHT))
 	{
 		//TODO define += for Vectors
-		RE::Vector3 position = cam->GetPosition();
+		RE::Vector3 position = _mCubeEntity.transform->GetTranslation();//cam->GetPosition();
 		position = position + RE::Vector3{ 0.5f, 0.0f, 0.0f };
-		cam->SetPosition(position);
+		//cam->SetPosition(position);
+		_mCubeEntity.transform->Translate(position);
 	}
 }
 

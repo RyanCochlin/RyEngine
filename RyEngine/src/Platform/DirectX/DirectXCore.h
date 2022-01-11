@@ -14,6 +14,9 @@
 #include "ColorBuffer.h"
 #include "MeshGeometry.h"
 #include "Resources/UploadResource.h"
+#include "Resources/ResColored.h"
+
+using Microsoft::WRL::ComPtr;
 
 namespace RE
 {
@@ -39,13 +42,15 @@ namespace RE
 		void PushDrawCall(DrawCall d);
 		void SetClearColor(Color color);
 		
-		static ID3D12Device* GetDevice() { return sDevice; }
+		static ComPtr<ID3D12Device> GetDevice() { return sDevice; }
 
+		static D3D12_CPU_DESCRIPTOR_HANDLE TestDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE type);
 		static D3D12_CPU_DESCRIPTOR_HANDLE AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE type, D3D12_DESCRIPTOR_HEAP_FLAGS flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
-		static ID3D12DescriptorHeap* GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type);
+		static ComPtr<ID3D12DescriptorHeap> GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type);
+		static UINT GetDescriptorIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE type);
 		
 	private:
-		IDXGISwapChain* _mSwapChain;
+		ComPtr<IDXGISwapChain> _mSwapChain;
 		CommandListManager* _mCommandListManager;
 		CommandContext* _mCurrentCommandContext;
 		GraphicsPipelineState _mPSO;
@@ -53,29 +58,28 @@ namespace RE
 		ViewPort* _mainView;
 		GeometeryManager _mGeoManager;
 		std::vector<DrawCall> _mDrawCalls;
-		UploadResource* _mCurrentUploadResource;
 		DXGI_FORMAT _mSwapChainFormat;
 		UINT32 _mDisplayWidth;
 		UINT32 _mDisplayHeight;
 		uint16_t _mCurrentBuffer;
+		// TODO these need to be moved to the draw call
+		UploadResource<ResColoredPassConstants> _mCurrentPassUploadResource;
+		UploadResource<ResColoredObjectConstants> _mCurrentObjectUploadResource;
+
+		static ComPtr<ID3D12Device> sDevice;
+		static DescriptorAllocator sDescriptorAllocators[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES];
 
 		ColorBuffer _mDisplays[SWAP_CHAIN_BUFFER_COUNT] = {
 			ColorBuffer(DEFAULT_CLEAR_COLOR),
 			ColorBuffer(DEFAULT_CLEAR_COLOR)
 		};
 
-		static ID3D12Device* sDevice;
-		static DescriptorAllocator sDescriptorAllocators[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES];
 
 		void CreateSwapChain(IDXGIFactory4* factory);
-		void PopulateCommandList();
-		void WaitForPreviousFrame();
 		void UploadGeometery();
-		void UploadConstantBuffers();
-		void SubmitGeometery(MeshHeap* meshHeap); // TODO remove this once new system is working
+		void UploadPassConstantBuffers();
+		void UploadObjectConstantBuffers();
 		void SubmitMeshHeap(const MeshHeapData& meshHeap);
-
-		//TODO: this is just test stuff to draw a triangle
-		void CreateTriangle();
+		void DrawGeometery();
 	};
 }
