@@ -18,7 +18,7 @@ namespace RE
 		virtual void Release() = 0;
 		virtual bool ProcessEvents() = 0;
 		WindowDimensions GetDimensions();
-		FLOAT GetAspect();
+		float GetAspect();
 		void SetEventCallback(EventCallback callback, void* callee);
 
 	protected:

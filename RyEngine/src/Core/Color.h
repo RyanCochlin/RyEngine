@@ -17,9 +17,9 @@ namespace RE
 	{
 		struct c
 		{
-			FLOAT r, g, b, a;
+			float r, g, b, a;
 		} c;
-		FLOAT rgba[4];
+		float rgba[4];
 	};
 
 	inline Vector4 ColorToVector(Color c)
