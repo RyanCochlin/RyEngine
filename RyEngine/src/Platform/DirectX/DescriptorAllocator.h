@@ -16,9 +16,8 @@ namespace RE
 		D3D12_CPU_DESCRIPTOR_HANDLE Allocate(uint32_t count, D3D12_DESCRIPTOR_HEAP_FLAGS flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
 		ComPtr<ID3D12DescriptorHeap> GetCurrentDescriptorHeap();
 		UINT GetDescriptorIncrementSize();
+		uint32_t GetTotalAllocations();
 		void ReleaseStale(uint64_t frame);
-
-		D3D12_CPU_DESCRIPTOR_HANDLE DescriptorAllocatorTest();
 
 	private:
 		//TODO make this a heap for faster search
@@ -31,9 +30,8 @@ namespace RE
 		uint32_t _mCurrentHeapIndex;
 		uint32_t _mDescriptorSize;
 		uint32_t _mRemainingFree;
+		uint32_t _mTotalAllocations;
 		D3D12_CPU_DESCRIPTOR_HANDLE _mCurrentHandle;
-
-		ComPtr<ID3D12DescriptorHeap> _mTestHeap;
 	};
 
 	class DescriptorAllocatorPage

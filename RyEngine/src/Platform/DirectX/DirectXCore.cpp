@@ -115,8 +115,8 @@ namespace RE
 
 			//Create Constant buffer.
 			// TODO I think this should be done via draw call but I think it's okay here too
-			_mCurrentPassUploadResource.Create();
-			_mCurrentObjectUploadResource.Create();
+			_mCurrentPassUploadResource.Create(1);
+			//_mCurrentObjectUploadResource.Create(1);
 
 			//Initialize PSO
 			//TODO will probably want to do this on demand somehow but this will work for now
@@ -134,11 +134,6 @@ namespace RE
 		}
 	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE DirectXCore::TestDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE type)
-	{
-		return sDescriptorAllocators[type].DescriptorAllocatorTest();
-	}
-
 	D3D12_CPU_DESCRIPTOR_HANDLE DirectXCore::AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE type, D3D12_DESCRIPTOR_HEAP_FLAGS flags)
 	{
 		return sDescriptorAllocators[type].Allocate(1, flags);
@@ -147,6 +142,11 @@ namespace RE
 	ComPtr<ID3D12DescriptorHeap> DirectXCore::GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type)
 	{
 		return sDescriptorAllocators[type].GetCurrentDescriptorHeap();
+	}
+
+	uint32_t DirectXCore::GetDescriptorCount(D3D12_DESCRIPTOR_HEAP_TYPE type)
+	{
+		return sDescriptorAllocators[type].GetTotalAllocations();
 	}
 
 	UINT DirectXCore::GetDescriptorIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE type)
@@ -222,7 +222,7 @@ namespace RE
 		//TODO figure out how to make multiple draw calls. For now just use first one
 		DXDrawCall dc = _mDrawCalls.back();
 		ResColoredPassConstants pc{ dc.GetMVP() };
-		_mCurrentPassUploadResource.Upload(pc);
+		_mCurrentPassUploadResource.Upload(pc, 0);
 		_mDrawCalls.clear();
 	}
 
@@ -235,7 +235,7 @@ namespace RE
 			{
 				SubMeshData& subMesh = mesh.GetSubMeshData(j);
 				ResColoredObjectConstants oc{ subMesh.transform->GetWorld() };
-				_mCurrentObjectUploadResource.Upload(oc);
+				_mCurrentObjectUploadResource.Upload(oc, j);
 			}
 		}
 	}
@@ -248,7 +248,9 @@ namespace RE
 		IndexBuffer ib(indicies);
 
 		MeshGeometry mesh(vb, ib, meshHeap.subMeshData);
+		uint32_t meshCount = meshHeap.subMeshData.size();
 		_mGeoManager.AddMesh(mesh);
+		_mCurrentObjectUploadResource.Create(meshCount);
 	}
 
 	void DirectXCore::DrawGeometery()
@@ -258,14 +260,15 @@ namespace RE
 		{
 			MeshGeometry& mesh = _mGeoManager.GetMesh(i);
 
-			_mCurrentCommandContext->SetVertexBuffers(mesh, 0);
-			_mCurrentCommandContext->SetIndexBuffers(mesh);
-
 			for (int j = 0; j < mesh.SubMeshCount(); ++j)
 			{
+				_mCurrentCommandContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+				_mCurrentCommandContext->SetVertexBuffers(mesh, 0);
+				_mCurrentCommandContext->SetIndexBuffers(mesh);
 				// TODO need to keep better track of the offsets and indicies for constat buffers
 				uint32_t offset = j + 1;
-				_mCurrentPassUploadResource.SetDescriptor(_mCurrentCommandContext, 1, offset);
+				_mCurrentObjectUploadResource.SetDescriptor(_mCurrentCommandContext, 1, offset);
+				_mCurrentCommandContext->Draw(_mGeoManager.IndexCount(), _mGeoManager.VertexCount());
 			}
 		}
 	}
@@ -291,7 +294,6 @@ namespace RE
 		
 		_mCurrentCommandContext->Start();
 		_mCurrentCommandContext->SetRootSignature(_mRootSig);
-		_mCurrentCommandContext->SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		_mCurrentCommandContext->SetPipelineState(_mPSO);
 		_mCurrentCommandContext->SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -302,10 +304,10 @@ namespace RE
 		_mCurrentCommandContext->TransitionResource(curBackBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET);
 		_mCurrentCommandContext->SetRenderTarget(curBackBuffer.GetDescriptorHandle());
 		_mCurrentCommandContext->SetViewPortAndScissor(0, 0, _mDisplayWidth, _mDisplayHeight);
+		_mCurrentCommandContext->Clear(&curBackBuffer);
 
 		DrawGeometery();
 
-		_mCurrentCommandContext->Draw(&curBackBuffer, _mGeoManager.IndexCount(), _mGeoManager.VertexCount());
 		_mCurrentCommandContext->TransitionResource(curBackBuffer, D3D12_RESOURCE_STATE_PRESENT);
 
 		_mCurrentCommandContext->End();

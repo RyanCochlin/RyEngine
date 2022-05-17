@@ -119,8 +119,12 @@ void Sandbox::OnStart()
 
 	//_mCube = new RE::Cube(20, {-20.0f, 15.0f, 50.0f});
 	_mCubeEntity = RE::GeometryGenerator::GetCube(10, { 0.0f, 0.0f, 0.0f });
-	_mCubeEntity.transform->Translate({ 0.0f, 0.0f, 100.0f });
+	_mCubeEntity.transform->Translate({ -20.0f, 0.0f, 100.0f });
 	_mCubeEntity.transform->Scale({ 1.5f, 1.5f, 1.5f});
+
+	_mCubeEntity = RE::GeometryGenerator::GetCube(10, { 0.0f, 0.0f, 0.0f });
+	_mCubeEntity.transform->Translate({ 20.0f, 0.0f, 100.0f });
+	_mCubeEntity.transform->Scale({ 1.5f, 1.5f, 1.5f });
 	//_mCube.SetColor(RE_RED);
 
 	//_mTriange1 = new RE::Triangle(p11, p21, p31);

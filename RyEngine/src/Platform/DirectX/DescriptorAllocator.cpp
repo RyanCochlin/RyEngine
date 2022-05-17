@@ -11,6 +11,7 @@ namespace RE
 		_mCurrentHeapIndex(0),
 		_mDescriptorSize(0),
 		_mRemainingFree(0),
+		_mTotalAllocations(0),
 		_mCurrentHandle()
 	{}
 
@@ -36,6 +37,7 @@ namespace RE
 			_mDescriptorHeapPool.push_back(newPage);
 			nextPage = newPage;
 		}
+		_mTotalAllocations += count;
 
 		return nextPage->Allocate(count);
 	}
@@ -65,21 +67,14 @@ namespace RE
 		return incrementSize;
 	}
 
+	uint32_t DescriptorAllocator::GetTotalAllocations()
+	{
+		return _mTotalAllocations;
+	}
+
 	void DescriptorAllocator::ReleaseStale(uint64_t frame)
 	{
 		//TODO need to release descriptors. I'm leaking memory
-	}
-
-	D3D12_CPU_DESCRIPTOR_HANDLE DescriptorAllocator::DescriptorAllocatorTest()
-	{
-		D3D12_DESCRIPTOR_HEAP_DESC cbvHeapDesc;
-		cbvHeapDesc.NumDescriptors = 2;
-		cbvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-		cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-		cbvHeapDesc.NodeMask = 0;
-		ThrowIfFailed(DirectXCore::GetDevice()->CreateDescriptorHeap(&cbvHeapDesc,
-			IID_PPV_ARGS(&_mTestHeap)));
-		return _mTestHeap->GetCPUDescriptorHandleForHeapStart();
 	}
 
 	//-----------------------------DescriptorAllocatorPage------------------------//
@@ -110,7 +105,7 @@ namespace RE
 
 		// TODO need to keep track of current descriptor offset
 		D3D12_CPU_DESCRIPTOR_HANDLE cur = _mCurrentHandle;
-		_mCurrentOffset += count * _mDescriptorSize;
+		_mCurrentOffset = count * _mDescriptorSize;
 		_mCurrentHandle.ptr += _mCurrentOffset;
 		_mRemainingDescriptors -= count;
 		return cur;

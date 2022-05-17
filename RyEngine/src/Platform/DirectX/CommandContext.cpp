@@ -28,10 +28,11 @@ namespace RE
 	void CommandContext::SetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type)
 	{
 		ComPtr<ID3D12DescriptorHeap> heap = DirectXCore::GetDescriptorHeap(type);
+		uint32_t totalHeaps = DirectXCore::GetDescriptorCount(type); //TODO this isn't right
 		if (heap != nullptr)
 		{
-			ID3D12DescriptorHeap* heaps[] = { heap.Get()};
-			SetDescriptorHeaps(1, heaps);
+			ID3D12DescriptorHeap* heaps[] = { heap.Get() };
+			SetDescriptorHeaps(_countof(heaps), heaps);
 		}
 	}
 
@@ -181,24 +182,21 @@ namespace RE
 		_mCommandList->IASetIndexBuffer(ibView.data());
 	}
 
-	void CommandContext::Draw(ColorBuffer* buffer, UINT indexCount, UINT vertexCount)
+	void CommandContext::Clear(ColorBuffer* buffer)
 	{
-		Color clearColor = buffer->GetClearColor();;
+		Color clearColor = buffer->GetClearColor();
 		D3D12_CPU_DESCRIPTOR_HANDLE rtv = buffer->GetDescriptorHandle();
-
 		_mCommandList->ClearRenderTargetView(rtv, clearColor.rgba, 0, nullptr);
-		//_mCommandList->DrawInstanced(vertexCount, 1, 0, 0);
-		_mCommandList->DrawIndexedInstanced(indexCount, vertexCount, 0, 0, 0);
+	}
+
+	void CommandContext::Draw(UINT indexCount, UINT vertexCount)
+	{
+		_mCommandList->DrawIndexedInstanced(indexCount, 1, 0, 0, 0);
 	}
 
 	void CommandContext::UploadMeshes(ID3D12Device* device, GeometeryManager& gm)
 	{
 		gm.UploadAll(_mCommandList);
-	}
-
-	void CommandContext::UploadConstantBuffers(ID3D12Device* device)
-	{
-
 	}
 
 	void CommandContext::End()

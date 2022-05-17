@@ -41,10 +41,20 @@ namespace RE::GeometryGenerator
 
 	Entity& GetCube(uint32_t size, Vector3 center)
 	{
-		Cube* c = new Cube(size, center);
 		Transform* trans = new Transform();
-		SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->AddMesh(c, trans);
+		// TODO make this string a static member of the class to check against
+		Mesh* c = SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->GetMeshInstance("cube");
+		if (c == nullptr)
+		{
+			Cube* c = new Cube(size, center);
+			SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->AddMesh(c, trans);
+		}
+		else
+		{
+			SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->AddMeshInstance("cube", trans);
+		}
 
+		// TODO this is temporary
 		Entity entity;
 		entity.mesh = c;
 		entity.transform = trans;
