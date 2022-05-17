@@ -54,6 +54,7 @@ namespace RE::GeometryGenerator
 			SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->AddMeshInstance("cube", trans);
 		}
 
+		// TODO this is temporary
 		Entity entity;
 		entity.mesh = c;
 		entity.transform = trans;

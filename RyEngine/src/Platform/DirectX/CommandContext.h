@@ -33,9 +33,9 @@ namespace RE
 		void SetIndexBuffers(GeometeryManager& gm);
 		void SetIndexBuffers(MeshGeometry& mesh);
 		void SetDescriptorHeaps();
-		void Draw(ColorBuffer* rtv, UINT indexCount, UINT vertexCount);
+		void Clear(ColorBuffer* buffer);
+		void Draw(UINT indexCount, UINT vertexCount);
 		void UploadMeshes(ID3D12Device* device, GeometeryManager& gm);
-		void UploadConstantBuffers(ID3D12Device* device);
 		void End();
 
 	private:

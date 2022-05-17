@@ -123,8 +123,9 @@ namespace RE
 
 	Mesh* MeshManager::GetInstance(const char* id)
 	{
-		auto& item = std::find_if(_mInstancedMeshes.begin(), _mInstancedMeshes.end(), [&](MeshInstanceData inst) {
-			return inst.mesh->GetID() == id;
+		auto item = std::find_if(_mInstancedMeshes.begin(), _mInstancedMeshes.end(), [&](MeshInstanceData inst) {
+			auto meshId = inst.mesh->GetID();
+			return strcmp(meshId, id) == 0;
 		});
 
 		return item != _mInstancedMeshes.end() ? item->mesh : nullptr;

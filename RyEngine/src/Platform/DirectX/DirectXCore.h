@@ -44,9 +44,9 @@ namespace RE
 		
 		static ComPtr<ID3D12Device> GetDevice() { return sDevice; }
 
-		static D3D12_CPU_DESCRIPTOR_HANDLE TestDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE type);
 		static D3D12_CPU_DESCRIPTOR_HANDLE AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE type, D3D12_DESCRIPTOR_HEAP_FLAGS flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
 		static ComPtr<ID3D12DescriptorHeap> GetDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE type);
+		static uint32_t GetDescriptorCount(D3D12_DESCRIPTOR_HEAP_TYPE type);
 		static UINT GetDescriptorIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE type);
 		
 	private:

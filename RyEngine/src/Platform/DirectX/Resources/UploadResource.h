@@ -30,18 +30,28 @@ namespace RE
 			ASSERT(_mSize > 0);
 
 			_mUploadBuffer->Create(_mCount, _mSize);
-			_mCBV = DirectXCore::AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
-
-			D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-			cbvDesc.BufferLocation = _mUploadBuffer->GetGpuVirtualAddress(); // TODO this needs to be offset
-			cbvDesc.SizeInBytes = Math::Align(_mSize, 256);
-			DirectXCore::GetDevice()->CreateConstantBufferView(&cbvDesc, _mCBV);
 			_mCpuBuffer = _mUploadBuffer->Map();
+			//_mCBV = DirectXCore::AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+
+			size_t alignedSize = Math::Align(_mSize, 256);
+			for (uint32_t i = 0; i < count; ++i)
+			{
+				D3D12_CPU_DESCRIPTOR_HANDLE handle = DirectXCore::AllocateDescriptor(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE);
+
+				D3D12_GPU_VIRTUAL_ADDRESS cbAddress = _mUploadBuffer->GetGpuVirtualAddress();
+				cbAddress += (i * alignedSize);
+
+				D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+				cbvDesc.BufferLocation = cbAddress;
+				cbvDesc.SizeInBytes = alignedSize;
+				DirectXCore::GetDevice()->CreateConstantBufferView(&cbvDesc, handle);
+			}
 		}
 
-		void Upload(T& cb)
+		void Upload(T& cb, int index)
 		{
-			memcpy(_mCpuBuffer, &cb, _mDataSize);
+			size_t size = Math::Align(_mSize, 256);
+			memcpy((char*)_mCpuBuffer+(index * size), &cb, _mDataSize);
 		}
 
 		void SetDescriptor(CommandContext* commandContext, UINT index, uint32_t offset)
