@@ -119,6 +119,7 @@ namespace RE
 			md.indicies.push_back(0);
 			md.indicies.push_back(2);
 			md.indicies.push_back(3);
+			AddMeshData(md);
 		}
 	};
 
