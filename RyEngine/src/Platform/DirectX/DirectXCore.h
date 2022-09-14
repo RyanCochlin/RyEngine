@@ -65,6 +65,7 @@ namespace RE
 		// TODO these need to be moved to the draw call
 		UploadResource<ResColoredPassConstants> _mCurrentPassUploadResource;
 		UploadResource<ResColoredObjectConstants> _mCurrentObjectUploadResource;
+		UploadResource<ResColoredMaterialConstants> _mCurrentMaterialUploadResource;
 
 		static ComPtr<ID3D12Device> sDevice;
 		static DescriptorAllocator sDescriptorAllocators[D3D12_DESCRIPTOR_HEAP_TYPE_NUM_TYPES];

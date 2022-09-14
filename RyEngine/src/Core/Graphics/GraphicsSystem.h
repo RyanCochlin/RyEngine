@@ -7,10 +7,13 @@
 #include "Core/SubSystem.h"
 #include "IGraphicsAPI.h"
 #include "MeshManager.h"
+#include "MaterialManager.h"
 #include "Mesh.h"
 #include "Core/Color.h"
 #include "MeshHeap.h"
+#include "Material.h"
 #include "DrawCall.h"
+#include "LightManager.h"
 #include "Platform/DirectX/DirectXCore.h"
 
 #ifndef __ry_graphics_api__
@@ -45,10 +48,13 @@ namespace RE
 		GraphicsSystem& operator=(const GraphicsSystem&) = delete;
 
 		IGraphicsAPI* GraphicsAPI();
-		void AddMesh(Mesh* mesh, Transform* trans);
+		void AddMesh(Mesh* mesh, Transform* trans, Material* mat);
 		Mesh* GetMeshInstance(const char* id);
-		void AddMeshInstance(const char* id, Transform* trans);
+		Material* GetDefaultMaterial(const char* name);
+		void AddMeshInstance(const char* id, Transform* trans, Material* mat);
 		void BackgroundColor(Color color);
+		void SetAmbientLight(Color color);
+		Color GetAmbientLight();
 
 		void OnRegister() override;
 		void OnStart() override;
@@ -59,6 +65,8 @@ namespace RE
 	private:
 		IGraphicsAPI* _mGraphicsAPI;
 		std::unique_ptr<MeshManager> _mMeshManager;
+		std::unique_ptr<MaterialManager> _mMaterialManager;
+		std::unique_ptr<LightManager> _mLightManager;
 		MeshHeap* _mMeshHeap;
 	};
 }

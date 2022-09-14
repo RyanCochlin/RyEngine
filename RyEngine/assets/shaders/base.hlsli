@@ -2,11 +2,19 @@
 cbuffer cbObj : register(b0)
 {
 	float4x4 gViewProj;
+	float4 gAmbient;
 }
 
 cbuffer cObjBuf : register(b1)
 {
 	float4x4 gWorld;
+}
+
+cbuffer cMatBuf : register(b2)
+{
+	float4 gDiffuseAlbedo;
+	float3 gFresnelR0;
+	float  gRoughness;
 }
 
 struct VertIn

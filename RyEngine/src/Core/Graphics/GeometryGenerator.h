@@ -19,7 +19,8 @@ namespace RE::GeometryGenerator
 		//TODO fetch verts from vertex pool
 		Triangle* t = new Triangle(p1, p2, p3);
 		Transform* trans = new Transform();
-		SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->AddMesh(t, trans);
+		Material* mat = SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->GetDefaultMaterial("TestName");
+		SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->AddMesh(t, trans, mat);
 		
 		Entity entity;
 		entity.mesh = t;
@@ -31,7 +32,8 @@ namespace RE::GeometryGenerator
 	{
 		Square* s = new Square(width, height, center);
 		Transform* trans = new Transform();
-		SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->AddMesh(s, trans);
+		Material* mat = SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->GetDefaultMaterial("TestName");
+		SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->AddMesh(s, trans, mat);
 		
 		Entity entity;
 		entity.mesh = s;
@@ -42,22 +44,24 @@ namespace RE::GeometryGenerator
 	Entity& GetCube(uint32_t size, Vector3 center)
 	{
 		Transform* trans = new Transform();
+		Material* mat = SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->GetDefaultMaterial("TestName");
 		// TODO make this string a static member of the class to check against
 		Mesh* c = SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->GetMeshInstance("cube");
 		if (c == nullptr)
 		{
 			Cube* c = new Cube(size, center);
-			SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->AddMesh(c, trans);
+			SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->AddMesh(c, trans, mat);
 		}
 		else
 		{
-			SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->AddMeshInstance("cube", trans);
+			SubSystemManager::Instance().GetSubSystem<GraphicsSystem>()->AddMeshInstance("cube", trans, mat);
 		}
 
 		// TODO this is temporary
 		Entity entity;
 		entity.mesh = c;
 		entity.transform = trans;
+		entity.material = mat;
 		return entity;
 	}
 }

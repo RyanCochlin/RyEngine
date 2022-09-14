@@ -29,6 +29,8 @@ namespace RE
 
 		_mMeshHeap = new MeshHeap();
 		_mMeshManager = std::make_unique<MeshManager>();
+		_mMaterialManager = std::make_unique<MaterialManager>();
+		_mLightManager = std::make_unique<LightManager>();
 	}
 
 	void GraphicsSystem::OnStart()
@@ -52,6 +54,7 @@ namespace RE
 		{
 			DrawCall dc;
 			dc.SetMVP(cam->GetModelView());
+			dc.SetAmbient(_mLightManager->GetAmbientLight());
 			_mGraphicsAPI->PushDrawCall(dc);
 		}
 
@@ -76,9 +79,9 @@ namespace RE
 		return _mGraphicsAPI;
 	}
 
-	void GraphicsSystem::AddMesh(Mesh* mesh, Transform* trans)
+	void GraphicsSystem::AddMesh(Mesh* mesh, Transform* trans, Material* mat)
 	{
-		_mMeshManager->AddMesh(mesh, trans);
+		_mMeshManager->AddMesh(mesh, trans, mat);
 	}
 
 	Mesh* GraphicsSystem::GetMeshInstance(const char* id)
@@ -86,13 +89,34 @@ namespace RE
 		return _mMeshManager->GetInstance(id);
 	}
 
-	void GraphicsSystem::AddMeshInstance(const char* id, Transform* trans)
+	Material* GraphicsSystem::GetDefaultMaterial(const char* name)
 	{
-		_mMeshManager->AddInstance(id, trans);
+		return _mMaterialManager->GetDefaultMaterial(name);
+	}
+
+	void GraphicsSystem::AddMeshInstance(const char* id, Transform* trans, Material* mat)
+	{
+		_mMeshManager->AddInstance(id, trans, mat);
 	}
 
 	void GraphicsSystem::BackgroundColor(Color color)
 	{
 		_mGraphicsAPI->SetClearColor(color);
+	}
+
+	void GraphicsSystem::SetAmbientLight(Color color)
+	{
+		_mLightManager->SetAmbientLight(ColorToVector(color));
+	}
+
+	Color GraphicsSystem::GetAmbientLight()
+	{
+		Vector4 light = _mLightManager->GetAmbientLight();
+		Color lightColor;
+		lightColor.c.r = light.x;
+		lightColor.c.g = light.y;
+		lightColor.c.b = light.z;
+		lightColor.c.a = light.w;
+		return lightColor;
 	}
 }

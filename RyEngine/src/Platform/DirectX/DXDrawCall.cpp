@@ -9,5 +9,6 @@ namespace RE
 	DXDrawCall::DXDrawCall(DrawCall dc)
 	{
 		_mModelViewProjection = dc.GetMVP();
+		_mAmbientLight = dc.GetAmbient();
 	}
 }

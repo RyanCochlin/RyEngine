@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/SubSystem.h"
+#include "Core/Graphics/Material.h"
 
 namespace RE
 {
@@ -9,6 +10,7 @@ namespace RE
 	public:
 		Transform* transform;
 		Mesh* mesh;
+		const Material* material;
 	};
 
 	class EcsSystem : public SubSystem

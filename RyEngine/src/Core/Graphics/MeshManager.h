@@ -8,6 +8,7 @@
 #include "Core/Utils.h"
 #include "Core/Singleton.h"
 #include "Mesh.h"
+#include "Material.h"
 
 namespace RE
 {
@@ -32,8 +33,9 @@ namespace RE
 	struct SubMeshData
 	{
 		SubMeshData() = default;
-		SubMeshData(Transform* t, uint32_t bv, uint32_t bi, uint32_t ic) : transform(t), baseVertex(bv), baseIndex(bi), indexCount(ic) {}
+		SubMeshData(Transform* t, Material* m, uint32_t bv, uint32_t bi, uint32_t ic) : transform(t), material(m), baseVertex(bv), baseIndex(bi), indexCount(ic) {}
 		Transform* transform;
+		Material* material;
 		uint32_t baseVertex;
 		uint32_t baseIndex;
 		uint32_t indexCount;
@@ -62,12 +64,14 @@ namespace RE
 
 	struct MeshInstanceData
 	{
-		MeshInstanceData(Mesh* m, Transform* t) : mesh(m)
+		MeshInstanceData(Mesh* m, Transform* t, Material* mat) : mesh(m)
 		{
 			instanceTransforms.push_back(std::move(t));
+			instanceMaterials.push_back(mat);
 		}
 		Mesh* mesh;
 		std::vector<Transform*> instanceTransforms;
+		std::vector<Material*> instanceMaterials;
 	};
 
 	class MeshManager
@@ -79,8 +83,8 @@ namespace RE
 
 		const std::vector<MeshInstanceData>& GetMeshData() const { return _mInstancedMeshes; }
 		void OnUpdate();
-		void AddMesh(Mesh* mesh, Transform* trans);
-		void AddInstance(const char* id, Transform* trans);
+		void AddMesh(Mesh* mesh, Transform* trans, Material* mat);
+		void AddInstance(const char* id, Transform* trans, Material* mat);
 		Mesh* GetInstance(const char* id);
 		bool FlushMeshData(MeshHeapData& meshData);
 

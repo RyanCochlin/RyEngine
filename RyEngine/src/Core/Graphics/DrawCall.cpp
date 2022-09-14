@@ -16,4 +16,14 @@ namespace RE
 	{
 		return _mModelViewProjection;
 	}
+
+	void DrawCall::SetAmbient(Vector4 ambient)
+	{
+		_mAmbientLight = ambient;
+	}
+
+	Vector4 DrawCall::GetAmbient()
+	{
+		return _mAmbientLight;
+	}
 }

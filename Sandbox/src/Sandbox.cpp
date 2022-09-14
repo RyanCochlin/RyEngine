@@ -53,6 +53,7 @@ void Sandbox::OnStart()
 {
 	//TODO: should NOT be directly accessing the Graphics Engine from the client. Background color should be set by the camera
 	::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->BackgroundColor(RE_CYAN);
+	::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->SetAmbientLight(RE_WHITE);
 
 	//TODO this function binding is so ugly. Should be able to just pass the function pointer in
 	auto func = std::bind(&Sandbox::OnMouseEvent, this, std::placeholders::_1, std::placeholders::_2);
@@ -189,6 +190,30 @@ void Sandbox::OnUpdate()
 		position = position + RE::Vector3{ 0.5f, 0.0f, 0.0f };
 		//cam->SetPosition(position);
 		_mCubeEntity.transform->Translate(position);
+	}
+
+	if (RE::Keyboard::KeyDown(RE_R))
+	{
+		RE::Color aColor = ::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->GetAmbientLight();
+		aColor.c.r += 0.1f;
+		if (aColor.c.r > 1.0f) aColor.c.r = 0.0f;
+		::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->SetAmbientLight(aColor);
+	}
+
+	if (RE::Keyboard::KeyDown(RE_G))
+	{
+		RE::Color aColor = ::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->GetAmbientLight();
+		aColor.c.g += 0.1f;
+		if (aColor.c.g > 1.0f) aColor.c.g = 0.0f;
+		::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->SetAmbientLight(aColor);
+	}
+
+	if (RE::Keyboard::KeyDown(RE_B))
+	{
+		RE::Color aColor = ::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->GetAmbientLight();
+		aColor.c.b += 0.1f;
+		if (aColor.c.b > 1.0f) aColor.c.b = 0.0f;
+		::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->SetAmbientLight(aColor);
 	}
 }
 

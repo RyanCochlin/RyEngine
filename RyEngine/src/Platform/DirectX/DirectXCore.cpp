@@ -41,6 +41,7 @@ namespace RE
 		_mCurrentCommandContext(nullptr),
 		_mCurrentPassUploadResource(),
 		_mCurrentObjectUploadResource(),
+		_mCurrentMaterialUploadResource(),
 		_mainView{},
 		_mGeoManager{},
 		_mRootSig{},
@@ -116,7 +117,6 @@ namespace RE
 			//Create Constant buffer.
 			// TODO I think this should be done via draw call but I think it's okay here too
 			_mCurrentPassUploadResource.Create(1);
-			//_mCurrentObjectUploadResource.Create(1);
 
 			//Initialize PSO
 			//TODO will probably want to do this on demand somehow but this will work for now
@@ -221,7 +221,7 @@ namespace RE
 	{
 		//TODO figure out how to make multiple draw calls. For now just use first one
 		DXDrawCall dc = _mDrawCalls.back();
-		ResColoredPassConstants pc{ dc.GetMVP() };
+		ResColoredPassConstants pc{ dc.GetMVP(), dc.GetAmbient()};
 		_mCurrentPassUploadResource.Upload(pc, 0);
 		_mDrawCalls.clear();
 	}
@@ -235,7 +235,13 @@ namespace RE
 			{
 				SubMeshData& subMesh = mesh.GetSubMeshData(j);
 				ResColoredObjectConstants oc{ subMesh.transform->GetWorld() };
+				ResColoredMaterialConstants mc;
+				mc.DiffuseAlbedo = subMesh.material->materialData.diffuse;
+				mc.FresnelR0 = subMesh.material->materialData.fresnel;
+				mc.Roughness = subMesh.material->materialData.rough;
+
 				_mCurrentObjectUploadResource.Upload(oc, j);
+				_mCurrentMaterialUploadResource.Upload(mc, j);
 			}
 		}
 	}
@@ -251,6 +257,7 @@ namespace RE
 		uint32_t meshCount = meshHeap.subMeshData.size();
 		_mGeoManager.AddMesh(mesh);
 		_mCurrentObjectUploadResource.Create(meshCount);
+		_mCurrentMaterialUploadResource.Create(meshCount);
 	}
 
 	void DirectXCore::DrawGeometery()
@@ -267,7 +274,9 @@ namespace RE
 				_mCurrentCommandContext->SetIndexBuffers(mesh);
 				// TODO need to keep better track of the offsets and indicies for constat buffers
 				uint32_t offset = j + 1;
+				uint32_t matOffset = j + 3;
 				_mCurrentObjectUploadResource.SetDescriptor(_mCurrentCommandContext, 1, offset);
+				_mCurrentMaterialUploadResource.SetDescriptor(_mCurrentCommandContext, 2, matOffset);
 				_mCurrentCommandContext->Draw(_mGeoManager.IndexCount(), _mGeoManager.VertexCount());
 			}
 		}

@@ -87,9 +87,11 @@ namespace RE
 
 				_mMeshHeapData.vertexHeap.insert(_mMeshHeapData.vertexHeap.end(), meshData.verticies.begin(), meshData.verticies.end());
 				_mMeshHeapData.indexHeap.insert(_mMeshHeapData.indexHeap.end(), meshData.indicies.begin(), meshData.indicies.end());
-				for (auto transform : meshInstance.instanceTransforms)
+				for(int i = 0; i < meshInstance.instanceTransforms.size(); ++i)
 				{
-					_mMeshHeapData.subMeshData.emplace_back(transform, baseVertex, baseIndex, indexCount);
+					Transform* transform = meshInstance.instanceTransforms[i];
+					Material* material = meshInstance.instanceMaterials[i];
+					_mMeshHeapData.subMeshData.emplace_back(transform, material, baseVertex, baseIndex, indexCount);
 				}
 
 				baseVertex += meshData.verticies.size();
@@ -100,22 +102,23 @@ namespace RE
 		}
 	}
 
-	void MeshManager::AddMesh(Mesh* mesh, Transform* trans)
+	void MeshManager::AddMesh(Mesh* mesh, Transform* trans, Material* mat)
 	{
-		MeshInstanceData instance( mesh, trans );
+		MeshInstanceData instance( mesh, trans, mat );
 		_mInstancedMeshes.push_back(instance);
 		_mTotalVerts += mesh->GetVerticies().size();
 		_mTotalIndicis += mesh->GetIndicies().size();
 		_mDirty = true;
 	}
 
-	void MeshManager::AddInstance(const char* id, Transform* trans)
+	void MeshManager::AddInstance(const char* id, Transform* trans, Material* mat)
 	{
 		for (auto& instance : _mInstancedMeshes)
 		{
 			if (strcmp(instance.mesh->GetID(), id) == 0)
 			{
 				instance.instanceTransforms.push_back(trans);
+				instance.instanceMaterials.push_back(mat);
 				break;
 			}
 		}
