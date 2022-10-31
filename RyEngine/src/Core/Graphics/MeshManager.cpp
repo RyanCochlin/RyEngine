@@ -83,6 +83,7 @@ namespace RE
 			{
 				Mesh* mesh = meshInstance.mesh;
 				MeshData& meshData = mesh->GetMeshData();
+				mesh->CalculateNormals();
 				indexCount = meshData.indicies.size();
 
 				_mMeshHeapData.vertexHeap.insert(_mMeshHeapData.vertexHeap.end(), meshData.verticies.begin(), meshData.verticies.end());

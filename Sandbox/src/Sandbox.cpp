@@ -3,6 +3,7 @@
 #include "Core/Graphics/Mesh.h"
 #include "Core/Graphics/GeometryGenerator.h"
 #include "Core/Graphics/Transform.h"
+#include "Core/Graphics/LightSystem.h"
 #include "Core/Math/Vector.h"
 #include "Core/Color.h"
 #include "Core/Math/CoreMath.h"
@@ -38,6 +39,7 @@ private:
 	RE::OrthographicCamera* _mCamera;
 	RE::PerspectiveCamera* _mPerCamera;
 	RE::Vector3 _lookAt;
+	RE::Light* _mLight;
 };
 
 Sandbox::~Sandbox()
@@ -51,9 +53,14 @@ Sandbox::~Sandbox()
 
 void Sandbox::OnStart()
 {
+	RE::Color ambient;
+	ambient.c.r = 0.7f;
+	ambient.c.g = 0.5f;
+	ambient.c.b = 0.5f;
+	ambient.c.a = 1.0f;
 	//TODO: should NOT be directly accessing the Graphics Engine from the client. Background color should be set by the camera
 	::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->BackgroundColor(RE_CYAN);
-	::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->SetAmbientLight(RE_WHITE);
+	::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->SetAmbientLight(ambient);
 
 	//TODO this function binding is so ugly. Should be able to just pass the function pointer in
 	auto func = std::bind(&Sandbox::OnMouseEvent, this, std::placeholders::_1, std::placeholders::_2);
@@ -76,6 +83,10 @@ void Sandbox::OnStart()
 	_mPerCamera->LookAt({ 0.0f, 0.0f, 0.0f }, _lookAt, { 0.0f, 1.0f, 0.0f });
 	//_mPerCamera->LookAt({ 0.0f, 0.0f, 0.0f }, { sinf(RE::Math::degToRad(45.0f)), 0.0f, -1.0f * cosf(RE::Math::degToRad(45.0f)) }, { 0.0f, 1.0f, 0.0f });
 	_mPerCamera->SetPosition({ 0.0f, 20.0f, 0.0f });
+
+	_mLight = RE::LightSystem::GetLight(RE::Directional);
+	_mLight->Direction = { 1.0f, -0.5f, 0.4f };
+	_mLight->Strength = { 0.8f, 0.5f, 0.5f };
 
 	//RE::Vector3 p11{ 0.0f, 10.0f, 20.0f };
 	//RE::Vector3 p21{ 10.0f, 0.0f, 20.0f };

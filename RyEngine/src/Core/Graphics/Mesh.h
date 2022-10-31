@@ -36,10 +36,11 @@ namespace RE
 	{
 		std::vector<Vertex> verticies;
 		std::vector<RE_INDEX> indicies;
+		uint32_t triangles = 0;
 	};
 
 	//-------------------------Mesh--------------------------------//
-	class RE_API Mesh //: public Component
+	class RE_API Mesh
 	{
 	public:
 		Mesh(const char* id);
@@ -59,6 +60,7 @@ namespace RE
 		Color GetColor();
 		void SetSubmesh(uint32_t indexCount);
 		void AddSubmesh(uint32_t indexCount, std::vector<Vertex>& mesh);
+		void CalculateNormals();
 
 	protected:
 		MeshData _mMeshData;
@@ -136,16 +138,40 @@ namespace RE
 			float backDepth = center.z + halfSize;
 
 			//front verticies
-			md.verticies.emplace_back( Vertex({halfSize + center.x, halfSize + center.y, frontDepth }, RE_RED) );
-			md.verticies.emplace_back( Vertex({halfSize + center.x, -halfSize + center.y, frontDepth }, RE_GREEN) );
-			md.verticies.emplace_back( Vertex({ -halfSize + center.x, -halfSize + center.y, frontDepth }, RE_BLUE) );
-			md.verticies.emplace_back( Vertex({ -halfSize + center.x, halfSize + center.y, frontDepth }, RE_YELLOW) );
+			md.verticies.emplace_back( Vertex({ -halfSize + center.x, -halfSize + center.y, frontDepth }, RE_RED) );
+			md.verticies.emplace_back( Vertex({ -halfSize + center.x, halfSize + center.y, frontDepth }, RE_GREEN) );
+			md.verticies.emplace_back( Vertex({ halfSize + center.x, halfSize + center.y, frontDepth }, RE_BLUE) );
+			md.verticies.emplace_back( Vertex({ halfSize + center.x, -halfSize + center.y, frontDepth }, RE_YELLOW) );
 
 			//back verticies
-			md.verticies.emplace_back( Vertex({ halfSize + center.x, halfSize + center.y, backDepth }, RE_CYAN) );
-			md.verticies.emplace_back( Vertex({ halfSize + center.x, -halfSize + center.y, backDepth }, RE_WHITE) );
-			md.verticies.emplace_back( Vertex({ -halfSize + center.x, -halfSize + center.y, backDepth }, RE_BLACK) );
-			md.verticies.emplace_back( Vertex({ -halfSize + center.x, halfSize + center.y, backDepth }, RE_MAGENTA) );
+			md.verticies.emplace_back( Vertex({ halfSize + center.x, -halfSize + center.y, backDepth }, RE_CYAN) );
+			md.verticies.emplace_back( Vertex({ halfSize + center.x, halfSize + center.y, backDepth }, RE_WHITE) );
+			md.verticies.emplace_back( Vertex({ -halfSize + center.x, halfSize + center.y, backDepth }, RE_BLACK) );
+			md.verticies.emplace_back( Vertex({ -halfSize + center.x, -halfSize + center.y, backDepth }, RE_MAGENTA) );
+
+			//left verticies
+			md.verticies.emplace_back(Vertex({ -halfSize + center.x, -halfSize + center.y, backDepth }, RE_CYAN));
+			md.verticies.emplace_back(Vertex({ -halfSize + center.x, halfSize + center.y, backDepth }, RE_WHITE));
+			md.verticies.emplace_back(Vertex({ -halfSize + center.x, halfSize + center.y, frontDepth }, RE_BLACK));
+			md.verticies.emplace_back(Vertex({ -halfSize + center.x, -halfSize + center.y, frontDepth }, RE_MAGENTA));
+
+			//right verticies
+			md.verticies.emplace_back(Vertex({ halfSize + center.x, -halfSize + center.y, frontDepth }, RE_CYAN));
+			md.verticies.emplace_back(Vertex({ halfSize + center.x, halfSize + center.y, frontDepth }, RE_WHITE));
+			md.verticies.emplace_back(Vertex({ halfSize + center.x, halfSize + center.y, backDepth }, RE_BLACK));
+			md.verticies.emplace_back(Vertex({ halfSize + center.x, -halfSize + center.y, backDepth }, RE_MAGENTA));
+
+			//top verticies
+			md.verticies.emplace_back(Vertex({ -halfSize + center.x, halfSize + center.y, frontDepth }, RE_CYAN));
+			md.verticies.emplace_back(Vertex({ -halfSize + center.x, halfSize + center.y, backDepth }, RE_WHITE));
+			md.verticies.emplace_back(Vertex({ halfSize + center.x, halfSize + center.y, backDepth }, RE_BLACK));
+			md.verticies.emplace_back(Vertex({ halfSize + center.x, halfSize + center.y, frontDepth }, RE_MAGENTA));
+
+			//bottom verticies
+			md.verticies.emplace_back(Vertex({ -halfSize + center.x, -halfSize + center.y, backDepth }, RE_CYAN));
+			md.verticies.emplace_back(Vertex({ -halfSize + center.x, -halfSize + center.y, frontDepth }, RE_WHITE));
+			md.verticies.emplace_back(Vertex({ halfSize + center.x, -halfSize + center.y, frontDepth }, RE_BLACK));
+			md.verticies.emplace_back(Vertex({ halfSize + center.x, -halfSize + center.y, backDepth }, RE_MAGENTA));
 
 			//front face
 			md.indicies.push_back(0);
@@ -154,46 +180,52 @@ namespace RE
 			md.indicies.push_back(0);
 			md.indicies.push_back(2);
 			md.indicies.push_back(3);
+			md.triangles += 2;
 
 			//back face
 			md.indicies.push_back(4);
-			md.indicies.push_back(6);
 			md.indicies.push_back(5);
-			md.indicies.push_back(4);
-			md.indicies.push_back(7);
 			md.indicies.push_back(6);
+			md.indicies.push_back(4);
+			md.indicies.push_back(6);
+			md.indicies.push_back(7);
+			md.triangles += 2;
 
 			//left face
-			md.indicies.push_back(3);
-			md.indicies.push_back(2);
-			md.indicies.push_back(6);
-			md.indicies.push_back(3);
-			md.indicies.push_back(6);
-			md.indicies.push_back(7);
+			md.indicies.push_back(8);
+			md.indicies.push_back(9);
+			md.indicies.push_back(10);
+			md.indicies.push_back(8);
+			md.indicies.push_back(10);
+			md.indicies.push_back(11);
+			md.triangles += 2;
 
 			//right face
-			md.indicies.push_back(0);
-			md.indicies.push_back(5);
-			md.indicies.push_back(1);
-			md.indicies.push_back(0);
-			md.indicies.push_back(4);
-			md.indicies.push_back(5);
+			md.indicies.push_back(12);
+			md.indicies.push_back(13);
+			md.indicies.push_back(14);
+			md.indicies.push_back(12);
+			md.indicies.push_back(14);
+			md.indicies.push_back(15);
+			md.triangles += 2;
 
 			//top face
-			md.indicies.push_back(4);
-			md.indicies.push_back(0);
-			md.indicies.push_back(3);
-			md.indicies.push_back(4);
-			md.indicies.push_back(3);
-			md.indicies.push_back(7);
+			md.indicies.push_back(16);
+			md.indicies.push_back(17);
+			md.indicies.push_back(18);
+			md.indicies.push_back(16);
+			md.indicies.push_back(18);
+			md.indicies.push_back(19);
+			md.triangles += 2;
 
 			//bottom face
-			md.indicies.push_back(1);
-			md.indicies.push_back(5);
-			md.indicies.push_back(2);
-			md.indicies.push_back(2);
-			md.indicies.push_back(5);
-			md.indicies.push_back(6);
+			md.indicies.push_back(20);
+			md.indicies.push_back(21);
+			md.indicies.push_back(22);
+			md.indicies.push_back(20);
+			md.indicies.push_back(22);
+			md.indicies.push_back(23);
+			md.triangles += 2;
 
 			AddMeshData(md);
 		}

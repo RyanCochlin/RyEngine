@@ -18,6 +18,7 @@ namespace RE
 			color(c) {}
 
 		Vector3 position;
+		Vector3 normal;
 		Vector4 color;
 	};
 }

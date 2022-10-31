@@ -55,6 +55,14 @@ namespace RE
 			DrawCall dc;
 			dc.SetMVP(cam->GetModelView());
 			dc.SetAmbient(_mLightManager->GetAmbientLight());
+
+			for (auto light : _mLightManager->GetLights())
+			{
+				dc.AddLight(light);
+			}
+
+			//TODO figure out eye position. Right now it's at origin
+			dc.SetEyePosition(cam->GetPosition());
 			_mGraphicsAPI->PushDrawCall(dc);
 		}
 
@@ -118,5 +126,10 @@ namespace RE
 		lightColor.c.b = light.z;
 		lightColor.c.a = light.w;
 		return lightColor;
+	}
+
+	void GraphicsSystem::AddLight(Light* light)
+	{
+		_mLightManager->AddLight(light);
 	}
 }

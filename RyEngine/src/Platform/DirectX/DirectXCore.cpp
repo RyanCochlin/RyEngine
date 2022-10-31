@@ -122,7 +122,7 @@ namespace RE
 			//TODO will probably want to do this on demand somehow but this will work for now
 			_mRootSig = new RootSignature(sDevice.Get());
 			_mPSO.SetRootSignature(_mRootSig);
-			_mPSO.SetInputLayout(2, gILColoredDesc);
+			_mPSO.SetInputLayout(3, gILColoredDesc);
 			_mPSO.SetPixelShader(g_scoloredPS, sizeof(g_scoloredPS));
 			_mPSO.SetVertexShader(g_scoloredVS, sizeof(g_scoloredVS));
 			_mPSO.SetTopology(D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
@@ -189,7 +189,7 @@ namespace RE
 		delete _mRootSig;
 	}
 
-	void DirectXCore::PushDrawCall(DrawCall d)
+	void DirectXCore::PushDrawCall(DXDrawCall d)
 	{
 		_mDrawCalls.push_back(d);
 	}
@@ -221,7 +221,13 @@ namespace RE
 	{
 		//TODO figure out how to make multiple draw calls. For now just use first one
 		DXDrawCall dc = _mDrawCalls.back();
-		ResColoredPassConstants pc{ dc.GetMVP(), dc.GetAmbient()};
+		ResColoredPassConstants pc{ dc.GetMVP(), dc.GetAmbient(), dc.GetEyePosition(), dc.GetDirectionalLightCount()};
+
+		for (int i = 0; i < dc.GetDxLights().size(); ++i)
+		{
+			pc.lights[0] = dc.GetDxLights()[i];
+		}
+
 		_mCurrentPassUploadResource.Upload(pc, 0);
 		_mDrawCalls.clear();
 	}

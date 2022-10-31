@@ -4,9 +4,19 @@
 
 namespace RE
 {
+    enum LightType
+    {
+        Directional
+    };
+
 	struct Light
 	{
-		Vector3 Color;
-		Vector3 Direction;
+        LightType Type;
+        Vector3 Strength;
+        Vector3 Direction;
+        Vector3 Position;
+        float FalloffStart;
+        float FalloffEnd;
+        float SpotPower;
 	};
 }

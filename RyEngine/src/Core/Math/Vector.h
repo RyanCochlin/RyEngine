@@ -151,9 +151,9 @@ namespace RE
 		return left;
 	}
 
-	inline Vector3 operator-(Vector3 left, Vector3 right)
+	inline Vector3 operator-(Vector3& left, Vector3& right)
 	{
-		return left -= right;
+		return Vector3(left.x - right.x, left.y - right.y, left.z - right.z);
 	}
 
 	inline Vector3 operator*(float s, Vector3& v)
@@ -182,19 +182,19 @@ namespace RE
 		};
 	}
 
-	inline float sqrMagnitutde(Vector3 v)
+	inline float sqrMagnitutde(Vector3& v)
 	{
 		return	(v.x * v.x) +
 				(v.y * v.y) +
 				(v.z * v.z);
 	}
 
-	inline float magnitutde(Vector3 v)
+	inline float magnitutde(Vector3& v)
 	{
 		return sqrtf( sqrMagnitutde(v) );
 	}
 
-	inline Vector3 normalize(Vector3 v)
+	inline Vector3 normalize(Vector3& v)
 	{
 		float m = magnitutde(v);
 		return (1.0f / m) * v;

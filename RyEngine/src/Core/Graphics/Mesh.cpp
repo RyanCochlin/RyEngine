@@ -80,4 +80,27 @@ namespace RE
 	{
 		SetSubmesh(indexCount);
 	}
+
+	void Mesh::CalculateNormals()
+	{
+		for (int i = 0; i < _mMeshData.triangles; ++i)
+		{
+			int i1 = _mMeshData.indicies[i * 3 + 0];
+			int i2 = _mMeshData.indicies[i * 3 + 1];
+			int i3 = _mMeshData.indicies[i * 3 + 2];
+
+			Vertex v1 = _mMeshData.verticies[i1];
+			Vertex v2 = _mMeshData.verticies[i2];
+			Vertex v3 = _mMeshData.verticies[i3];
+
+			Vector3 e1 = v2.position - v1.position;
+			Vector3 e2 = v3.position - v1.position;
+
+			Vector3 normal = cross(e1, e2);
+
+			_mMeshData.verticies[i1].normal = normalize(normal);
+			_mMeshData.verticies[i2].normal = normalize(normal);
+			_mMeshData.verticies[i3].normal = normalize(normal);
+		}
+	}
 }

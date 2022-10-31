@@ -55,6 +55,7 @@ namespace RE
 		void BackgroundColor(Color color);
 		void SetAmbientLight(Color color);
 		Color GetAmbientLight();
+		void AddLight(Light* light);
 
 		void OnRegister() override;
 		void OnStart() override;

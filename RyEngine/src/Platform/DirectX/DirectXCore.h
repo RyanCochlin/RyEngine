@@ -4,8 +4,8 @@
 #include "Core/DirectXInit.h"
 #include "Core/Color.h"
 #include "Core/Graphics/MeshHeap.h"
-#include "Core/Graphics/DrawCall.h"
 #include "Core/Graphics/MeshManager.h"
+#include "DXDrawCall.h"
 #include "CommandManager.h"
 #include "CommandContext.h"
 #include "PipelineState.h"
@@ -39,7 +39,7 @@ namespace RE
 		void Release();
 		void OnRender();
 
-		void PushDrawCall(DrawCall d);
+		void PushDrawCall(DXDrawCall d);
 		void SetClearColor(Color color);
 		
 		static ComPtr<ID3D12Device> GetDevice() { return sDevice; }
@@ -57,7 +57,7 @@ namespace RE
 		RootSignature* _mRootSig;
 		ViewPort* _mainView;
 		GeometeryManager _mGeoManager;
-		std::vector<DrawCall> _mDrawCalls;
+		std::vector<DXDrawCall> _mDrawCalls;
 		DXGI_FORMAT _mSwapChainFormat;
 		UINT32 _mDisplayWidth;
 		UINT32 _mDisplayHeight;

@@ -1,13 +1,19 @@
 #pragma once
 #include "Core/Math/Matrix.h"
-#include "UploadResource.h"
+#include "DxLight.h"
 
 namespace RE
 {
+#define MAX_LIGHTS 4
+
 	struct ResColoredPassConstants
 	{
 		Matrix4 ViewProj;
 		Vector4 Ambient;
+		Vector3 EyePosition;
+		uint32_t DirLightCount;
+
+		DxLight lights[MAX_LIGHTS];
 	};
 
 	struct ResColoredObjectConstants

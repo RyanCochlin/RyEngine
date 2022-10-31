@@ -23,7 +23,7 @@ Material* RE::MaterialManager::GetDefaultMaterial(const char* name)
     mat->name = name;
     mat->materialData.diffuse = ColorToVector(RE_WHITE);
     mat->materialData.fresnel = { 0.5f, 0.5f, 0.5f };
-    mat->materialData.rough = 0.2f;
+    mat->materialData.rough = 0.3f;
     return mat;
 }
 }
