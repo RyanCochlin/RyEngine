@@ -70,7 +70,7 @@ namespace RE
 	};
 
 	//-------------------------Basic Geometry-------------------------//
-	class BasicGeometry : public Mesh
+	class RE_API BasicGeometry : public Mesh
 	{
 	public:
 		BasicGeometry() = default;

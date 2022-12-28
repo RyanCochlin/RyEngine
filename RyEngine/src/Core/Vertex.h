@@ -15,6 +15,7 @@ namespace RE
 
 		Vertex(Vector3 p, Vector4 c) :
 			position(p),
+			normal(),
 			color(c) {}
 
 		Vector3 position;

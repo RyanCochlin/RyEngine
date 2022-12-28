@@ -114,9 +114,9 @@ namespace RE
 		float wx = (right + left) / (right - left);
 		float wy = (top + bottom) / (top - bottom);
 		float wz = (_mFar + _mNear) / (_mFar - _mNear);
-		wx *= (wx == 0) ? 1.0 : -1.0;
-		wy *= (wy == 0) ? 1.0 : -1.0;
-		wz *= (wz == 0) ? 1.0 : -1.0;
+		wx *= (wx == 0.0f) ? 1.0f : -1.0f;
+		wy *= (wy == 0.0f) ? 1.0f : -1.0f;
+		wz *= (wz == 0.0f) ? 1.0f : -1.0f;
 
 		Vector4 x{ 2.0f / (right - left), 0.0f, 0.0f, wx };
 		Vector4 y{ 0.0f, 2.0f / (top - bottom), 0.0f, wy };
@@ -128,7 +128,8 @@ namespace RE
 	//----------------------------------------------------------------------------------------//
 	PerspectiveCamera::PerspectiveCamera() :
 		_mNearHeight(0.0f),
-		_mFarHeight(0.0f)
+		_mFarHeight(0.0f),
+		_mFovY(0.0f)
 	{}
 
 	PerspectiveCamera::~PerspectiveCamera()

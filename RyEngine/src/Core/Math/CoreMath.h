@@ -8,12 +8,12 @@ namespace RE::Math
 
 	inline float degToRad( float deg )
 	{
-		return (deg * M_PI) / 180.0f;
+		return (deg * (float)M_PI) / 180.0f;
 	}
 
 	inline float radToDeg( float rad )
 	{
-		return (rad * 180.0f) / M_PI;
+		return (rad * 180.0f) / (float)M_PI;
 	}
 
 	template<typename T> inline T Align( T val, size_t alignment )
