@@ -20,6 +20,7 @@ namespace RE
 		_mAllSubSystems.push_back(new InputSystem());
 		_mAllSubSystems.push_back(new GraphicsSystem());
 		_mAllSubSystems.push_back(new CameraManager());
+		_mAllSubSystems.push_back(new FileSystem());
 		//_mAllSubSystems.push_back(new EcsSystem());
 	}
 

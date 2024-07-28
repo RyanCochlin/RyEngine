@@ -13,7 +13,8 @@ namespace RE
 		LoggingSystem,
 		GraphicsSystem,
 		CameraSystem,
-		EcsSystem
+		EcsSystem,
+		FileSystem
 	};
 
 	class SubSystem

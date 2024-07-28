@@ -11,6 +11,8 @@
 #include "Core/Input/KeyCodes.h"
 #include "Core/Input/Mouse.h"
 #include "Core/ECS/ECS.h"
+#include "Core/FileSystem/FileSystem.h"
+#include "Core/FileSystem/FileBuffer.h"
 
 #include <vector>
 
@@ -146,6 +148,15 @@ void Sandbox::OnStart()
 	//_mTriange2 = new RE::Triangle(p11, p21, p31);
 	//_mTriange2->SetColor(RE_YELLOW);
 	//_mTriange2->Draw();
+
+	RE::RFSFileBuffer fileBuffer;
+	::RE::RFSFileHandle file = ::RE::FileSystem::FileOpen("/assets/test.txt");
+	size_t success = ::RE::FileSystem::FileRead(file, fileBuffer);
+	const char* str = fileBuffer.c_str();
+	if (success)
+	{
+		RE_LOG_INFO(std::string(str));
+	}
 }
 
 void Sandbox::OnUpdate()
