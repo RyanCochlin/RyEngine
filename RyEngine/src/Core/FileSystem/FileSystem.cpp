@@ -150,7 +150,7 @@ namespace RE
 			be = new WindowsFSBackend();
 			break;
 		default:
-			RE_CORE_ERROR("Invalid FileSystem Type {0}", beType);
+			RE_CORE_ERROR("Invalid FileSystem Type {0}", (int)beType);
 		}
 		
 		return be;
