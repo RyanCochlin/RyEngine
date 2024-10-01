@@ -6,6 +6,7 @@ VertOut VS(VertIn vIn)
 
 	float4 pos = float4(vIn.pos, 1);
 	pos = mul(pos, gWorld);
+	vOut.posW = pos.xyz;
 
 	// TODO sort out non-uniform scaling
 	float3 norm = vIn.normal;

@@ -6,7 +6,8 @@ namespace RE
 {
     enum LightType
     {
-        Directional
+        Directional,
+        Point
     };
 
 	struct Light

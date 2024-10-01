@@ -7,7 +7,8 @@
 namespace RE
 {
 	DXDrawCall::DXDrawCall() :
-		_mDirectionalLightCount(0)
+		_mDirectionalLightCount(0),
+		_mPointLightCount(0)
 	{}
 
 	DXDrawCall::DXDrawCall(DrawCall dc)
@@ -16,10 +17,11 @@ namespace RE
 		_mAmbientLight = dc.GetAmbient();
 		_mEyePosition = dc.GetEyePosition();
 		_mDirectionalLightCount = 0;
+		_mPointLightCount = 0;
 
 		std::vector<Light*> lights = dc.GetLights();
 		std::sort(lights.begin(), lights.end(), [](const Light* a, const Light* b) {
-			return a->Type > b->Type;
+			return a->Type < b->Type;
 		});
 
 		uint32_t lightCount = 0;
@@ -28,6 +30,7 @@ namespace RE
 			DxLight dxLight(light);
 			_mLights.push_back(dxLight);
 			_mDirectionalLightCount += (light->Type == LightType::Directional) ? 1 : 0;
+			_mPointLightCount += (light->Type == LightType::Point) ? 1 : 0;
 			//TODO other light types
 
 			//TODO get pass type and max lights from draw call
@@ -39,6 +42,21 @@ namespace RE
 	uint32_t DXDrawCall::GetDirectionalLightCount()
 	{
 		return _mDirectionalLightCount;
+	}
+
+	uint32_t DXDrawCall::GetPointLightCount()
+	{
+		return _mPointLightCount;
+	}
+
+	uint32_t DXDrawCall::GetDirectionalLightIndex()
+	{
+		return _mDirectionalLightCount;
+	}
+
+	uint32_t DXDrawCall::GetPointLightIndex()
+	{
+		return _mDirectionalLightCount + _mPointLightCount;
 	}
 
 	std::vector<DxLight>& DXDrawCall::GetDxLights()

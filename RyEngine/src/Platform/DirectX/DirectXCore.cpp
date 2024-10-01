@@ -221,11 +221,11 @@ namespace RE
 	{
 		//TODO figure out how to make multiple draw calls. For now just use first one
 		DXDrawCall dc = _mDrawCalls.back();
-		ResColoredPassConstants pc{ dc.GetMVP(), dc.GetAmbient(), dc.GetEyePosition(), dc.GetDirectionalLightCount()};
+		ResColoredPassConstants pc{ dc.GetMVP(), dc.GetAmbient(), dc.GetEyePosition(), dc.GetDirectionalLightIndex(), dc.GetPointLightIndex()};
 
 		for (int i = 0; i < dc.GetDxLights().size(); ++i)
 		{
-			pc.lights[0] = dc.GetDxLights()[i];
+			pc.lights[i] = dc.GetDxLights()[i];
 		}
 
 		_mCurrentPassUploadResource.Upload(pc, 0);

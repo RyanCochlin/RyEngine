@@ -54,9 +54,30 @@ float3 ComputeDirectionalLight(Light light, Material mat, float3 normal, float3 
     return BlinnPhong(strength, toLight, normal, eye, mat);
 }
 
+float3 ComputePointLight(Light light, Material mat, float3 pos, float3 normal, float3 eye)
+{
+    float3 lightPos = light.Position;
+    float3 toLight = lightPos - pos;
+    float distance = length(toLight);
+    
+    if(distance > light.FalloffEnd)
+        return 0.0f;
+    
+    toLight /= distance; //normalize
+    
+    float nDotL = max(dot(toLight, normal), 0.0f);
+    float3 strength = light.Strength * nDotL;
+    
+    //Linear attenuation. TODO proper PBR falloff
+    float attenuation = saturate((light.FalloffEnd - distance) / (light.FalloffEnd - light.FalloffStart));
+    strength *= attenuation;
+    
+    return BlinnPhong(strength, toLight, normal, eye, mat);
+}
+
 // Most of the lighting calculations taken from DX12 book for now
 float4 CalculateLighting(Light lights[gMaxLights], Material mat, float3 pos, float3 normal, float3 eye,
-    int dirLightCount)
+    int dirLightIndex, int pointLightIndex)
 {
     int i = 0;
     float3 result = 0.0f;
@@ -65,8 +86,10 @@ float4 CalculateLighting(Light lights[gMaxLights], Material mat, float3 pos, flo
 
     for (i = 0; i < gMaxLights; i++)
     {
-        if (i < dirLightCount)
+        if (i < dirLightIndex)
             result += ComputeDirectionalLight(lights[i], mat, normal, toEye);
+        if (i >= dirLightIndex && i < pointLightIndex)
+            result += ComputePointLight(lights[i], mat, pos, normal, toEye);
     }
 
     return float4(result, 0.0f);

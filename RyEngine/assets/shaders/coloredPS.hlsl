@@ -8,7 +8,7 @@ float4 PS(VertOut pIn) : SV_Target
 	float shininess = 1 - gRoughness;
 	Material mat = { gDiffuseAlbedo, gFresnelR0, shininess };
 
-	float4 lighting = CalculateLighting(gLights, mat, pIn.posH.xyz, pIn.normal, gEyePos, gDirLightCount);
+	float4 lighting = CalculateLighting(gLights, mat, pIn.posW, pIn.normal, gEyePos, gDirLightCountIndex, gPointLightIndex);
 	float4 ambient = gDiffuseAlbedo * gAmbient;
 
 	float4 litColor = ambient + lighting;

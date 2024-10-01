@@ -40,6 +40,7 @@ private:
 	RE::PerspectiveCamera* _mPerCamera;
 	RE::Vector3 _lookAt;
 	RE::Light* _mLight;
+	RE::Light* _mPointLight;
 };
 
 Sandbox::~Sandbox()
@@ -54,12 +55,12 @@ Sandbox::~Sandbox()
 void Sandbox::OnStart()
 {
 	RE::Color ambient;
-	ambient.c.r = 0.7f;
-	ambient.c.g = 0.5f;
-	ambient.c.b = 0.5f;
+	ambient.c.r = 0.2f;
+	ambient.c.g = 0.1f;
+	ambient.c.b = 0.1f;
 	ambient.c.a = 1.0f;
 	//TODO: should NOT be directly accessing the Graphics Engine from the client. Background color should be set by the camera
-	::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->BackgroundColor(RE_CYAN);
+	::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->BackgroundColor(RE_BLACK);
 	::RE::SubSystemManager::Instance().GetSubSystem<RE::GraphicsSystem>()->SetAmbientLight(ambient);
 
 	//TODO this function binding is so ugly. Should be able to just pass the function pointer in
@@ -86,7 +87,14 @@ void Sandbox::OnStart()
 
 	_mLight = RE::LightSystem::GetLight(RE::Directional);
 	_mLight->Direction = { 1.0f, -0.5f, 0.4f };
-	_mLight->Strength = { 0.8f, 0.5f, 0.5f };
+	_mLight->Strength = { 0.2f, 0.1f, 0.1f };
+
+	_mPointLight = RE::LightSystem::GetLight(RE::Point);
+	_mPointLight->Position = { 0.0f, 0.0f, 90.0f };
+	_mPointLight->Direction = { 0.0f, 0.0f, -1.0f };
+	_mPointLight->Strength = { 0.1f, 0.8f, 0.1f };
+	_mPointLight->FalloffStart = 10.0f;
+	_mPointLight->FalloffEnd = 100.0f;
 
 	//RE::Vector3 p11{ 0.0f, 10.0f, 20.0f };
 	//RE::Vector3 p21{ 10.0f, 0.0f, 20.0f };
