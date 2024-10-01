@@ -8,6 +8,7 @@ workspace "RyEngine"
 		shaderentry ""
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+prjAbsPath = path.getabsolute("%{prj.location.abspath}")
 
 project "RyEngine"
 	location "RyEngine"
@@ -27,7 +28,8 @@ project "RyEngine"
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/assets/shaders/**.hlsl",
-		"%{prj.name}/assets/shaders/**.hlsli"
+		"%{prj.name}/assets/shaders/**.hlsli",
+		"%{prj.name}/config/**.cfg"
 	}
 
 	includedirs
@@ -45,7 +47,8 @@ project "RyEngine"
 		{
 			"RE_DLL_BUILD",
 			"RE_WINDOWS",
-			"_USE_MATH_DEFINES"
+			"_USE_MATH_DEFINES",
+			"PRJ_PATH=\"" .. prjAbsPath .. "%{prj.name}/assets/\""
 		}
 
 		links

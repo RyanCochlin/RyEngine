@@ -5,6 +5,7 @@
 #include "Window/WindowSystem.h"
 #include "Input/InputSystem.h"
 #include "Graphics/GraphicsSystem.h"
+#include "FileSystem/FileSystem.h"
 #include "CameraManager.h"
 #include "ECS/ECS.h"
 
